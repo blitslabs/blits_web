@@ -7,7 +7,7 @@ import { connect } from 'react-redux'
 import { saveCreditRequest } from '../../../actions/creditRequest'
 import { nextFormController, backFormController } from '../../../actions/formController'
 
-class ClientCivilStatusForm extends Component {
+class PropertyRegimeForm extends Component {
 
     state = {
         selectedOption: '',
@@ -15,8 +15,8 @@ class ClientCivilStatusForm extends Component {
 
     componentDidMount() {
         const { creditRequest, dispatch } = this.props
-        document.title = "Estado Civil | Precalificador - SwayLending"
-        this.setState({ selectedOption: creditRequest.civilStatus })
+        document.title = "Régimen de los bienes | Precalificador - SwayLending"
+        this.setState({ selectedOption: creditRequest.propertyRegime })
     }
 
     handleOptionClick = (option) => this.setState({ selectedOption: option })
@@ -30,7 +30,7 @@ class ClientCivilStatusForm extends Component {
             return
         }
 
-        const params = { civilStatus: selectedOption }
+        const params = { propertyRegime: selectedOption }
         dispatch(saveCreditRequest(params))
         dispatch(nextFormController())
     }
@@ -43,31 +43,19 @@ class ClientCivilStatusForm extends Component {
 
     render() {
 
-        const option1 = 'Soltero(a)'
-        const option2 = 'Casado(a)'
-        const option3 = 'Cohabitación'
-        const option4 = 'Divorciado(a)'
-        const option5 = 'Viudo(a)'
+        const option1 = 'Bienes Mancomunados'
+        const option2 = 'Bienes Separados'
 
         return (
             <div className="row mt-5">
                 <div className="col-sm-12 col-md-6 offset-md-3 col-lg-6 offset-lg-3 text-center">
-                    <div className="form-title">¿Qué tipo de actividad realizas principalmente?</div>
+                    <div className="form-title">¿Cuál es el régimen de los bienes?</div>
                     <div className="form-group">
                         <div>
                             <button onClick={e => this.handleOptionClick(option1)} className={this.state.selectedOption === option1 ? "btn btn-light btn-lg btn-selected mt-4" : "btn btn-light btn-lg btn-select mt-4"}>{option1}</button>
                         </div>
                         <div>
                             <button onClick={e => this.handleOptionClick(option2)} className={this.state.selectedOption === option2 ? "btn btn-light btn-lg btn-selected mt-3" : "btn btn-light btn-lg btn-select mt-3"}>{option2}</button>
-                        </div>
-                        <div>
-                            <button onClick={e => this.handleOptionClick(option3)} className={this.state.selectedOption === option3 ? "btn btn-light btn-lg btn-selected mt-3" : "btn btn-light btn-lg btn-select mt-3"}>{option3}</button>
-                        </div>
-                        <div>
-                            <button onClick={e => this.handleOptionClick(option4)} className={this.state.selectedOption === option4 ? "btn btn-light btn-lg btn-selected mt-3" : "btn btn-light btn-lg btn-select mt-3"}>{option4}</button>
-                        </div>
-                        <div>
-                            <button onClick={e => this.handleOptionClick(option5)} className={this.state.selectedOption === option5 ? "btn btn-light btn-lg btn-selected mt-3" : "btn btn-light btn-lg btn-select mt-3"}>{option5}</button>
                         </div>
                     </div>
                     <div className="form-group text-center mt-4">
@@ -88,4 +76,4 @@ function mapStateToProps({ auth, formController, creditRequest }) {
     }
 }
 
-export default connect(mapStateToProps)(ClientCivilStatusForm)
+export default connect(mapStateToProps)(PropertyRegimeForm)
