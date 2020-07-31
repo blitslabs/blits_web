@@ -17,7 +17,7 @@ class ClientHasProspectivePropertyForm extends Component {
     componentDidMount() {
         const { token, dispatch } = this.props
 
-        document.title = "Precalificador"
+        document.title = "Monto del Inmueble Buscado | Precalificador - SwayLending"
 
 
     }

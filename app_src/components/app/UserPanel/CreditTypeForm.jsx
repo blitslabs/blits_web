@@ -19,7 +19,7 @@ class CreditTypeForm extends Component {
     componentDidMount() {
         const { token, dispatch } = this.props
 
-        document.title = "Precalificador"
+        document.title = "Tipo de Crédito | Precalificador - SwayLending"
 
 
     }

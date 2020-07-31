@@ -19,7 +19,7 @@ class ProspectivePropertyValueForm extends Component {
     componentDidMount() {
         const { token, dispatch } = this.props
 
-        document.title = "Precalificador"
+        document.title = "Valor del Inmueble Buscado | Precalificador - SwayLending"
 
 
     }

@@ -15,11 +15,9 @@ class ClientMainOccupationForm extends Component {
     }
 
     componentDidMount() {
-        const { token, dispatch } = this.props
-
-        document.title = "Precalificador"
-
-
+        const { creditRequest, dispatch } = this.props
+        document.title = "Actividad Principal | Precalificador - SwayLending"
+        this.setState({ selectedOption: creditRequest.clientMainOccupation })
     }
 
     handleOptionClick = (option) => this.setState({ selectedOption: option })
@@ -33,7 +31,7 @@ class ClientMainOccupationForm extends Component {
             return
         }
 
-        const params = { clientHasProspectiveProperty: selectedOption }
+        const params = { clientMainOccupation: selectedOption }
         dispatch(saveCreditRequest(params))
         dispatch(nextFormController())
     }
@@ -46,6 +44,10 @@ class ClientMainOccupationForm extends Component {
 
     render() {
 
+        const option1 = 'Empleado'
+        const option2 = 'Independiente'
+        const option3 = 'Empresario'
+        const option4 = 'Socio'
 
         return (
             <div className="row mt-5">
@@ -53,13 +55,16 @@ class ClientMainOccupationForm extends Component {
                     <div className="form-title">¿Qué tipo de actividad realizas principalmente?</div>
                     <div className="form-group">
                         <div>
-                            <button onClick={e => this.handleOptionClick('Ya lo tengo')} className={this.state.selectedOption === 'Ya lo tengo' ? "btn btn-light btn-lg btn-selected mt-4" : "btn btn-light btn-lg btn-select mt-4"}>Ya lo tengo</button>
+                            <button onClick={e => this.handleOptionClick(option1)} className={this.state.selectedOption === option1 ? "btn btn-light btn-lg btn-selected mt-4" : "btn btn-light btn-lg btn-select mt-4"}>{option1}</button>
                         </div>
                         <div>
-                            <button onClick={e => this.handleOptionClick('Lo estoy buscando')} className={this.state.selectedOption === 'Lo estoy buscando' ? "btn btn-light btn-lg btn-selected mt-3" : "btn btn-light btn-lg btn-select mt-3"}>Lo estoy buscando</button>
+                            <button onClick={e => this.handleOptionClick(option2)} className={this.state.selectedOption === option2 ? "btn btn-light btn-lg btn-selected mt-3" : "btn btn-light btn-lg btn-select mt-3"}>{option2}</button>
                         </div>
                         <div>
-                            <button onClick={e => this.handleOptionClick('Solo quiero conocer mi crédito')} className={this.state.selectedOption === 'Solo quiero conocer mi crédito' ? "btn btn-light btn-lg btn-selected mt-3" : "btn btn-light btn-lg btn-select mt-3"}>Solo quiero conocer mi crédito</button>
+                            <button onClick={e => this.handleOptionClick(option3)} className={this.state.selectedOption === option3 ? "btn btn-light btn-lg btn-selected mt-3" : "btn btn-light btn-lg btn-select mt-3"}>{option3}</button>
+                        </div>
+                        <div>
+                            <button onClick={e => this.handleOptionClick(option4)} className={this.state.selectedOption === option4 ? "btn btn-light btn-lg btn-selected mt-3" : "btn btn-light btn-lg btn-select mt-3"}>{option4}</button>
                         </div>
                     </div>
                     <div className="form-group text-center mt-4">

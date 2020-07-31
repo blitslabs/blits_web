@@ -11,6 +11,7 @@ import ProspectivePropertyValueForm from './ProspectivePropertyValueForm'
 import ClientHasProspectivePropertyAmountForm from './ClientHasProspectivePropertyAmountForm'
 import ClientMonthlyIncomeForm from './ClientMonthlyIncomeForm'
 import ClientMainOccupationForm from './ClientMainOccupationForm'
+import ClientNameForm from './ClientNameForm'
 
 class Precalificador extends Component {
 
@@ -22,7 +23,7 @@ class Precalificador extends Component {
     componentDidMount() {
         const { token, dispatch } = this.props
 
-        document.title = "Precalificador"
+        document.title = "Precalificador - SwayLending"
 
         this.setState({
             loading: false
@@ -43,17 +44,18 @@ class Precalificador extends Component {
                 <div className="row p-4" style={{ minHeight: '820px' }}>
                     <div className="col-xs-10 offset-xs-1 col-sm-10 offset-sm-1 col-md-10 offset-md-1 " >
                         <div className="breadcrumb-title mt-4"><b>Pre-aprobación</b> {'>'} Carga de Documentos {'>'} Propuestas {'>'} Solicitud {'>'} Autorización {'>'} Avalúo {'>'} Firma en Notaría</div>
-                        <div style={{display:'flex'}}>
+                        <div style={{ display: 'flex' }}>
                             <div className="page-title mt-3 pt-3">Pre-calificación</div>
                             <img src={process.env.SERVER_HOST + '/app_assets/images/telescopio.png'} style={{ height: '100px' }} />
                         </div>
 
-                        { formController === 1 && <CreditTypeForm/>}
-                        { formController === 2 && <ClientHasProspectivePropertyForm/>}
-                        { formController === 3 && <ProspectivePropertyValueForm />}
-                        { formController === 4 && <ClientHasProspectivePropertyAmountForm  />}
-                        { formController === 5 && <ClientMonthlyIncomeForm />}
-                        { formController ===6 && <ClientMainOccupationForm />}
+                        {formController === 1 && <CreditTypeForm />}
+                        {formController === 2 && <ClientHasProspectivePropertyForm />}
+                        {formController === 3 && <ProspectivePropertyValueForm />}
+                        {formController === 4 && <ClientHasProspectivePropertyAmountForm />}
+                        {formController === 5 && <ClientMonthlyIncomeForm />}
+                        {formController === 6 && <ClientMainOccupationForm />}
+                        {formController === 7 && <ClientNameForm />}
                     </div>
                 </div>
             </DashboardTemplate>
