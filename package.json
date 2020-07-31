@@ -44,12 +44,14 @@
     "chart.js": "2.9.3",
     "clipboard-copy": "3.1.0",
     "clsx": "1.0.4",
+    "convert-excel-to-json": "^1.7.0",
     "cookie-parser": "1.4.3",
     "cors": "2.8.5",
     "country-state-city": "1.0.4",
     "cp-cli": "2.0.0",
     "css-mediaquery": "0.1.2",
     "csurf": "1.9.0",
+    "csvtojson": "^2.0.10",
     "currency-formatter": "^1.5.5",
     "date-fns": "2.8.1",
     "debug": "4.1.1",
@@ -71,6 +73,7 @@
     "json2mq": "0.2.0",
     "jsonwebtoken": "8.4.0",
     "jss-rtl": "0.3.0",
+    "line-by-line": "^0.1.6",
     "lodash": "4.17.15",
     "material-ui-popup-state": "1.4.1",
     "moment": "2.24.0",
@@ -78,6 +81,7 @@
     "node-fetch": "2.6.0",
     "nodemailer": "5.1.1",
     "object-path": "0.11.4",
+    "papaparse": "^5.2.0",
     "passport": "0.4.0",
     "passport-facebook": "3.0.0",
     "passport-google-auth": "1.0.2",
@@ -143,6 +147,7 @@
     "serve-favicon": "2.5.0",
     "socicon": "3.0.5",
     "socket.io": "2.2.0",
-    "utf8": "3.0.0"
+    "utf8": "^3.0.0",
+    "xml2js": "^0.4.23"
   }
 }
