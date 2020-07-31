@@ -1,0 +1,185 @@
+/* ----------------------------------------------------------------
+	Custom CSS
+
+	Add all your Custom Styled CSS here for New Styles or
+	Overwriting Default Theme Styles for Better Handling Updates
+-----------------------------------------------------------------*/
+
+@font-face {
+	font-family: Raleway;
+	src: url(fonts/Raleway-VariableFont_wght.ttf);
+}
+
+@font-face {
+	font-family: Signika;
+	src: url(fonts/Signika-Regular.otf);
+}
+
+@font-face {
+	font-family: Avenir;
+	src: url(fonts/avenirltstd-light.otf);
+}
+
+@font-face {
+	font-family: BwModelica;
+	src: url(fonts/BwModelica-RegularCondensed.ttf);
+}
+
+body {
+	padding: 0px;
+	overflow-x: hidden;
+}
+
+.container-fluid {
+	padding: 0px !important;
+	margin: 0px !important;
+}
+
+.bg-dark, footer {
+	background-color: #2D2D2F !important;
+}
+
+@media only screen and (max-width: 960px) {
+	/* .row {
+		margin-left: 0px;
+		margin-right: 0px;
+	} */
+}
+
+.page-title {
+	font-family: Signika;
+	font-size: 36px;
+	font-weight: bold;
+	color: #404144;
+}
+
+.breadcrumb-title {
+	font-family: Tahoma;
+	font-size: 18px;
+}
+
+h4 {
+	font-family: Tahoma;
+}
+
+#header-wrap {
+	background-color: #2D2D2F !important;
+}
+
+.slogan {
+	font-family: BwModelica;
+	text-align: right;
+	color: #B8BBC1;
+	font-weight: 300;
+}
+
+.form-title {
+	font-family: Signika;
+	font-weight: bold;
+	font-size: 22px;
+}
+
+.form-label {
+	font-family: Avenir;
+	color: #919191;
+}
+
+.btn {
+	font-family: Raleway;
+	font-weight: bold;
+	padding: 10px 40px;
+}
+
+.btn-primary {
+	background-color: #E97117;
+	border-color: #E97117;
+}
+
+.btn-primary:hover {
+	background-color: #d26818;
+	border-color: #d26818;
+}
+
+.btn-primary:not(:disabled):not(.disabled).active, .btn-primary:not(:disabled):not(.disabled):active, .show>.btn-primary.dropdown-toggle {
+	background-color: #d26818;
+	border-color: #d26818;
+}
+
+.btn-primary:focus {
+	background-color: #d26818;
+	border-color: #d26818;
+}
+
+.btn-secondary {
+	background-color: white;
+	border-color: white;
+	color: #E97117;
+}
+
+.btn-secondary:hover {
+	background-color: #c6c6c6;
+	border-color: #c6c6c6;
+}
+
+.btn-light {
+	background-color: #D1D1D1;
+	border-color: #D1D1D1;
+}
+
+.btn-select {
+	padding: 15px;
+	width: 500px;
+	/* -webkit-box-shadow: 3px 3px #ccc;	
+	-moz-box-shadow: 3px 3px #ccc;	
+	box-shadow: 3px 3px #ccc; */
+}
+
+.btn-select:hover {
+	background-color: #328000;
+	border-color: #328000;
+	color: white;
+}
+
+.btn-selected {
+	padding: 15px;
+	width: 500px;
+	background-color: #328000;
+	border-color: #328000;
+	color: white;
+}
+
+.btn-selected:focus {
+	background-color: #328000;
+	border-color: #328000;
+	color: white;
+}
+
+.input-underline {
+	height: 55px;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	background-color:#F5F5F5;
+	border-bottom: 2px solid #707070;
+	font-size: 1.1rem;
+	padding-top: 15px;
+	font-family: Avenir;
+}
+
+.input-underline:focus {
+	background-color:#F5F5F5;
+	border-top: none;
+	border-left: none;
+	border-right: none;
+	border-bottom: 2px solid #007888;
+	box-shadow: none;
+}
+
+.input-prefix {
+	position: relative;
+	top: 20px;
+	left: 10px;
+	text-align: left;
+	font-size: 12px;
+	color: #007888;
+}
