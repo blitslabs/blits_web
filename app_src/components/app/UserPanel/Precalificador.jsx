@@ -14,6 +14,7 @@ import ClientMainOccupationForm from './ClientMainOccupationForm'
 import ClientNameForm from './ClientNameForm'
 import ClientCivilStatusForm from './ClientCivilStatusForm'
 import PropertyRegimeForm from './PropertyRegimeForm'
+import ClientRFCForm from './ClientRFCForm'
 
 class Precalificador extends Component {
 
@@ -60,6 +61,7 @@ class Precalificador extends Component {
                         {formController === 7 && <ClientNameForm />}
                         {formController === 8 && <ClientCivilStatusForm />}
                         {formController === 9 && <PropertyRegimeForm />}
+                        {formController === 10 && <ClientRFCForm/>}
                     </div>
                 </div>
             </DashboardTemplate>
