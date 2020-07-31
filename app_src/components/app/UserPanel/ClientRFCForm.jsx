@@ -17,11 +17,9 @@ class ClientRFCForm extends Component {
     }
 
     componentDidMount() {
-        const { token, dispatch } = this.props
-
+        const { creditRequest, dispatch } = this.props
         document.title = "RFC | Precalificador - SwayLending"
-
-
+        this.setState({ rfc: creditRequest.rfc })
     }
 
     handleRFCChange = (e) => this.setState({ rfc: e.target.value, rfcIsInvalid: e.target.value.length > 0 ? false : true })
@@ -30,7 +28,7 @@ class ClientRFCForm extends Component {
         e.preventDefault()
         const { rfc, rfcIsInvalid } = this.state
         const { dispatch } = this.props
-        
+
         if (!rfc || rfcIsInvalid) {
             this.setState({ rfcIsInvalid: true })
             return
