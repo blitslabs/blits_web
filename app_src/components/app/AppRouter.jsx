@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import Login from './Login'
 import Signup from './Signup'
 import Precalificador from './UserPanel/Precalificador'
+import AvailableCreditOptions from './UserPanel/AvailableCreditOptions'
 
 class AppRouter extends Component {
     render() {
@@ -16,7 +17,7 @@ class AppRouter extends Component {
                 <Route path={`${match.path}/login`} component={Login} />
                 <Route path={`${match.path}/signup`} component={Signup} />
                 <Route path={`${match.path}/precalificador`} component={Precalificador} />
-                
+                <Route path={`${match.path}/opciones-disponibles`} component={AvailableCreditOptions} />
             </Fragment>
         )
     }

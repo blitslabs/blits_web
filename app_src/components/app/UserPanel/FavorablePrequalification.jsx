@@ -44,7 +44,6 @@ class FavorablePrequalification extends Component {
                         <div className="form-input-desc text-center">También te hemos enviado tu historial a tu correo <span>{creditRequest.email}</span></div>
                     </div>
                     <div className="form-group text-center mt-5" >
-
                         <button onClick={this.handleContinueBtn} className="btn btn-green">Siguiente {'>'}</button>
                     </div>
                 </div>
