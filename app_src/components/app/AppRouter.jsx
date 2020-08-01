@@ -9,6 +9,7 @@ import Precalificador from './UserPanel/Precalificador'
 import AvailableCreditOptions from './UserPanel/AvailableCreditOptions'
 import UploadDocuments from './UserPanel/UploadDocuments'
 import RequestInProgress from './UserPanel/RequestInProgress'
+import CreditProposals from './UserPanel/CreditProposals'
 
 class AppRouter extends Component {
     render() {
@@ -22,6 +23,7 @@ class AppRouter extends Component {
                 <Route path={`${match.path}/opciones-disponibles`} component={AvailableCreditOptions} />
                 <Route path={`${match.path}/cargar-documentos`} component={UploadDocuments} />
                 <Route path={`${match.path}/solicitud-en-proceso`} component={RequestInProgress} />
+                <Route path={`${match.path}/propuestas-de-credito`} component={CreditProposals} />
             </Fragment>
         )
     }
