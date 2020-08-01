@@ -51,21 +51,21 @@ class Precalificador extends Component {
                                 <div className="text-center">
                                     <div className="form-label mb-2">INE (FRONTAL)</div>
                                     <DropZone saveFileData={this.pictureDataChange} multiple={false} />
-                                    <div className="form-label" style={{ marginTop: '-10px' }}>Seleccione o arrastre el archivo</div>
+                                    
                                 </div>
                             </div>
                             <div className="col-sm-12 col-md-4 col-lg-4 ">
                                 <div className="text-center">
                                     <div className="form-label mb-2">INE (POSTERIOR)</div>
                                     <DropZone saveFileData={this.pictureDataChange} multiple={false} />
-                                    <div className="form-label" style={{ marginTop: '-10px' }}>Seleccione o arrastre el archivo</div>
+                                    
                                 </div>
                             </div>
                             <div className="col-sm-12 col-md-4 col-lg-4 ">
                                 <div className="text-center">
                                     <div className="form-label mb-2">ACTA DE NACIMIENTO</div>
                                     <DropZone saveFileData={this.pictureDataChange} multiple={false} />
-                                    <div className="form-label" style={{ marginTop: '-10px' }}>Seleccione o arrastre el archivo</div>
+                                   
                                 </div>
                             </div>
                         </div>
@@ -75,14 +75,14 @@ class Precalificador extends Component {
                                 <div className="text-center">
                                     <div className="form-label mb-2">COMPROBANTE DE DOMICILIO</div>
                                     <DropZone saveFileData={this.pictureDataChange} multiple={false} />
-                                    <div className="form-label" style={{ marginTop: '-10px' }}>Seleccione o arrastre el archivo</div>
+                                    
                                 </div>
                             </div>
                             <div className="col-sm-12 col-md-4 col-lg-4 ">
                                 <div className="text-center">
                                     <div className="form-label mb-2">COMPROBANTE DE INGRESOS</div>
                                     <DropZone saveFileData={this.pictureDataChange} multiple={false} />
-                                    <div className="form-label" style={{ marginTop: '-10px' }}>Seleccione o arrastre el archivo</div>
+                                    
                                 </div>
                             </div>
                         </div>

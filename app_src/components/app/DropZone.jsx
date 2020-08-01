@@ -6,6 +6,7 @@ const thumbsContainer = {
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
+    alignItems: 'center',
     marginTop: 16
 };
 
@@ -82,9 +83,11 @@ function DropZone(props) {
                 <input {...getInputProps()} />
                 <p className="dropzone-text">Seleccione el archivo <i className="fa fa-plus ml-2"></i></p>
             </div>
-            <aside style={thumbsContainer}>
+            <div className="form-label text-center mt-2" >Seleccione o arrastre el archivo</div>
+            <aside style={thumbsContainer}>            
                 {thumbs}
             </aside>
+           
         </section>
     );
 }
