@@ -80,7 +80,7 @@ function DropZone(props) {
         <section className="dropzone-container">
             <div {...getRootProps({ className: 'dropzone' })}>
                 <input {...getInputProps()} />
-                <p className="dropzone-text">Drag 'n' drop some files here, or click to select files</p>
+                <p className="dropzone-text">Seleccione el archivo <i className="fa fa-plus ml-2"></i></p>
             </div>
             <aside style={thumbsContainer}>
                 {thumbs}
