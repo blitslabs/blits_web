@@ -183,3 +183,8 @@ h4 {
 	font-size: 12px;
 	color: #007888;
 }
+
+.form-input-desc {
+	text-align: justify;
+	font-family: Avenir;
+}

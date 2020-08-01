@@ -16,6 +16,9 @@ import ClientCivilStatusForm from './ClientCivilStatusForm'
 import PropertyRegimeForm from './PropertyRegimeForm'
 import ClientRFCForm from './ClientRFCForm'
 import AddressForm from './AddressForm'
+import PhoneForm from './PhoneForm'
+import NipForm from './NipForm'
+import ConfirmNipForm from './ConfirmNipForm'
 
 class Precalificador extends Component {
 
@@ -64,6 +67,9 @@ class Precalificador extends Component {
                         {formController === 9 && <PropertyRegimeForm />}
                         {formController === 10 && <ClientRFCForm />}
                         {formController === 11 && <AddressForm />}
+                        {formController === 12 && <PhoneForm />}
+                        {formController === 13 && <NipForm />}
+                        {formController === 14 && <ConfirmNipForm/>}
                     </div>
                 </div>
             </DashboardTemplate>
