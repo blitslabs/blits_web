@@ -7,7 +7,7 @@ import CurrencyInput from 'react-currency-input'
 import DashboardTemplate from '../DashboardTemplate'
 import DropZone from '../DropZone'
 
-class Precalificador extends Component {
+class UploadDocuments extends Component {
 
     state = {
 
@@ -109,4 +109,4 @@ function mapStateToProps({ auth, formController, creditRequest }) {
     }
 }
 
-export default connect(mapStateToProps)(Precalificador)
+export default connect(mapStateToProps)(UploadDocuments)
