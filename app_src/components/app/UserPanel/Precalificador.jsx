@@ -19,6 +19,7 @@ import AddressForm from './AddressForm'
 import PhoneForm from './PhoneForm'
 import NipForm from './NipForm'
 import ConfirmNipForm from './ConfirmNipForm'
+import FavorablePrequalification from './FavorablePrequalification'
 
 class Precalificador extends Component {
 
@@ -70,6 +71,7 @@ class Precalificador extends Component {
                         {formController === 12 && <PhoneForm />}
                         {formController === 13 && <NipForm />}
                         {formController === 14 && <ConfirmNipForm/>}
+                        {formController === 15 && <FavorablePrequalification/>}
                     </div>
                 </div>
             </DashboardTemplate>

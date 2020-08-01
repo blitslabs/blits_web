@@ -12,7 +12,7 @@
 
 @font-face {
 	font-family: Signika;
-	src: url(fonts/Signika-Regular.otf);
+	src: url(fonts/Signika-Bold.otf);
 }
 
 @font-face {
@@ -187,4 +187,23 @@ h4 {
 .form-input-desc {
 	text-align: justify;
 	font-family: Avenir;
+}
+
+.download-label {
+	font-size: 28px;
+	font-family: Avenir;
+	text-decoration: underline;
+}
+
+.btn-green {
+	background-color: #35691E;
+	border-color: #35691E;
+	color: white;
+	border-radius: 26px;
+}
+
+.btn-green:hover {
+	background-color: black;
+	border-color: black;
+	color: white;
 }
