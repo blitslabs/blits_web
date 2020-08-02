@@ -375,3 +375,11 @@ h4 {
 .custom-switch.custom-switch-xl .custom-control-input:checked~.custom-control-label::after {
 	transform: translateX(calc(2.5rem - 0.25rem));
 }
+
+.approved-label {
+	background-color: #35691E;
+	color: white;
+	display: inline-block;
+	padding: 5px 15px;
+	border-radius: 5px;
+}

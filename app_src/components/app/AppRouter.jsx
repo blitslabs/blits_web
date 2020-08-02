@@ -12,6 +12,7 @@ import RequestInProgress from './UserPanel/RequestInProgress'
 import CreditProposals from './UserPanel/CreditProposals'
 import CreditRequest from './UserPanel/CreditRequest'
 import CreditRequestInProgress from './UserPanel/CreditRequestInProgress'
+import CreditAuthorization from './UserPanel/CreditAuthorization'
 
 class AppRouter extends Component {
     render() {
@@ -28,6 +29,7 @@ class AppRouter extends Component {
                 <Route path={`${match.path}/propuestas-de-credito`} component={CreditProposals} />
                 <Route path={`${match.path}/solicitud-credito`} component={CreditRequest} />
                 <Route path={`${match.path}/solicitud-credito-en-proceso`} component={CreditRequestInProgress} />
+                <Route path={`${match.path}/autorizacion`} component={CreditAuthorization} />
             </Fragment>
         )
     }
