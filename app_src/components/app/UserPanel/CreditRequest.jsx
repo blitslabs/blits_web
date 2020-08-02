@@ -8,6 +8,7 @@ import ClientInformationForm from './ClientInformationForm'
 import ClientAddressOccupationForm from './ClientAddressOccupationForm'
 import CreditParticipantsForm from './CreditParticipantsForm'
 import UploadCreditProposals from './UploadCreditProposals'
+import CreditRequestInProgress from './CreditRequestInProgress'
 
 // Actions
 import { setCreditRequestController } from '../../../actions/formController'
@@ -24,7 +25,7 @@ class Precalificador extends Component {
 
         document.title = "Solicitud de Crédito | Precalificador - SwayLending"
         
-        dispatch(setCreditRequestController(4))
+        dispatch(setCreditRequestController(5))
 
         this.setState({
             loading: false
@@ -57,6 +58,7 @@ class Precalificador extends Component {
                         {creditRequestController === 2 && <ClientAddressOccupationForm/>}
                         {creditRequestController === 3 && <CreditParticipantsForm/>}
                         {creditRequestController === 4 && <UploadCreditProposals/>}
+                        {creditRequestController === 5 && <CreditRequestInProgress />}
                         
                     </div>
                 </div>
