@@ -85,9 +85,16 @@ h4 {
 	font-size: 22px;
 }
 
+
+
 .form-label {
 	font-family: Avenir;
 	color: #919191;
+}
+
+.form-title-separator {
+	margin-top: 5px;
+	border-top: 2px solid #BB000C;
 }
 
 .btn {
@@ -225,4 +232,16 @@ h4 {
 	background-color: black;
 	border-color: black;
 	color: white;
+}
+
+.datepicker {
+    width: 100%;
+    height: 40px;
+	font-size: 16px;
+	background-color: #fff;
+}
+
+.react-date-picker__wrapper {
+	border: 1px solid #ced4da !important;
+	border-radius: .25rem;
 }

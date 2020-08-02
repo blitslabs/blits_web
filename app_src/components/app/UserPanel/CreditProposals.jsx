@@ -141,7 +141,7 @@ class CreditProposals extends Component {
                                 <div className="row" style={{ marginTop: '150px' }}>
                                     <div className="form-group col-sm-12 col-lg-10 offset-lg-1" >
                                         <div className="text-center">
-                                            <button onClick={this.handleContinueBtn} className="btn btn-green">Elegir esta opción</button>
+                                            <button onClick={this.handleContinueBtn} className="btn btn-green">Elegir la opción óptima</button>
                                         </div>
                                         <div className="form-label mt-3 text-justify">
                                             Permitir que el algoritmo de Sway Compass elija la opción
