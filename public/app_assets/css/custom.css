@@ -275,6 +275,19 @@ h4 {
 	color: white;
 }
 
+.btn-brown {
+	background-color: #B98000;
+	border-color: #B98000;
+	color: white;
+	border-radius: 26px;
+}
+
+.btn-brown:hover {
+	background-color: #8e6200;
+	border-color: #8e6200;
+	color: white;
+}
+
 .modal-title {
 	font-family: Signika;
 	font-size: 22px;
