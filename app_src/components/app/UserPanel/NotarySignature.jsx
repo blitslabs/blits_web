@@ -53,22 +53,20 @@ class Appraisal extends Component {
     }
 
     onEditorStateChange = (editorState) => {
-        console.log(editorState)
-
-        const rawContentState = convertToRaw(editorState.getCurrentContent());
+        const rawContentState = convertToRaw(editorState.getCurrentContent())
         const markup = draftToHtml(
             rawContentState,
 
-        );
+        )
         console.log(markup)
         this.setState({
             editorState,
             markup,
-        });
+        })
     }
 
     handleEditorChange = (e) => {
-        console.log(e)
+        // console.log(e)
     }
 
     render() {

@@ -95,6 +95,11 @@ h4 {
 	border-top: 2px solid #dc3545;
 }
 
+.form-title-separator-black {
+	margin-top: 5px;
+	border-top: 2px solid black;
+}
+
 .btn {
 	font-family: Raleway;
 	font-weight: bold;
@@ -395,4 +400,15 @@ h4 {
 	display: inline-block;
 	padding: 5px 15px;
 	border-radius: 5px;
+}
+
+.underline-text-btn {
+	text-decoration: underline;
+	font-weight: bold;
+	font-size: 18px;
+}
+
+.download-btn {
+	text-decoration: underline;
+	font-weight: bold;
 }
