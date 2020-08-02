@@ -14,6 +14,7 @@ import CreditRequest from './UserPanel/CreditRequest'
 import CreditRequestInProgress from './UserPanel/CreditRequestInProgress'
 import CreditAuthorization from './UserPanel/CreditAuthorization'
 import Appraisal from './UserPanel/Appraisal'
+import NotarySignature from './UserPanel/NotarySignature'
 
 class AppRouter extends Component {
     render() {
@@ -32,6 +33,7 @@ class AppRouter extends Component {
                 <Route path={`${match.path}/solicitud-credito-en-proceso`} component={CreditRequestInProgress} />
                 <Route path={`${match.path}/autorizacion`} component={CreditAuthorization} />
                 <Route path={`${match.path}/avaluo`} component={Appraisal} />
+                <Route path={`${match.path}/firma-notaria`} component={NotarySignature} />
             </Fragment>
         )
     }
