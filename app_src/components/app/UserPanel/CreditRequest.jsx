@@ -5,9 +5,10 @@ import { connect } from 'react-redux'
 import Loading from '../../Loading'
 import DashboardTemplate from '../DashboardTemplate'
 import ClientInformationForm from './ClientInformationForm'
+import ClientAddressOccupationForm from './ClientAddressOccupationForm'
 
 // Actions
-import { setFormID } from '../../../actions/formController'
+import { setCreditRequestController } from '../../../actions/formController'
 
 class Precalificador extends Component {
 
@@ -21,6 +22,8 @@ class Precalificador extends Component {
 
         document.title = "Solicitud de Crédito | Precalificador - SwayLending"
         
+        dispatch(setCreditRequestController(2))
+
         this.setState({
             loading: false
         })
@@ -49,6 +52,7 @@ class Precalificador extends Component {
                         </div>
 
                         {creditRequestController === 1 && <ClientInformationForm />}
+                        {creditRequestController === 2 && <ClientAddressOccupationForm/>}
                         
                     </div>
                 </div>
