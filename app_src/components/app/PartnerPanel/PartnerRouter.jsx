@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 
 import Home from './Home'
 import ClientRecords from './ClientRecords'
+import Precalificador from './Precalificador'
 
 class PartnerRouter extends Component {
     render() {
@@ -14,6 +15,7 @@ class PartnerRouter extends Component {
             <Fragment>
                 <Route path={`${match.path}/home`} component={Home} />
                 <Route path={`${match.path}/expedientes`} component={ClientRecords} />
+                <Route path={`${match.path}/precalificador`} component={Precalificador} />
             </Fragment>
         )
     }
