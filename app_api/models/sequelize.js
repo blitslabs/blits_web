@@ -1,5 +1,6 @@
 const Sequelize = require('sequelize')
 const SepomexModel = require('./sepomex')
+const PreCreditRequestModel = require('./preCreditRequest')
 
 const sequelize = new Sequelize(
     process.env.DB_NAME,
@@ -18,6 +19,7 @@ const sequelize = new Sequelize(
 
 
 const Sepomex = SepomexModel(sequelize, Sequelize)
+const PreCreditRequest = PreCreditRequestModel(sequelize, Sequelize)
 
 sequelize
     .query('SET FOREIGN_KEY_CHECKS = 0', { raw: true })
@@ -30,5 +32,6 @@ sequelize
 
 module.exports = {
     Sepomex,
+    PreCreditRequest,
     sequelize,
 }
