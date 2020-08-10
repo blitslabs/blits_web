@@ -27,7 +27,7 @@ import './styles.css'
 
 class Precalificador extends Component {
     state = {
-        totalFormSections: 8,
+        totalFormSections: 9,
         loading: true,
     }
 
