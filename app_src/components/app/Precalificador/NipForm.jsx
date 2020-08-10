@@ -1,6 +1,9 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
+// Components
+import Loading from '../../Loading'
+
 // Actions
 import { nextFormController, backFormController } from '../../../actions/preFormController'
 
@@ -50,6 +53,11 @@ class NipForm extends Component {
     }
 
     render() {
+
+        if(this.state.loading) {
+            return <Loading />
+        }
+
         return (
             <Fragment>
                 <div className="form-description mt-2">El cliente autoriza a SwayLending la utilización de medios electrónicos de autenticación tales como el NIP.</div>

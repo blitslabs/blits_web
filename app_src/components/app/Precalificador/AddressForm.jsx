@@ -178,8 +178,6 @@ class AddressForm extends Component {
                     </div>
                 </div>
 
-
-
                 <div className="text-center " style={{ display: 'flex', justifyContent: 'center' }}>
                     <div className="text-center mt-4" style={{ marginRight: '10px' }}>
                         <button onClick={this.handleBackBtn} className="btn btn-light btn-continue">Previa</button>

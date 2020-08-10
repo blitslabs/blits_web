@@ -1,6 +1,9 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
+// Components
+import Loading from '../../Loading'
+
 // Actions
 import { saveCreditRequest, saveCreditRequestId, saveCreditRequestNIP } from '../../../actions/preCreditRequest'
 import { nextFormController, backFormController } from '../../../actions/preFormController'
@@ -102,6 +105,8 @@ class LeadForm extends Component {
 
         dispatch(saveCreditRequest(params))
 
+        this.setState({ loading: true })
+
         // API
         createCreditRequest(params)
             .then(data => data.json())
@@ -117,6 +122,7 @@ class LeadForm extends Component {
             })
             .catch((err) => {
                 console.log(err)
+                this.setState({loading: false})
                 return
             })
     }
@@ -133,6 +139,10 @@ class LeadForm extends Component {
     }
 
     render() {
+
+        if(this.state.loading) {
+            return <Loading />
+        }
 
         return (
             <Fragment>

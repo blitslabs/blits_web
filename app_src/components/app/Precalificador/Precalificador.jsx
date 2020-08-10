@@ -35,7 +35,7 @@ class Precalificador extends Component {
         document.title = "Precalificador | SwayLending"
         const { formController, dispatch } = this.props
 
-        // dispatch(setFormID(1))
+        // dispatch(setFormID(7))
 
         this.setState({
 

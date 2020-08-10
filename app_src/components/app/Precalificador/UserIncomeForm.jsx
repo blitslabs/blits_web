@@ -1,6 +1,9 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
+// Components
+import CurrencyInput from 'react-currency-input'
+
 // Actions
 import { saveCreditRequest } from '../../../actions/preCreditRequest'
 import { nextFormController, backFormController } from '../../../actions/preFormController'
@@ -35,7 +38,9 @@ class CreditTypeForm extends Component {
     handleSourceOfResourcesChange = (e) => this.setState({ sourceOfResources: e.target.value, sourceOfResourcesIsInvalid: e.target.value.length > 0 ? false : true })
 
     handleVerifiableIncomeChange = (e) => {
-        const amount = e.target.value
+        let amount = e.target.value
+        amount = parseFloat(amount.replace('$', '').replace(/,/g, ''))
+        
         if (amount < 0) {
             this.setState({ verifiableIncomeIsInvalid: true, verifiableIncomeErrorMsg: 'Ingresa una cantidad válida' })
         } else {
@@ -45,7 +50,9 @@ class CreditTypeForm extends Component {
     }
 
     handleUnverifiableIncomeChange = (e) => {
-        const amount = e.target.value
+        let amount = e.target.value
+        amount = parseFloat(amount.replace('$', '').replace(/,/g, ''))
+
         if (amount < 0) {
             this.setState({ unverifiableIncomeIsInvalid: true, unverifiableIncomeErrorMsg: 'Ingresa una cantidad válida' })
         } else {
@@ -117,7 +124,7 @@ class CreditTypeForm extends Component {
                         <div className="input-group-prepend">
                             <span className="input-group-text">MXN</span>
                         </div>
-                        <input placeholder="0.00" value={this.state.verifiableIncome} onChange={this.handleVerifiableIncomeChange} type="number" className={this.state.verifiableIncomeIsInvalid ? 'form-control is-invalid' : 'form-control'} />
+                        <CurrencyInput prefix="$" precision="1" value={this.state.verifiableIncome} onChangeEvent={this.handleVerifiableIncomeChange} className={this.state.verifiableIncomeIsInvalid ? 'form-control is-invalid' : 'form-control'} />
                         <div className="invalid-feedback">
                             {this.state.verifiableIncomeErrorMsg}
                         </div>
@@ -129,7 +136,7 @@ class CreditTypeForm extends Component {
                         <div className="input-group-prepend">
                             <span className="input-group-text">MXN</span>
                         </div>
-                        <input placeholder="0.00" value={this.state.unverifiableIncome} onChange={this.handleUnverifiableIncomeChange} type="number" className={this.state.unverifiableIncomeIsInvalid ? 'form-control is-invalid' : 'form-control'} />
+                        <CurrencyInput prefix="$" precision="1" value={this.state.unverifiableIncome} onChangeEvent={this.handleUnverifiableIncomeChange} className={this.state.unverifiableIncomeIsInvalid ? 'form-control is-invalid' : 'form-control'} />                       
                         <div className="invalid-feedback">
                             {this.state.unverifiableIncomeErrorMsg}
                         </div>

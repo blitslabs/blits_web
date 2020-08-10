@@ -6,9 +6,9 @@ import './styles.css'
 
 function Loading(props) {
     return (
-        <Row style={{ marginTop:'30vh', width:'100%' }}>
+        <Row style={{ marginTop:'100px', height: '200px', }}>
             <Col md={{ span: 8, offset: 2 }} style={{ textAlign: 'center' }}>                
-                    <ReactLoading className="preloader" type='bubbles' color='#0079fc' height={667} width={375} />                
+                    <ReactLoading className="preloader" type='spin' color='#274d00' height={40} width={40} />                
             </Col>
         </Row>
     )

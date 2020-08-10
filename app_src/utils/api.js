@@ -2,7 +2,7 @@ const API = process.env.API_HOST + '/'
 
 // PRECALIFICADOR START
 export function createCreditRequest(params) {
-    return fetch(API + 'create_credit_request', {
+    return fetch(API + 'precalificador/creditRequest', {
         method: 'POST',
         body: JSON.stringify(params),
         headers: {
@@ -12,7 +12,7 @@ export function createCreditRequest(params) {
 }
 
 export function checkCreditRequestNIP(params) {
-    return fetch(API + 'check_nip', {
+    return fetch(API + 'precalificador/checkNip', {
         method: 'POST',
         body: JSON.stringify(params),
         headers: {
