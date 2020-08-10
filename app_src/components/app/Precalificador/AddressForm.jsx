@@ -5,6 +5,9 @@ import { connect } from 'react-redux'
 import { saveCreditRequest, } from '../../../actions/preCreditRequest'
 import { nextFormController, backFormController } from '../../../actions/preFormController'
 
+// API
+import { getAddressesByPostalCode } from '../../../utils/api'
+
 class AddressForm extends Component {
 
     state = {
@@ -26,6 +29,7 @@ class AddressForm extends Component {
         municipioErrorMsg: 'Este campo es obligatorio.',
         entidadFederativaErrorMsg: ' Este campo es obligatorio',
         postalCodeErrorMsg: 'Este campo es obligatorio.',
+        addresses: [],
     }
 
     componentDidMount() {
@@ -47,7 +51,28 @@ class AddressForm extends Component {
     handleColoniaChange = (e) => this.setState({ colonia: e.target.value, coloniaIsInvalid: e.target.value.length > 0 ? false : true })
     handleMunicipioChange = (e) => this.setState({ municipio: e.target.value, municipioIsInvalid: e.target.value.length > 0 ? false : true })
     handleEntidadFederativaChange = (e) => this.setState({ entidadFederativa: e.target.value, entidadFederativaIsInvalid: e.target.value.length > 0 ? false : true })
-    handlePostalCodeChange = (e) => this.setState({ postalCode: e.target.value, postalCodeIsInvalid: e.target.value.length > 0 ? false : true })
+
+    handlePostalCodeChange = (e) => {
+        const postalCode = e.target.value
+
+        if (postalCode.length > 5) return
+
+        if (postalCode.length === 5) {
+            getAddressesByPostalCode({ postalCode })
+                .then(data => data.json())
+                .then((res) => {
+                    console.log(res)
+                    if (res.status === 'OK') {
+                        this.setState({
+                            municipio: res.payload[0].municipio,
+                            entidadFederativa: res.payload[0].estado,
+                            addresses: res.payload,
+                        })
+                    }
+                })
+        }
+        this.setState({ postalCode: e.target.value, postalCodeIsInvalid: e.target.value.length === 5 ? false : true })
+    }
 
     handleContinueBtn = (e) => {
         e.preventDefault()
@@ -74,7 +99,7 @@ class AddressForm extends Component {
         const params = {
             calle, numeroExt, colonia, municipio, entidadFederativa, postalCode
         }
-        
+
         dispatch(saveCreditRequest(params))
 
         // next form controller
@@ -94,6 +119,7 @@ class AddressForm extends Component {
 
         return (
             <Fragment>
+
                 <div className="form-group mt-4">
                     <div style={{ display: 'flex' }}>
                         <div style={{ width: '75%', marginRight: '10px' }}>
@@ -112,12 +138,25 @@ class AddressForm extends Component {
                 </div>
 
                 <div className="form-group">
-
+                    <label className="form-label">Código Postal<span className="form-required-symbol">*</span></label>
+                    <input value={this.state.postalCode} onChange={this.handlePostalCodeChange} maxLength="10" type="number" className={this.state.postalCodeIsInvalid ? 'form-control is-invalid' : 'form-control'} />
+                    <div className="invalid-feedback">
+                        {this.state.postalCodeErrorMsg}
+                    </div>
                 </div>
 
                 <div className="form-group">
                     <label className="form-label">Colonia<span className="form-required-symbol">*</span></label>
-                    <input value={this.state.colonia} onChange={this.handleColoniaChange} type="text" className={this.state.coloniaIsInvalid ? 'form-control is-invalid' : 'form-control'} />
+                    <select value={this.state.colonia} onChange={this.handleColoniaChange} className={this.state.coloniaIsInvalid ? 'form-control is-invalid' : 'form-control'}>
+                        <option value="">Seleccionar</option>
+                        {
+                            this.state.addresses.length > 0 ?
+                                this.state.addresses.map((a) => (
+                                    <option key={a.id} value={a.asentamiento}>{a.asentamiento}</option>
+                                ))
+                                : null
+                        }
+                    </select>
                     <div className="invalid-feedback">
                         {this.state.coloniaErrorMsg}
                     </div>
@@ -125,7 +164,7 @@ class AddressForm extends Component {
 
                 <div className="form-group">
                     <label className="form-label">Alcanldía / Municipio<span className="form-required-symbol">*</span></label>
-                    <input value={this.state.municipio} onChange={this.handleMunicipioChange} type="text" className={this.state.municipioIsInvalid ? 'form-control is-invalid' : 'form-control'} />
+                    <input readOnly value={this.state.municipio} onChange={this.handleMunicipioChange} type="text" className={this.state.municipioIsInvalid ? 'form-control is-invalid' : 'form-control'} />
                     <div className="invalid-feedback">
                         {this.state.municipioErrorMsg}
                     </div>
@@ -133,53 +172,13 @@ class AddressForm extends Component {
 
                 <div className="form-group">
                     <label className="form-label">Estado<span className="form-required-symbol">*</span></label>
-                    <select value={this.state.entidadFederativa} onChange={this.handleEntidadFederativaChange} className={this.state.entidadFederativaIsInvalid ? 'form-control is-invalid' : "form-control"}>
-                        <option value="">Seleccionar</option>
-                        <option value="CDMX">Ciudad de México</option>
-                        <option value="AGS">Aguascalientes</option>
-                        <option value="BCN">Baja California</option>
-                        <option value="BCS">Baja California Sur</option>
-                        <option value="CAM">Campeche</option>
-                        <option value="CHP">Chiapas</option>
-                        <option value="CHI">Chihuahua</option>
-                        <option value="COA">Coahuila</option>
-                        <option value="COL">Colima</option>
-                        <option value="DUR">Durango</option>
-                        <option value="GTO">Guanajuato</option>
-                        <option value="GRO">Guerrero</option>
-                        <option value="HGO">Hidalgo</option>
-                        <option value="JAL">Jalisco</option>
-                        <option value="MEX">M&eacute;xico</option>
-                        <option value="MIC">Michoac&aacute;n</option>
-                        <option value="MOR">Morelos</option>
-                        <option value="NAY">Nayarit</option>
-                        <option value="NLE">Nuevo Le&oacute;n</option>
-                        <option value="OAX">Oaxaca</option>
-                        <option value="PUE">Puebla</option>
-                        <option value="QRO">Quer&eacute;taro</option>
-                        <option value="ROO">Quintana Roo</option>
-                        <option value="SLP">San Luis Potos&iacute;</option>
-                        <option value="SIN">Sinaloa</option>
-                        <option value="SON">Sonora</option>
-                        <option value="TAB">Tabasco</option>
-                        <option value="TAM">Tamaulipas</option>
-                        <option value="TLX">Tlaxcala</option>
-                        <option value="VER">Veracruz</option>
-                        <option value="YUC">Yucat&aacute;n</option>
-                        <option value="ZAC">Zacatecas</option>
-                    </select>
+                    <input readOnly value={this.state.entidadFederativa} onChange={this.handleEntidadFederativaChange} type="text" className={this.state.entidadFederativaIsInvalid ? 'form-control is-invalid' : 'form-control'} />
                     <div className="invalid-feedback">
                         {this.state.entidadFederativaErrorMsg}
                     </div>
                 </div>
 
-                <div className="form-group">
-                    <label className="form-label">Código Postal<span className="form-required-symbol">*</span></label>
-                    <input value={this.state.postalCode} onChange={this.handlePostalCodeChange} maxLength="10" type="number" className={this.state.postalCodeIsInvalid ? 'form-control is-invalid' : 'form-control'} />
-                    <div className="invalid-feedback">
-                        {this.state.postalCodeErrorMsg}
-                    </div>
-                </div>
+
 
                 <div className="text-center " style={{ display: 'flex', justifyContent: 'center' }}>
                     <div className="text-center mt-4" style={{ marginRight: '10px' }}>

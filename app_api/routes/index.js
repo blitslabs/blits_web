@@ -13,7 +13,8 @@ const sepomexController = require('../controllers/sepomex')
 const testController = require('../controllers/test')
 
 // TEST
-router.get('/test/sms', testController.sendSMS)
+router.get('/test/sms/:phone', testController.sendSMS)
+router.get('/test/email/:email', testController.sendEmail)
 
 // SEPOMEX
 router.get('/sepomex/getAddresses/:postalCode', sepomexController.getAddressesByPostalCode)

@@ -3,6 +3,7 @@ const PreCreditRequest = require('../models/sequelize').PreCreditRequest
 const sequelize = require('../models/sequelize').sequelize
 const sendJSONresponse = require('../../utils/index').sendJSONresponse
 const sendSMS = require('../../utils/sms').sendSMS
+const sendEmail = require('../../utls/email').sendEmail
 
 module.exports.createPreCreditRequest = (req, res) => {
     const firstName = req.body.firstName
@@ -121,12 +122,35 @@ module.exports.createPreCreditRequest = (req, res) => {
         const message = `Tu código NIP para Sway Lending es: ${nip}`
         const origin = 'SwayLending'
 
-        const response = await sendSMS(phone, message, origin)
+        let smsResponse, emailResponse
 
-        if(response.statusCode != 200) {
-            sendJSONresponse(res, 422, { status: 'ERROR', message: 'Ocurrió un error al intentar enviar el mensaje SMS'})
-            return
-        }
+        // Send SMS
+        // try {
+        //     smsResponse = await sendSMS(phone, message, origin)
+        // } catch (e) {
+        //     console.log(e)
+        //     sendJSONresponse(res, 422, { status: 'ERROR', message: 'Ocurrió un error al intentar enviar el mensaje SMS'})
+        //     return
+        // }
+
+        // if (smsResponse.statusCode != 200) {
+        //     sendJSONresponse(res, 422, { status: 'ERROR', message: 'Ocurrió un error al intentar enviar el mensaje SMS' })
+        //     return
+        // }
+
+        // // Send Email
+        // try {
+        //     emailResponse = await sendEmail(email, 'Test Email', nip)
+        // } catch(e) {
+        //     console.log(e)
+        //     sendJSONresponse(res, 422, { status: 'ERROR', message: 'Ocurrió un error al intentar enviar el correo electrónico' })
+        //     return
+        // }
+
+        // if(!emailResponse || !('messageId' in emailResponse)) {
+        //     sendJSONresponse(res, 422, { status: 'ERROR', message: 'Ocurrió un error al intentar enviar el correo electrónico'})
+        //     return
+        // }
 
         sendJSONresponse(res, 200, { status: 'OK', payload: preCreditRequest, message: 'Solicitud de crédito guardada correctamente' })
         return
