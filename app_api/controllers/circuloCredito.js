@@ -1,3 +1,4 @@
+const PreCreditRequest = require('../models/sequelize').PreCreditRequest
 const CreditReport = require('../models/sequelize').CreditReport
 const CreditReportConsulta = require('../models/sequelize').CreditReportConsulta
 const CreditReportCredito = require('../models/sequelize').CreditReportCredito
@@ -7,30 +8,69 @@ const CreditReportMensaje = require('../models/sequelize').CreditReportMensaje
 const CreditReportScore = require('../models/sequelize').CreditReportScore
 const sequelize = require('../models/sequelize').sequelize
 const sendJSONresponse = require('../../utils/index').sendJSONresponse
+const getStateCodeByName = require('../../utils/index').getStateCodeByName
 const rp = require('request-promise')
+const moment = require('moment')
 
-module.exports.getReporteCreditoConsolidado = (req, res) => {
-    const URL = `https://services.circulodecredito.com.mx/sandbox/v1/rcc-ficoscore-pld`
+module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
 
-    const params = {
-        "apellidoPaterno": "SESENTAYDOS",
-        "apellidoMaterno": "PRUEBA",
-        "primerNombre": "JUAN",
-        "fechaNacimiento": "1965-08-09",
-        "RFC": "SEPJ650809JG1",
-        "nacionalidad": "MX",
-        "domicilio": {
-            "direccion": "PASADISO ENCONTRADO 58",
-            "coloniaPoblacion": "MONTEVIDEO",
-            "delegacionMunicipio": "GUSTAVO A MADERO",
-            "ciudad": "CIUDAD DE MÉXICO",
-            "estado": "CDMX",
-            "CP": "07730"
-        }
+    const preCreditRequestId = req.params.preCreditRequestId
+
+    if (!preCreditRequestId) {
+        sendJSONresponse(res, 422, { status: 'ERROR', message: 'Ingresa todos los campos requeridos' })
+        return
     }
 
     // Create CreditReport
     sequelize.transaction(async (t) => {
+
+        const preCreditRequest = await PreCreditRequest.findOne({
+            where: {
+                id: preCreditRequestId
+            },
+            transaction: t
+        })
+
+        if(!preCreditRequest) {
+            sendJSONresponse(res, 422, { status: 'ERROR', message: 'Solicitud de crédito no encontrada'})
+            return
+        }
+
+        const URL = `https://services.circulodecredito.com.mx/sandbox/v1/rcc-ficoscore-pld`
+
+        // const params = {
+        //     "apellidoPaterno": "SESENTAYDOS",
+        //     "apellidoMaterno": "PRUEBA",
+        //     "primerNombre": "JUAN",
+        //     "fechaNacimiento": "1965-08-09",
+        //     "RFC": "SEPJ650809JG1",
+        //     "nacionalidad": "MX",
+        //     "domicilio": {
+        //         "direccion": "PASADISO ENCONTRADO 58",
+        //         "coloniaPoblacion": "MONTEVIDEO",
+        //         "delegacionMunicipio": "GUSTAVO A MADERO",
+        //         "ciudad": "CIUDAD DE MÉXICO",
+        //         "estado": "CDMX",
+        //         "CP": "07730"
+        //     }
+        // } 
+
+        const params = {
+            "apellidoPaterno": preCreditRequest.lastName.toUpperCase(),
+            "apellidoMaterno": preCreditRequest.secondLastName.toUpperCase(),
+            "primerNombre": preCreditRequest.firstName.toUpperCase(),
+            "fechaNacimiento": moment(preCreditRequest.dateOfBirth).format('YYYY-MM-DD'),
+            "RFC": preCreditRequest.rfc.toUpperCase(),
+            "nacionalidad": "MX",
+            "domicilio": {
+                "direccion": preCreditRequest.calle.toUpperCase() + ' ' + preCreditRequest.numeroExt,
+                "coloniaPoblacion": preCreditRequest.colonia.toUpperCase(),
+                "delegacionMunicipio": preCreditRequest.municipio.toUpperCase(),
+                "ciudad": preCreditRequest.entidadFederativa.toUpperCase(),
+                "estado": getStateCodeByName(preCreditRequest.entidadFederativa),
+                "CP": preCreditRequest.postalCode
+            }
+        }
 
         let response = await rp(URL, {
             method: 'POST',
@@ -157,6 +197,10 @@ module.exports.getReporteCreditoConsolidado = (req, res) => {
                 leyenda: mensaje.leyenda,
             }, { transaction: t })
         }
+
+        // Update CreditReportId in PreCreditRequest
+        preCreditRequest.creditReportId = creditReport.id
+        await preCreditRequest.save({ transaction: t })
 
         sendJSONresponse(res, 200, { status: 'OK', payload: response })
         return

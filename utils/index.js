@@ -3,41 +3,151 @@ module.exports.sendJSONresponse = function (res, status, content) {
     res.json(content)
 }
 
-module.exports.checkSequentialCharacters = function (s) {
-    // check for sequential numerical characters
-    for (let i in s) {
-        if (+s[+i + 1] == +s[i] + 1 && +s[+i + 2] == +s[i] + 2)
-            return false
-    }
 
-    // check for sequential alphabetical characters
-    for (let i in s) {
-        if (String.fromCharCode(s.charCodeAt(i) + 1) == s[+i + 1] &&
-            String.fromCharCode(s.charCodeAt(i) + 2) == s[+i + 2]) {
-            return false
+const entidades = [
+    {
+        name: 'Distrito Federal',
+        code: 'DIF'
+    },
+    {
+        name: 'Ciudad de México',
+        code: 'CDMX'
+    },
+    {
+        name: 'Aguascalientes',
+        code: 'AGS'
+    },
+    {
+        name: 'Baja California',
+        code: 'BCN'
+    },
+    {
+        name: 'Baja California Sur',
+        code: 'BCS'
+    },
+    {
+        name: 'Campeche',
+        code: 'CAM'
+    },
+    {
+        name: 'Chiapas',
+        code: 'CHP'
+    },
+    {
+        name: 'Chihuahua',
+        code: 'CHI'
+    },
+    {
+        name: 'Coahuila',
+        code: 'COA'
+    },
+    {
+        name: 'Colima',
+        code: 'COL'
+    },
+    {
+        name: 'Durango',
+        code: 'DUR'
+    },
+    {
+        name: 'Guanajuato',
+        code: 'GTO'
+    },
+    {
+        name: 'Guerrero',
+        code: 'GRO'
+    },
+    {
+        name: 'Hidalgo',
+        code: 'HGO'
+    },
+    {
+        name: 'Jalisco',
+        code: 'JAL'
+    },
+    {
+        name: 'México',
+        code: 'MEX'
+    },{
+        name: 'Michoacán',
+        code: 'MIC'
+    },
+    {
+        name: 'Morelos',
+        code: 'MOR'
+    },
+    {
+        name: 'Nayarit',
+        code: 'NAY'
+    },
+    {
+        name: 'Nuevo León',
+        code: 'NLE'
+    },
+    {
+        name: 'Oaxaca',
+        code: 'OAX'
+    },
+    {
+        name: 'Puebla',
+        code: 'PUE'
+    },
+    {
+        name: 'Querétaro',
+        code: 'QRO'
+    },
+    {
+        name: 'Quintana Roo',
+        code: 'ROO'
+    },
+    {
+        name: 'San Luis Potosí',
+        code: 'SLP'
+    },
+    {
+        name: 'Sinaloa',
+        code: 'SIN'
+    },
+    {
+        name: 'Sonora',
+        code: 'SON'
+    },
+    {
+        name: 'Tabasco',
+        code: 'TAB'
+    },
+    {
+        name: 'Tamaulipas',
+        code: 'TAM'
+    },
+    {
+        name: 'Tlaxcala',
+        code: 'TLX'
+    },
+    {
+        name: 'Veracruz',
+        code: 'VER'
+    },
+]
+
+module.exports.getStateCodeByName = (name) => {
+    let entidadFederativa
+    for(let entidad of entidades) {
+        if(entidad.name === name){
+            entidadFederativa = entidad
+            break
         }
     }
-
-    // check if characters are repeat more than twice
-    if (/([A-Za-z0-9])\1{2}/.test(s)) {
-        return false
-    }
-
-    return true
+    return entidadFederativa.code
 }
 
-module.exports.removeSpanishChars = function (s) {
-    s = s.replace("%E1", "a");
-    s = s.replace("%E9", "e");
-    s = s.replace("%ED", "i");
-    s = s.replace("%F3", "o");
-    s = s.replace("%FA", "u");
-    s = s.replace("%F1", "n");
-    s = s.replace("%C1", "Á");
-    s = s.replace("%C9", "É");
-    s = s.replace("%CD", "Í");
-    s = s.replace("%D3", "Ó");
-    s = s.replace("%DA", "Ú");
-    s = s.replace("%D1", "Ñ");
-    return s;
+module.exports.getStateNameByCode = (code) => {
+    let entidadFederativa
+    for(let entidad of entidades) {
+        if(entidad.code === code) {
+            entidadFederativa = entidad
+            break
+        }
+    }
+    return entidadFederativa.name
 }

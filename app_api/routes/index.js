@@ -22,7 +22,7 @@ router.get('/test/email/:email', testController.sendEmail)
 router.post('/precalificador/creditRequest', preCreditRequest.createPreCreditRequest)
 
 // circulo de credito
-router.get('/circuloCredito', circuloCreditoController.getReporteCreditoConsolidado)
+router.get('/circuloCredito/precalificador/:preCreditRequestId', circuloCreditoController.getReporteCreditoConsolidadoPrecalificador)
 
 // SEPOMEX
 router.get('/sepomex/getAddresses/:postalCode', sepomexController.getAddressesByPostalCode)
