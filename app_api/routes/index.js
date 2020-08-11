@@ -12,6 +12,7 @@ const adminAuth = require('../middlewares/admin').adminAuth
 const preCreditRequest = require('../controllers/preCreditRequest')
 const sepomexController = require('../controllers/sepomex')
 const testController = require('../controllers/test')
+const circuloCreditoController = require('../controllers/circuloCredito')
 
 // TEST
 router.get('/test/sms/:phone', testController.sendSMS)
@@ -19,6 +20,9 @@ router.get('/test/email/:email', testController.sendEmail)
 
 // precalificador
 router.post('/precalificador/creditRequest', preCreditRequest.createPreCreditRequest)
+
+// circulo de credito
+router.get('/circuloCredito', circuloCreditoController.getReporteCreditoConsolidado)
 
 // SEPOMEX
 router.get('/sepomex/getAddresses/:postalCode', sepomexController.getAddressesByPostalCode)
