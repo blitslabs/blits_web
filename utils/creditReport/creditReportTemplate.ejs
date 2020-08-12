@@ -2,7 +2,19 @@
 <html>
 
 <head charset="utf8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Reporte Consolidado de Crédito</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
     <style>
         html,
         body {
@@ -11,7 +23,7 @@
             font-family: Roboto, 'Segoe UI', Tahoma, sans-serif;
             /* font-weight: 500;
             font-size: 7px; */
-            background: rgb(241, 241, 241);
+            background: white;
             -webkit-print-color-adjust: exact;
             box-sizing: border-box;
         }
@@ -29,13 +41,12 @@
 
         .header-container {
             background: #2d2d2f;
-            display: flex;
-            justify-content: space-between;
+            
             padding: 25px 30px;
         }
 
         .logo {
-            height: 60px;
+            height: 40px;
         }
 
         .header-data {
@@ -175,10 +186,13 @@
 </head>
 
 <body>
-    <div class="page">
-        <div class="header-container">
-            <img class="logo" src="<%= data.host %>/app_assets/images/logo.png" alt="">
-            <div class="header-data">
+    <div class="container-responsive">
+        
+        <div class="row header-container">
+            <div class="col-6">
+                <img class="logo" src="<%= data.host %>/app_assets/images/logo.png" alt="">
+            </div>
+            <div class="col-6">
                 <div class="header-data-label">Fecha de consulta: <span class="header-data-val">Lunes 20 de julio de
                         2020</span></div>
                 <div class="header-data-label">Folio consulta: <span class="header-data-val">655,456,345</span></div>
@@ -476,22 +490,28 @@
             <h2>PLD CHECK</h2>
             <table class="table">
                 <tr>
-                    <td class="table-header">Fecha de consulta</td>
-                    <td class="table-header">Otorgante</td>
-                    <td class="table-header">Tipo de Crédito</td>
-                    <td class="table-header">Monto</td>
-                    <td class="table-header">Moneda</td>
+                    <td class="table-header">Consecutivo</td>
+                    <td class="table-header">Mensaje</td>
                 </tr>
-                <% let l = 1 %>
-                <% for(let c of data.consultas) { %>
+
+            </table>
+        </div>
+
+        <div class="section-container">
+            <h2>MensajesK</h2>
+            <table class="table">
+                <% 
+                if(data.mensajes.length > 0) {
+                let n = 1 
+                 for(let m of data.mensajes) { %>
                 <tr>
-                    <td><%= c.fechaConsulta %></td>
-                    <td><%= c.nombreOtorgante %></td>
-                    <td><%= c.tipoCredito %></td>
-                    <td><%= c.importeCredito %></td>
-                    <td>MXN</td>
+                    <td><%= m.leyenda %></td>
                 </tr>
-                <% l++ %>
+                <% m++ %>
+                <% }} else {%>
+                <tr>
+                    <td>No hay mensajes</td>
+                </tr>
                 <% } %>
             </table>
         </div>

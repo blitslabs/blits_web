@@ -14,6 +14,7 @@ const ejs = require('ejs')
 const path = require('path')
 const pdf = require('html-pdf');
 const currencyFormatter = require('currency-formatter');
+const puppeteer = require('puppeteer')
 
 module.exports.getCreditReportPDF = (req, res) => {
 
@@ -97,7 +98,7 @@ module.exports.getCreditReportPDF = (req, res) => {
             c.pagoQuincenal = currencyFormatter.format(c.pagoQuincenal, { code: 'USD' })
             c.pagoMensual = currencyFormatter.format(c.pagoMensual, { code: 'USD' })
         })
-        
+
         const score = await CreditReportScore.findOne({
             where: {
                 creditReportId,
@@ -146,18 +147,53 @@ module.exports.getCreditReportPDF = (req, res) => {
             summaryFormatted
         }
 
-        ejs.renderFile(path.resolve(APP_ROOT + '/utils/creditReport/creditReportTemplate.ejs'), { data: params }, (err, result) => {
+        ejs.renderFile(path.resolve(APP_ROOT + '/utils/creditReport/creditReportTemplate.ejs'), { data: params }, async (err, result) => {
             if (result) {
                 let html = result
 
-                res.send(html)
+                var finalHtml = encodeURIComponent(html);
 
-                const options = { /*format: 'Letter', orientation: 'portrait'*/ }
-                // pdf.create(html, options).toFile(path.resolve(APP_ROOT + '/uploads/documents/test.pdf'), function (err, res) {
+
+                var options = {
+                    format: 'A4',
+                    headerTemplate: "<p></p>",
+                    footerTemplate: "<p></p>",
+                    displayHeaderFooter: false,
+                    margin: {
+                        top: "40px",
+                        bottom: "100px"
+                    },
+                    printBackground: true,
+                    path: path.resolve(APP_ROOT + '/uploads/documents/test.pdf')
+                }
+
+                const browser = await puppeteer.launch({
+                    args: ['--no-sandbox'],
+                    headless: true
+                });
+
+                const page = await browser.newPage();
+                await page.goto(`data:text/html;charset=UTF-8,${finalHtml}`, {
+                    waitUntil: 'networkidle0'
+                });
+                await page.pdf(options);
+                await browser.close();
+                console.log('done')
+                res.send(html)
+                // const options = { format:'A3', width: '8in', height: '10.5in',"format": "Letter" }
+                // pdf.create(html, options).toFile(path.resolve(APP_ROOT + '/uploads/documents/test.pdf'), function (err, stream) {
                 //     if (err) return console.log(err);
-                //     console.log(res); // { filename: '/app/businesscard.pdf' }
+                //     console.log(stream); // { filename: '/app/businesscard.pdf' }
+                    
                 // });
-                // return
+
+                // pdf.create(html, options).toStream((err, stream) => {
+                //     if (err) return console.log(err);
+
+                //     res.setHeader('Content-type', 'application/pdf')
+                //     stream.pipe(res)
+                // })
+                return
             } else {
                 console.log(err)
             }
