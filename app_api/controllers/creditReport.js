@@ -153,7 +153,8 @@ module.exports.getCreditReportPDF = (req, res) => {
 
                 var finalHtml = encodeURIComponent(html);
 
-
+                // https://github.com/chuongtrh/html_to_pdf
+                
                 var options = {
                     format: 'A4',
                     headerTemplate: "<p></p>",

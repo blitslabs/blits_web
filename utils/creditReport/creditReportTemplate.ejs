@@ -41,12 +41,12 @@
 
         .header-container {
             background: #2d2d2f;
-            
+
             padding: 25px 30px;
         }
 
         .logo {
-            height: 40px;
+            height: 80px;
         }
 
         .header-data {
@@ -67,7 +67,7 @@
         .subheader-container {
             display: flex;
             justify-content: space-evenly;
-            margin-top: 20px;
+            margin-top: 30px;
         }
 
         .subheader-table-container {
@@ -75,6 +75,7 @@
             padding: 10px 45px;
             flex: 1;
             margin: 0px 20px 10px 20px;
+
             display: flex;
             text-align: center;
         }
@@ -91,11 +92,12 @@
         .medidor-container {
             flex: 1;
             text-align: center;
+            padding-top: 30px;
         }
 
         .medidor-img {
             /* height: 40px; */
-            width: 75%;
+            width: 60%;
         }
 
         .score-label {
@@ -187,12 +189,12 @@
 
 <body>
     <div class="container-responsive">
-        
+
         <div class="row header-container">
             <div class="col-6">
                 <img class="logo" src="<%= data.host %>/app_assets/images/logo.png" alt="">
             </div>
-            <div class="col-6">
+            <div class="col-6 text-right">
                 <div class="header-data-label">Fecha de consulta: <span class="header-data-val">Lunes 20 de julio de
                         2020</span></div>
                 <div class="header-data-label">Folio consulta: <span class="header-data-val">655,456,345</span></div>
@@ -238,181 +240,201 @@
             </div>
         </div>
 
-        <div class="section-container">
-            <h2>Domicilio</h2>
-            <table class="table">
-                <tr>
-                    <td class="table-header">#</td>
-                    <td class="table-header">Calle y No.</td>
-                    <td class="table-header">Colonia</td>
-                    <td class="table-header">Del/Mpio</td>
-                    <td class="table-header">Ciudad</td>
-                    <td class="table-header">Estado</td>
-                    <td class="table-header">CP</td>
-                    <td class="table-header">Teléfono</td>
-                    <td class="table-header">Registro</td>
-                </tr>
-                <% let i = 1 %>
-                <% for(let d of data.domicilios) { %>
-                <tr>
-                    <td><%= i %></td>
-                    <td><%= d.direccion.toUpperCase() %></td>
-                    <td><%= d.coloniaPoblacion.toUpperCase() %></td>
-                    <td><%= d.delegacionMunicipio.toUpperCase() %></td>
-                    <td><%= d.ciudad.toUpperCase() %></td>
-                    <td><%= d.estado.toUpperCase() %></td>
-                    <td><%= d.CP %></td>
-                    <td><%= d.numeroTelefono %></td>
-                    <td><%= d.fechaRegistroDomicilio %></td>
-                </tr>
-                <% i++ %>
-                <% } %>
-            </table>
+        <div class="row mt-5 mr-2 ml-2">
+            <div class="col-12">
+                <h2>Domicilio</h2>
+                <table class="table">
+                    <tr>
+                        <td class="table-header">#</td>
+                        <td class="table-header">Calle y No.</td>
+                        <td class="table-header">Colonia</td>
+                        <td class="table-header">Del/Mpio</td>
+                        <td class="table-header">Ciudad</td>
+                        <td class="table-header">Estado</td>
+                        <td class="table-header">CP</td>
+                        <td class="table-header">Teléfono</td>
+                        <td class="table-header">Registro</td>
+                    </tr>
+                    <% if(data.domicilios.length > 0) { %>
+                    <% let i = 1 %>
+                    <% for(let d of data.domicilios) { %>
+                    <tr>
+                        <td><%= i %></td>
+                        <td><%= d.direccion.toUpperCase() %></td>
+                        <td><%= d.coloniaPoblacion.toUpperCase() %></td>
+                        <td><%= d.delegacionMunicipio.toUpperCase() %></td>
+                        <td><%= d.ciudad.toUpperCase() %></td>
+                        <td><%= d.estado.toUpperCase() %></td>
+                        <td><%= d.CP %></td>
+                        <td><%= d.numeroTelefono %></td>
+                        <td><%= d.fechaRegistroDomicilio %></td>
+                    </tr>
+                    <% i++ %>
+                    <% }} else { %>
+                    <tr>
+                        <td colspan="11" style="font-weight: bold;text-align:center">No existen domicilios registrados
+                        </td>
+                    </tr>
+                    <% } %>
+                </table>
+            </div>
         </div>
 
-        <div class="section-container">
-            <h2>Empleos</h2>
-            <table class="table">
-                <tr>
-                    <td class="table-header">#</td>
-                    <td class="table-header">Compañía</td>
-                    <td class="table-header">Puesto</td>
-                    <td class="table-header">Salario</td>
-                    <td class="table-header">Calle y No.</td>
-                    <td class="table-header">Del/Mpio</td>
-                    <td class="table-header">Ciudad</td>
-                    <td class="table-header">Estado</td>
-                    <td class="table-header">CP</td>
-                    <td class="table-header">Teléfono</td>
-                    <td class="table-header">Registro</td>
-                </tr>
-                <% let j = 1 %>
-                <% for(let e of data.empleos) { %>
-                <tr>
-                    <td><%= j %></td>
-                    <td><%= e.nombreEmpresa.toUpperCase() %></td>
-                    <td><%= e.puesto.toUpperCase() %></td>
-                    <td><%= e.salarioMensual.toUpperCase() %></td>
-                    <td><%= e.direccion.toUpperCase() %></td>
-                    <td><%= e.delegacionMunicipio.toUpperCase() %></td>
-                    <td><%= e.ciudad.toUpperCase() %></td>
-                    <td><%= e.estado.toUpperCase() %></td>
-                    <td><%= e.CP %></td>
-                    <td><%= e.numeroTelefono %></td>
-                    <td><%= e.fechaContratacion %></td>
-                </tr>
-                <% j++ %>
-                <% } %>
-            </table>
+        <div class="row mt-3 mr-2 ml-2">
+            <div class="col-12">
+                <h2>Empleos</h2>
+                <table class="table">
+                    <tr>
+                        <td class="table-header">#</td>
+                        <td class="table-header">Compañía</td>
+                        <td class="table-header">Puesto</td>
+                        <td class="table-header">Salario</td>
+                        <td class="table-header">Calle y No.</td>
+                        <td class="table-header">Del/Mpio</td>
+                        <td class="table-header">Ciudad</td>
+                        <td class="table-header">Estado</td>
+                        <td class="table-header">CP</td>
+                        <td class="table-header">Teléfono</td>
+                        <td class="table-header">Registro</td>
+                    </tr>
+                    <% if(data.empleos.length > 0) {%>
+                    <% let j = 1 %>
+                    <% for(let e of data.empleos) { %>
+                    <tr>
+                        <td><%= j %></td>
+                        <td><%= e.nombreEmpresa.toUpperCase() %></td>
+                        <td><%= e.puesto.toUpperCase() %></td>
+                        <td><%= e.salarioMensual.toUpperCase() %></td>
+                        <td><%= e.direccion.toUpperCase() %></td>
+                        <td><%= e.delegacionMunicipio.toUpperCase() %></td>
+                        <td><%= e.ciudad.toUpperCase() %></td>
+                        <td><%= e.estado.toUpperCase() %></td>
+                        <td><%= e.CP %></td>
+                        <td><%= e.numeroTelefono %></td>
+                        <td><%= e.fechaContratacion %></td>
+                    </tr>
+                    <% j++ %>
+                    <% }} else { %>
+                    <tr>
+                        <td colspan="11" style="font-weight: bold;text-align:center">No existen empleos registrados</td>
+                    </tr>
+                    <% } %>
+                </table>
+            </div>
         </div>
 
-        <div class="section-container">
-            <h2>Resumen</h2>
-            <table class="table">
-                <tr>
-                    <td class="table-header" colspan="2" style="text-align:center">Descripción</td>
-                    <td class="table-header" colspan="4" style="text-align:center">Monto (MXN)</td>
-                    <td class="table-header" colspan="3" style="text-align:center">Pagos requeridos por cortes (MXN)
-                    </td>
-                </tr>
-                <tr>
-                    <td>Producto</td>
-                    <td>Cuentas</td>
-                    <td>Límite</td>
-                    <td>Aprobado</td>
-                    <td>Actual</td>
-                    <td>Vencido</td>
-                    <td>Pago Semanal</td>
-                    <td>Pago Quincenal</td>
-                    <td>Pago Mensual</td>
-                </tr>
-                <tr>
-                    <td>BIENES RAÍCES</td>
-                    <td><%= data.summaryFormatted.bienesRaices.cuentas %></td>
-                    <td><%= data.summaryFormatted.bienesRaices.limite %></td>
-                    <td><%= data.summaryFormatted.bienesRaices.aprobado %></td>
-                    <td><%= data.summaryFormatted.bienesRaices.actual %></td>
-                    <td><%= data.summaryFormatted.bienesRaices.vencido %></td>
-                    <td><%= data.summaryFormatted.bienesRaices.pagoSemanal %></td>
-                    <td><%= data.summaryFormatted.bienesRaices.pagoQuincenal %></td>
-                    <td><%= data.summaryFormatted.bienesRaices.pagoMensual %></td>
-                </tr>
-                <tr>
-                    <td>COMPRA AUTOMÓVIL</td>
-                    <td><%= data.summaryFormatted.compraAutomovil.cuentas %></td>
-                    <td><%= data.summaryFormatted.compraAutomovil.limite %></td>
-                    <td><%= data.summaryFormatted.compraAutomovil.aprobado %></td>
-                    <td><%= data.summaryFormatted.compraAutomovil.actual %></td>
-                    <td><%= data.summaryFormatted.compraAutomovil.vencido %></td>
-                    <td><%= data.summaryFormatted.compraAutomovil.pagoSemanal %></td>
-                    <td><%= data.summaryFormatted.compraAutomovil.pagoQuincenal %></td>
-                    <td><%= data.summaryFormatted.compraAutomovil.pagoMensual %></td>
-                </tr>
-                <tr>
-                    <td>LÍNEA DE CRÉDITO</td>
-                    <td><%= data.summaryFormatted.lineaCredito.cuentas %></td>
-                    <td><%= data.summaryFormatted.lineaCredito.limite %></td>
-                    <td><%= data.summaryFormatted.lineaCredito.aprobado %></td>
-                    <td><%= data.summaryFormatted.lineaCredito.actual %></td>
-                    <td><%= data.summaryFormatted.lineaCredito.vencido %></td>
-                    <td><%= data.summaryFormatted.lineaCredito.pagoSemanal %></td>
-                    <td><%= data.summaryFormatted.lineaCredito.pagoQuincenal %></td>
-                    <td><%= data.summaryFormatted.lineaCredito.pagoMensual %></td>
-                </tr>
-                <tr>
-                    <td>PRÉSTAMO NÓMINA</td>
-                    <td><%= data.summaryFormatted.prestamoNomina.cuentas %></td>
-                    <td><%= data.summaryFormatted.prestamoNomina.limite %></td>
-                    <td><%= data.summaryFormatted.prestamoNomina.aprobado %></td>
-                    <td><%= data.summaryFormatted.prestamoNomina.actual %></td>
-                    <td><%= data.summaryFormatted.prestamoNomina.vencido %></td>
-                    <td><%= data.summaryFormatted.prestamoNomina.pagoSemanal %></td>
-                    <td><%= data.summaryFormatted.prestamoNomina.pagoQuincenal %></td>
-                    <td><%= data.summaryFormatted.prestamoNomina.pagoMensual %></td>
-                </tr>
-                <tr>
-                    <td>TARJETA DE CRÉDITO</td>
-                    <td><%= data.summaryFormatted.tarjetaCredito.cuentas %></td>
-                    <td><%= data.summaryFormatted.tarjetaCredito.limite %></td>
-                    <td><%= data.summaryFormatted.tarjetaCredito.aprobado %></td>
-                    <td><%= data.summaryFormatted.tarjetaCredito.actual %></td>
-                    <td><%= data.summaryFormatted.tarjetaCredito.vencido %></td>
-                    <td><%= data.summaryFormatted.tarjetaCredito.pagoSemanal %></td>
-                    <td><%= data.summaryFormatted.tarjetaCredito.pagoQuincenal %></td>
-                    <td><%= data.summaryFormatted.tarjetaCredito.pagoMensual %></td>
-                </tr>
-                <tr>
-                    <td>OTROS</td>
-                    <td><%= data.summaryFormatted.otros.cuentas %></td>
-                    <td><%= data.summaryFormatted.otros.limite %></td>
-                    <td><%= data.summaryFormatted.otros.aprobado %></td>
-                    <td><%= data.summaryFormatted.otros.actual %></td>
-                    <td><%= data.summaryFormatted.otros.vencido %></td>
-                    <td><%= data.summaryFormatted.otros.pagoSemanal %></td>
-                    <td><%= data.summaryFormatted.otros.pagoQuincenal %></td>
-                    <td><%= data.summaryFormatted.otros.pagoMensual %></td>
-                </tr>
-                <tr>
-                    <td style="font-weight: bold;">Totales</td>
-                    <td><%= data.summaryFormatted.total.cuentas %></td>
-                    <td><%= data.summaryFormatted.total.limite %></td>
-                    <td><%= data.summaryFormatted.total.aprobado %></td>
-                    <td><%= data.summaryFormatted.total.actual %></td>
-                    <td><%= data.summaryFormatted.total.vencido %></td>
-                    <td><%= data.summaryFormatted.total.pagoSemanal %></td>
-                    <td><%= data.summaryFormatted.total.pagoQuincenal %></td>
-                    <td><%= data.summaryFormatted.total.pagoMensual %></td>
-                </tr>
-            </table>
+        <div class="row mt-3 mr-2 ml-2">
+            <div class="col-12">
+                <h2>Resumen</h2>
+                <table class="table">
+                    <tr>
+                        <td class="table-header" colspan="2" style="text-align:center">Descripción</td>
+                        <td class="table-header" colspan="4" style="text-align:center">Monto (MXN)</td>
+                        <td class="table-header" colspan="3" style="text-align:center">Pagos requeridos por cortes (MXN)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Producto</td>
+                        <td>Cuentas</td>
+                        <td>Límite</td>
+                        <td>Aprobado</td>
+                        <td>Actual</td>
+                        <td>Vencido</td>
+                        <td>Pago Semanal</td>
+                        <td>Pago Quincenal</td>
+                        <td>Pago Mensual</td>
+                    </tr>
+                    <tr>
+                        <td>BIENES RAÍCES</td>
+                        <td><%= data.summaryFormatted.bienesRaices.cuentas %></td>
+                        <td><%= data.summaryFormatted.bienesRaices.limite %></td>
+                        <td><%= data.summaryFormatted.bienesRaices.aprobado %></td>
+                        <td><%= data.summaryFormatted.bienesRaices.actual %></td>
+                        <td><%= data.summaryFormatted.bienesRaices.vencido %></td>
+                        <td><%= data.summaryFormatted.bienesRaices.pagoSemanal %></td>
+                        <td><%= data.summaryFormatted.bienesRaices.pagoQuincenal %></td>
+                        <td><%= data.summaryFormatted.bienesRaices.pagoMensual %></td>
+                    </tr>
+                    <tr>
+                        <td>COMPRA AUTOMÓVIL</td>
+                        <td><%= data.summaryFormatted.compraAutomovil.cuentas %></td>
+                        <td><%= data.summaryFormatted.compraAutomovil.limite %></td>
+                        <td><%= data.summaryFormatted.compraAutomovil.aprobado %></td>
+                        <td><%= data.summaryFormatted.compraAutomovil.actual %></td>
+                        <td><%= data.summaryFormatted.compraAutomovil.vencido %></td>
+                        <td><%= data.summaryFormatted.compraAutomovil.pagoSemanal %></td>
+                        <td><%= data.summaryFormatted.compraAutomovil.pagoQuincenal %></td>
+                        <td><%= data.summaryFormatted.compraAutomovil.pagoMensual %></td>
+                    </tr>
+                    <tr>
+                        <td>LÍNEA DE CRÉDITO</td>
+                        <td><%= data.summaryFormatted.lineaCredito.cuentas %></td>
+                        <td><%= data.summaryFormatted.lineaCredito.limite %></td>
+                        <td><%= data.summaryFormatted.lineaCredito.aprobado %></td>
+                        <td><%= data.summaryFormatted.lineaCredito.actual %></td>
+                        <td><%= data.summaryFormatted.lineaCredito.vencido %></td>
+                        <td><%= data.summaryFormatted.lineaCredito.pagoSemanal %></td>
+                        <td><%= data.summaryFormatted.lineaCredito.pagoQuincenal %></td>
+                        <td><%= data.summaryFormatted.lineaCredito.pagoMensual %></td>
+                    </tr>
+                    <tr>
+                        <td>PRÉSTAMO NÓMINA</td>
+                        <td><%= data.summaryFormatted.prestamoNomina.cuentas %></td>
+                        <td><%= data.summaryFormatted.prestamoNomina.limite %></td>
+                        <td><%= data.summaryFormatted.prestamoNomina.aprobado %></td>
+                        <td><%= data.summaryFormatted.prestamoNomina.actual %></td>
+                        <td><%= data.summaryFormatted.prestamoNomina.vencido %></td>
+                        <td><%= data.summaryFormatted.prestamoNomina.pagoSemanal %></td>
+                        <td><%= data.summaryFormatted.prestamoNomina.pagoQuincenal %></td>
+                        <td><%= data.summaryFormatted.prestamoNomina.pagoMensual %></td>
+                    </tr>
+                    <tr>
+                        <td>TARJETA DE CRÉDITO</td>
+                        <td><%= data.summaryFormatted.tarjetaCredito.cuentas %></td>
+                        <td><%= data.summaryFormatted.tarjetaCredito.limite %></td>
+                        <td><%= data.summaryFormatted.tarjetaCredito.aprobado %></td>
+                        <td><%= data.summaryFormatted.tarjetaCredito.actual %></td>
+                        <td><%= data.summaryFormatted.tarjetaCredito.vencido %></td>
+                        <td><%= data.summaryFormatted.tarjetaCredito.pagoSemanal %></td>
+                        <td><%= data.summaryFormatted.tarjetaCredito.pagoQuincenal %></td>
+                        <td><%= data.summaryFormatted.tarjetaCredito.pagoMensual %></td>
+                    </tr>
+                    <tr>
+                        <td>OTROS</td>
+                        <td><%= data.summaryFormatted.otros.cuentas %></td>
+                        <td><%= data.summaryFormatted.otros.limite %></td>
+                        <td><%= data.summaryFormatted.otros.aprobado %></td>
+                        <td><%= data.summaryFormatted.otros.actual %></td>
+                        <td><%= data.summaryFormatted.otros.vencido %></td>
+                        <td><%= data.summaryFormatted.otros.pagoSemanal %></td>
+                        <td><%= data.summaryFormatted.otros.pagoQuincenal %></td>
+                        <td><%= data.summaryFormatted.otros.pagoMensual %></td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold;">Totales</td>
+                        <td><%= data.summaryFormatted.total.cuentas %></td>
+                        <td><%= data.summaryFormatted.total.limite %></td>
+                        <td><%= data.summaryFormatted.total.aprobado %></td>
+                        <td><%= data.summaryFormatted.total.actual %></td>
+                        <td><%= data.summaryFormatted.total.vencido %></td>
+                        <td><%= data.summaryFormatted.total.pagoSemanal %></td>
+                        <td><%= data.summaryFormatted.total.pagoQuincenal %></td>
+                        <td><%= data.summaryFormatted.total.pagoMensual %></td>
+                    </tr>
+                </table>
+            </div>
         </div>
 
-        <div class="section-container" style="min-height: 800px; margin-top:40px">
-            <div style="display:flex;">
-                <div id="piechart1" style="width: 33.3%; height: 300px;border:1px solid black;border-right: none;">
+        <div class="row mt-3 mr-2 ml-2">
+            <div class="col-5 pr-0 text-center" style="border:1px solid black;border-right: none;">
+                <div id="piechart1">
                 </div>
-                <div id="piechart2" style="width: 33.3%; height: 300px;border:1px solid black"></div>
-                <div style="width: 33.3%;text-align:center"><img style="width:auto;height: 300px;"
-                        src="<%= data.host %>/app_assets/images/telescopio.png" alt=""></div>
+            </div>
+            <div class="col-5 pl-0 text-center" style="border:1px solid black">
+                <div id="piechart2"></div>
+            </div>
+            <div class="col-2">
+                <img style="width:auto;height: 300px;" src="<%= data.host %>/app_assets/images/telescopio.png" alt="">
             </div>
         </div>
 
