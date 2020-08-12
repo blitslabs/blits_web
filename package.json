@@ -72,6 +72,7 @@
     "firebase-admin": "8.10.0",
     "formik": "2.0.6",
     "google-maps-react": "2.0.2",
+    "html-pdf": "^2.2.0",
     "html-to-react": "^1.4.3",
     "http": "0.0.0",
     "immutable": "^4.0.0-rc.12",

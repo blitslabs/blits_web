@@ -154,6 +154,7 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
                 ciudad: domicilio.ciudad,
                 estado: domicilio.estado,
                 CP: domicilio.CP,
+                numeroTelefono: domicilio.numeroTelefono,
                 fechaResidencia: domicilio.fechaResidencia,
                 fechaRegistroDomicilio: domicilio.fechaRegistroDomicilio
             }, { transaction: t })
@@ -211,7 +212,5 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
             sendJSONresponse(res, 422, { status: 'Ocurrió un error al intentar realizar la acción' })
             return
         })
-
-
-
 }
+

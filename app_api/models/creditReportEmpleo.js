@@ -24,6 +24,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
+        estado: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         CP: {
             type: DataTypes.STRING,
             allowNull: true
