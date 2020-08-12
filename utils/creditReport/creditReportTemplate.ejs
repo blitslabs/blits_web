@@ -505,6 +505,7 @@
                         <td class="table-header">Monto</td>
                         <td class="table-header">Moneda</td>
                     </tr>
+                    <% if(data.consultas.length > 0) {%>
                     <% let l = 1 %>
                     <% for(let c of data.consultas) { %>
                     <tr>
@@ -515,7 +516,11 @@
                         <td>MXN</td>
                     </tr>
                     <% l++ %>
-                    <% } %>
+                    <% }} else { %>
+                    <tr>
+                        <td colspan="11" style="font-weight: bold;text-align:center">No existen consultas registradas</td>                        
+                    </tr>
+                    <% }  %>
                 </table>
             </div>
         </div>
@@ -528,7 +533,10 @@
                         <td class="table-header">Consecutivo</td>
                         <td class="table-header">Mensaje</td>
                     </tr>
-
+                    <tr>
+                        <td></td>
+                        <td></td>
+                    </tr>
                 </table>
             </div>
         </div>
