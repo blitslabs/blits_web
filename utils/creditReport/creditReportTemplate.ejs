@@ -133,6 +133,45 @@
             padding: 10px 10px;
         }
     </style>
+
+    <script src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44=" crossorigin="anonymous"></script>
+
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', { 'packages': ['corechart'] });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            const data = google.visualization.arrayToDataTable([
+                ['Cuenta', 'Deuda'],
+                ['Bienes Raíces', parseFloat('<%= data.summary.bienesRaices.actual %>')],
+                ['Compra Automóvil', parseFloat('<%= data.summary.compraAutomovil.actual %>')],
+                ['Línea de Crédito', parseFloat('<%= data.summary.lineaCredito.actual %>')],
+                ['Préstamo Nómina', parseFloat('<%= data.summary.prestamoNomina.actual %>')],
+                ['Tarjeta de Crédito', parseFloat('<%= data.summary.tarjetaCredito.actual %>')],
+                ['Otros', parseFloat('<%= data.summary.otros.actual %>')]
+            ])
+
+            const chart = new google.visualization.PieChart(document.getElementById('piechart1'))
+
+            chart.draw(data, { title: 'Distribución de Deuda Actual' })
+
+            const data2 = google.visualization.arrayToDataTable([
+                ['Cuenta', 'Deuda'],
+                ['Monto aprobado', parseFloat('<%= data.summary.total.aprobado %>')],
+                ['Deuda actual', parseFloat('<%= data.summary.total.actual %>')],
+            ])
+
+            const options2 = { title: 'Nivel de endeudamiento' }
+
+            const chart2 = new google.visualization.PieChart(document.getElementById('piechart2'))
+
+            chart2.draw(data2, { title: 'Nivel de endeudamiento' })
+        }
+    </script>
 </head>
 
 <body>
@@ -259,7 +298,8 @@
                 <tr>
                     <td class="table-header" colspan="2" style="text-align:center">Descripción</td>
                     <td class="table-header" colspan="4" style="text-align:center">Monto (MXN)</td>
-                    <td class="table-header" colspan="3" style="text-align:center">Pagos requeridos por cortes (MXN)</td>                    
+                    <td class="table-header" colspan="3" style="text-align:center">Pagos requeridos por cortes (MXN)
+                    </td>
                 </tr>
                 <tr>
                     <td>Producto</td>
@@ -274,84 +314,190 @@
                 </tr>
                 <tr>
                     <td>BIENES RAÍCES</td>
-                    <td><%= data.summary.bienesRaices.cuentas %></td>
-                    <td><%= data.summary.bienesRaices.limite %></td>
-                    <td><%= data.summary.bienesRaices.aprobado %></td>
-                    <td><%= data.summary.bienesRaices.actual %></td>
-                    <td><%= data.summary.bienesRaices.vencido %></td>
-                    <td><%= data.summary.bienesRaices.pagoSemanal %></td>
-                    <td><%= data.summary.bienesRaices.pagoQuincenal %></td>
-                    <td><%= data.summary.bienesRaices.pagoMensual %></td>
+                    <td><%= data.summaryFormatted.bienesRaices.cuentas %></td>
+                    <td><%= data.summaryFormatted.bienesRaices.limite %></td>
+                    <td><%= data.summaryFormatted.bienesRaices.aprobado %></td>
+                    <td><%= data.summaryFormatted.bienesRaices.actual %></td>
+                    <td><%= data.summaryFormatted.bienesRaices.vencido %></td>
+                    <td><%= data.summaryFormatted.bienesRaices.pagoSemanal %></td>
+                    <td><%= data.summaryFormatted.bienesRaices.pagoQuincenal %></td>
+                    <td><%= data.summaryFormatted.bienesRaices.pagoMensual %></td>
                 </tr>
                 <tr>
                     <td>COMPRA AUTOMÓVIL</td>
-                    <td><%= data.summary.compraAutomovil.cuentas %></td>
-                    <td><%= data.summary.compraAutomovil.limite %></td>
-                    <td><%= data.summary.compraAutomovil.aprobado %></td>
-                    <td><%= data.summary.compraAutomovil.actual %></td>
-                    <td><%= data.summary.compraAutomovil.vencido %></td>
-                    <td><%= data.summary.compraAutomovil.pagoSemanal %></td>
-                    <td><%= data.summary.compraAutomovil.pagoQuincenal %></td>
-                    <td><%= data.summary.compraAutomovil.pagoMensual %></td>
+                    <td><%= data.summaryFormatted.compraAutomovil.cuentas %></td>
+                    <td><%= data.summaryFormatted.compraAutomovil.limite %></td>
+                    <td><%= data.summaryFormatted.compraAutomovil.aprobado %></td>
+                    <td><%= data.summaryFormatted.compraAutomovil.actual %></td>
+                    <td><%= data.summaryFormatted.compraAutomovil.vencido %></td>
+                    <td><%= data.summaryFormatted.compraAutomovil.pagoSemanal %></td>
+                    <td><%= data.summaryFormatted.compraAutomovil.pagoQuincenal %></td>
+                    <td><%= data.summaryFormatted.compraAutomovil.pagoMensual %></td>
                 </tr>
                 <tr>
                     <td>LÍNEA DE CRÉDITO</td>
-                    <td><%= data.summary.lineaCredito.cuentas %></td>
-                    <td><%= data.summary.lineaCredito.limite %></td>
-                    <td><%= data.summary.lineaCredito.aprobado %></td>
-                    <td><%= data.summary.lineaCredito.actual %></td>
-                    <td><%= data.summary.lineaCredito.vencido %></td>
-                    <td><%= data.summary.lineaCredito.pagoSemanal %></td>
-                    <td><%= data.summary.lineaCredito.pagoQuincenal %></td>
-                    <td><%= data.summary.lineaCredito.pagoMensual %></td>
+                    <td><%= data.summaryFormatted.lineaCredito.cuentas %></td>
+                    <td><%= data.summaryFormatted.lineaCredito.limite %></td>
+                    <td><%= data.summaryFormatted.lineaCredito.aprobado %></td>
+                    <td><%= data.summaryFormatted.lineaCredito.actual %></td>
+                    <td><%= data.summaryFormatted.lineaCredito.vencido %></td>
+                    <td><%= data.summaryFormatted.lineaCredito.pagoSemanal %></td>
+                    <td><%= data.summaryFormatted.lineaCredito.pagoQuincenal %></td>
+                    <td><%= data.summaryFormatted.lineaCredito.pagoMensual %></td>
                 </tr>
                 <tr>
                     <td>PRÉSTAMO NÓMINA</td>
-                    <td><%= data.summary.prestamoNomina.cuentas %></td>
-                    <td><%= data.summary.prestamoNomina.limite %></td>
-                    <td><%= data.summary.prestamoNomina.aprobado %></td>
-                    <td><%= data.summary.prestamoNomina.actual %></td>
-                    <td><%= data.summary.prestamoNomina.vencido %></td>
-                    <td><%= data.summary.prestamoNomina.pagoSemanal %></td>
-                    <td><%= data.summary.prestamoNomina.pagoQuincenal %></td>
-                    <td><%= data.summary.prestamoNomina.pagoMensual %></td>
+                    <td><%= data.summaryFormatted.prestamoNomina.cuentas %></td>
+                    <td><%= data.summaryFormatted.prestamoNomina.limite %></td>
+                    <td><%= data.summaryFormatted.prestamoNomina.aprobado %></td>
+                    <td><%= data.summaryFormatted.prestamoNomina.actual %></td>
+                    <td><%= data.summaryFormatted.prestamoNomina.vencido %></td>
+                    <td><%= data.summaryFormatted.prestamoNomina.pagoSemanal %></td>
+                    <td><%= data.summaryFormatted.prestamoNomina.pagoQuincenal %></td>
+                    <td><%= data.summaryFormatted.prestamoNomina.pagoMensual %></td>
                 </tr>
                 <tr>
                     <td>TARJETA DE CRÉDITO</td>
-                    <td><%= data.summary.tarjetaCredito.cuentas %></td>
-                    <td><%= data.summary.tarjetaCredito.limite %></td>
-                    <td><%= data.summary.tarjetaCredito.aprobado %></td>
-                    <td><%= data.summary.tarjetaCredito.actual %></td>
-                    <td><%= data.summary.tarjetaCredito.vencido %></td>
-                    <td><%= data.summary.tarjetaCredito.pagoSemanal %></td>
-                    <td><%= data.summary.tarjetaCredito.pagoQuincenal %></td>
-                    <td><%= data.summary.tarjetaCredito.pagoMensual %></td>
+                    <td><%= data.summaryFormatted.tarjetaCredito.cuentas %></td>
+                    <td><%= data.summaryFormatted.tarjetaCredito.limite %></td>
+                    <td><%= data.summaryFormatted.tarjetaCredito.aprobado %></td>
+                    <td><%= data.summaryFormatted.tarjetaCredito.actual %></td>
+                    <td><%= data.summaryFormatted.tarjetaCredito.vencido %></td>
+                    <td><%= data.summaryFormatted.tarjetaCredito.pagoSemanal %></td>
+                    <td><%= data.summaryFormatted.tarjetaCredito.pagoQuincenal %></td>
+                    <td><%= data.summaryFormatted.tarjetaCredito.pagoMensual %></td>
                 </tr>
                 <tr>
                     <td>OTROS</td>
-                    <td><%= data.summary.otros.cuentas %></td>
-                    <td><%= data.summary.otros.limite %></td>
-                    <td><%= data.summary.otros.aprobado %></td>
-                    <td><%= data.summary.otros.actual %></td>
-                    <td><%= data.summary.otros.vencido %></td>
-                    <td><%= data.summary.otros.pagoSemanal %></td>
-                    <td><%= data.summary.otros.pagoQuincenal %></td>
-                    <td><%= data.summary.otros.pagoMensual %></td>
+                    <td><%= data.summaryFormatted.otros.cuentas %></td>
+                    <td><%= data.summaryFormatted.otros.limite %></td>
+                    <td><%= data.summaryFormatted.otros.aprobado %></td>
+                    <td><%= data.summaryFormatted.otros.actual %></td>
+                    <td><%= data.summaryFormatted.otros.vencido %></td>
+                    <td><%= data.summaryFormatted.otros.pagoSemanal %></td>
+                    <td><%= data.summaryFormatted.otros.pagoQuincenal %></td>
+                    <td><%= data.summaryFormatted.otros.pagoMensual %></td>
                 </tr>
                 <tr>
                     <td style="font-weight: bold;">Totales</td>
-                    <td><%= data.summary.total.cuentas %></td>
-                    <td><%= data.summary.total.limite %></td>
-                    <td><%= data.summary.total.aprobado %></td>
-                    <td><%= data.summary.total.actual %></td>
-                    <td><%= data.summary.total.vencido %></td>
-                    <td><%= data.summary.total.pagoSemanal %></td>
-                    <td><%= data.summary.total.pagoQuincenal %></td>
-                    <td><%= data.summary.total.pagoMensual %></td>
+                    <td><%= data.summaryFormatted.total.cuentas %></td>
+                    <td><%= data.summaryFormatted.total.limite %></td>
+                    <td><%= data.summaryFormatted.total.aprobado %></td>
+                    <td><%= data.summaryFormatted.total.actual %></td>
+                    <td><%= data.summaryFormatted.total.vencido %></td>
+                    <td><%= data.summaryFormatted.total.pagoSemanal %></td>
+                    <td><%= data.summaryFormatted.total.pagoQuincenal %></td>
+                    <td><%= data.summaryFormatted.total.pagoMensual %></td>
                 </tr>
             </table>
         </div>
+
+        <div class="section-container" style="min-height: 800px; margin-top:40px">
+            <div style="display:flex;">
+                <div id="piechart1" style="width: 33.3%; height: 300px;border:1px solid black;border-right: none;">
+                </div>
+                <div id="piechart2" style="width: 33.3%; height: 300px;border:1px solid black"></div>
+                <div style="width: 33.3%;text-align:center"><img style="width:auto;height: 300px;"
+                        src="<%= data.host %>/app_assets/images/telescopio.png" alt=""></div>
+            </div>
+        </div>
+
+        <div class="section-container">
+            <h2>Detalles de Cuentas</h2>
+            <table class="table">
+                <tr>
+                    <td class="table-header">#</td>
+                    <td class="table-header">Producto / Responsabilidad</td>
+                    <td class="table-header">Crédito</td>
+                    <td class="table-header">Otorgante</td>
+                    <td class="table-header">Plazo</td>
+                    <td class="table-header">Límite</td>
+                    <td class="table-header">Aprobado</td>
+                    <td class="table-header">Actual</td>
+                    <td class="table-header">Vencido</td>
+                    <td class="table-header">A pagar</td>
+                    <td class="table-header">Reporte</td>
+                    <td class="table-header">Apertura</td>
+                    <td class="table-header">Cierre</td>
+                    <td class="table-header">Pago</td>
+                    <td class="table-header">Historial de pago</td>
+                    <td class="table-header">Peor Atraso</td>
+                </tr>
+                <% let k = 1 %>
+                <% for(let c of data.creditos) { %>
+                <tr>
+                    <td><%= k %></td>
+                    <td><%= c.tipoResponsabilidad.toUpperCase() %></td>
+                    <td><%= c.tipoCredito.toUpperCase() %></td>
+                    <td><%= c.nombreOtorgante.toUpperCase() %></td>
+                    <td><%= (c.numeroPagos ? c.numeroPagos : '') + ' ' + c.frecuenciaPagos %></td>
+                    <td><%= c.limiteCredito %></td>
+                    <td><%= c.creditoMaximo %></td>
+                    <td><%= c.limiteCredito %></td>
+                    <td><%= c.saldoVencido %></td>
+                    <td><%= c.montoPagar %></td>
+                    <td><%= c.fechaReporte %></td>
+                    <td><%= c.fechaAperturaCuenta %></td>
+                    <td><%= c.fechaCierreCuenta %></td>
+                    <td><%= c.fechaUltimaCompra %></td>
+                    <td><%= c.historicoPagos %></td>
+                    <td><%= c.saldoVencidoPeorAtraso %></td>
+                </tr>
+                <% k++ %>
+                <% } %>
+            </table>
+        </div>
+
+        <div class="section-container">
+            <h2>Consultas Realizadas</h2>
+            <table class="table">
+                <tr>
+                    <td class="table-header">Fecha de consulta</td>
+                    <td class="table-header">Otorgante</td>
+                    <td class="table-header">Tipo de Crédito</td>
+                    <td class="table-header">Monto</td>
+                    <td class="table-header">Moneda</td>
+                </tr>
+                <% let l = 1 %>
+                <% for(let c of data.consultas) { %>
+                <tr>
+                    <td><%= c.fechaConsulta %></td>
+                    <td><%= c.nombreOtorgante %></td>
+                    <td><%= c.tipoCredito %></td>
+                    <td><%= c.importeCredito %></td>
+                    <td>MXN</td>
+                </tr>
+                <% l++ %>
+                <% } %>
+            </table>
+        </div>
+
+        <div class="section-container">
+            <h2>PLD CHECK</h2>
+            <table class="table">
+                <tr>
+                    <td class="table-header">Fecha de consulta</td>
+                    <td class="table-header">Otorgante</td>
+                    <td class="table-header">Tipo de Crédito</td>
+                    <td class="table-header">Monto</td>
+                    <td class="table-header">Moneda</td>
+                </tr>
+                <% let l = 1 %>
+                <% for(let c of data.consultas) { %>
+                <tr>
+                    <td><%= c.fechaConsulta %></td>
+                    <td><%= c.nombreOtorgante %></td>
+                    <td><%= c.tipoCredito %></td>
+                    <td><%= c.importeCredito %></td>
+                    <td>MXN</td>
+                </tr>
+                <% l++ %>
+                <% } %>
+            </table>
+        </div>
+
     </div>
+
 </body>
 
 </html>

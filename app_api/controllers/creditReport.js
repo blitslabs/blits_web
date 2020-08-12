@@ -86,7 +86,9 @@ module.exports.getCreditReportPDF = (req, res) => {
             summary.total.pagoMensual += c.frecuenciaPagos === 'M' ? parseFloat(c.montoPagar) : 0
         }
 
-        Object.values(summary).map((c) => {
+        const summaryFormatted = JSON.parse(JSON.stringify(summary))
+
+        Object.values(summaryFormatted).map((c) => {
             c.limite = currencyFormatter.format(c.limite, { code: 'USD' })
             c.aprobado = currencyFormatter.format(c.aprobado, { code: 'USD' })
             c.actual = currencyFormatter.format(c.actual, { code: 'USD' })
@@ -95,7 +97,7 @@ module.exports.getCreditReportPDF = (req, res) => {
             c.pagoQuincenal = currencyFormatter.format(c.pagoQuincenal, { code: 'USD' })
             c.pagoMensual = currencyFormatter.format(c.pagoMensual, { code: 'USD' })
         })
-
+        
         const score = await CreditReportScore.findOne({
             where: {
                 creditReportId,
@@ -141,6 +143,7 @@ module.exports.getCreditReportPDF = (req, res) => {
             consultas,
             mensajes,
             summary,
+            summaryFormatted
         }
 
         ejs.renderFile(path.resolve(APP_ROOT + '/utils/creditReport/creditReportTemplate.ejs'), { data: params }, (err, result) => {
