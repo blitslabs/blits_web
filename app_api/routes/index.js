@@ -18,6 +18,8 @@ const creditReportController = require('../controllers/creditReport')
 // TEST
 router.get('/test/sms/:phone', testController.sendSMS)
 router.get('/test/email/:email', testController.sendEmail)
+router.get('/test/whatsapp/:phone', testController.sendWhatsapp)
+router.get('/test/whatsapp_credit_response/:phone', testController.sendWACreditResponse)
 
 // precalificador
 router.post('/precalificador/creditRequest', preCreditRequest.createPreCreditRequest)
