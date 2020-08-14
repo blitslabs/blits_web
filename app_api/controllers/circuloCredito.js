@@ -14,9 +14,9 @@ const moment = require('moment')
 
 module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
 
-    const preCreditRequestId = req.params.preCreditRequestId
+    const preCreditRequestHash = req.params.preCreditRequestHash
 
-    if (!preCreditRequestId) {
+    if (!preCreditRequestHash) {
         sendJSONresponse(res, 422, { status: 'ERROR', message: 'Ingresa todos los campos requeridos' })
         return
     }
@@ -26,13 +26,13 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
 
         const preCreditRequest = await PreCreditRequest.findOne({
             where: {
-                id: preCreditRequestId
+                hash: preCreditRequestHash
             },
             transaction: t
         })
 
-        if(!preCreditRequest) {
-            sendJSONresponse(res, 422, { status: 'ERROR', message: 'Solicitud de crédito no encontrada'})
+        if (!preCreditRequest) {
+            sendJSONresponse(res, 422, { status: 'ERROR', message: 'Solicitud de crédito no encontrada' })
             return
         }
 
@@ -59,30 +59,39 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
             "apellidoPaterno": preCreditRequest.lastName.toUpperCase(),
             "apellidoMaterno": preCreditRequest.secondLastName.toUpperCase(),
             "primerNombre": preCreditRequest.firstName.toUpperCase(),
-            "fechaNacimiento": moment(preCreditRequest.dateOfBirth).format('YYYY-MM-DD'),
+            "fechaNacimiento": moment(Date.parse(preCreditRequest.dateOfBirth)).format('YYYY-MM-DD'),
             "RFC": preCreditRequest.rfc.toUpperCase(),
             "nacionalidad": "MX",
             "domicilio": {
                 "direccion": preCreditRequest.calle.toUpperCase() + ' ' + preCreditRequest.numeroExt,
-                "coloniaPoblacion": preCreditRequest.colonia.toUpperCase(),
-                "delegacionMunicipio": preCreditRequest.municipio.toUpperCase(),
+                "coloniaPoblacion": preCreditRequest.colonia.replace('.','').toUpperCase(),
+                "delegacionMunicipio": preCreditRequest.municipio.replace('.','').toUpperCase(),
                 "ciudad": preCreditRequest.entidadFederativa.toUpperCase(),
                 "estado": getStateCodeByName(preCreditRequest.entidadFederativa),
                 "CP": preCreditRequest.postalCode
             }
         }
 
-        let response = await rp(URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'x-api-key': process.env.CIRCULO_CREDITO_API_KEY,
-                'x-full-report': true
-            },
-            body: JSON.stringify(params)
-        })
+        let response
 
-        response = JSON.parse(response)
+        try {
+            response = await rp(URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-api-key': process.env.CIRCULO_CREDITO_API_KEY,
+                    'x-full-report': true
+                },
+                body: JSON.stringify(params)
+            })
+
+            response = JSON.parse(response)
+
+        } catch (e) {
+            console.log(e)
+            sendJSONresponse(res, 200, { status: 'ERROR', payload: { saldoVencido: 0, recordFound: 0 }, message: 'No se encontró ningún registro con los datos ingresados' })
+            return
+        }
 
         const creditReport = await CreditReport.create({
             folioConsulta: response.folioConsulta,
@@ -113,7 +122,11 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
             }, { transaction: t })
         }
 
+        let saldoVencido = 0
+
         for (let credito of response.creditos) {
+            saldoVencido += parseFloat(credito.saldoVencido)
+
             await CreditReportCredito.create({
                 creditReportId: creditReport.id,
                 fechaActualizacion: credito.fechaActualizacion,
@@ -204,7 +217,11 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
         preCreditRequest.creditReportId = creditReport.id
         await preCreditRequest.save({ transaction: t })
 
-        sendJSONresponse(res, 200, { status: 'OK', payload: response })
+        // send response
+        // email
+        // whatsapp
+
+        sendJSONresponse(res, 200, { status: 'OK', payload: { saldoVencido, recordFound: 1 }, message: 'Reporte de crédito guardado correctamente' })
         return
 
     })

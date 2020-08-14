@@ -12,6 +12,7 @@ import CreditAmountForm from './CreditAmountForm'
 import UserIncomeForm from './UserIncomeForm'
 import NipForm from './NipForm'
 import ConfirmNipForm from './ConfirmNipForm'
+import CreditRequestResult from './CreditRequestResult'
 
 // Actions
 import { setFormID } from '../../../actions/preFormController'
@@ -27,7 +28,7 @@ import './styles.css'
 
 class Precalificador extends Component {
     state = {
-        totalFormSections: 9,
+        totalFormSections: 10,
         loading: true,
     }
 
@@ -35,7 +36,7 @@ class Precalificador extends Component {
         document.title = "Precalificador | SwayLending"
         const { formController, dispatch } = this.props
 
-        // dispatch(setFormID(7))
+        dispatch(setFormID(1))
 
         this.setState({
 
@@ -71,7 +72,8 @@ class Precalificador extends Component {
                                                             formController === 6 ? 'Tipo de Actividad' :
                                                                 formController === 7 ? 'Datos de Contacto' :
                                                                     formController === 8 ? 'Autorización Círculo de Crédito' :
-                                                                        formController === 9 ? 'Autorización de Consulta de Historial Crediticio' : ''
+                                                                        formController === 9 ? 'Autorización de Consulta de Historial Crediticio' :
+                                                                            formController === 10 ? 'Resultado de la Evaluación' : ''
                                     }
                                 </div>
                                 <div className="form-subtitle">{progress}%</div>
@@ -89,7 +91,8 @@ class Precalificador extends Component {
                                                             formController === 6 ? 'Tipo de Actividad' :
                                                                 formController === 7 ? 'Datos de Contacto' :
                                                                     formController === 8 ? 'Autorización Círculo de Crédito' :
-                                                                        formController === 9 ? 'Autorización de Consulta de Historial Crediticio' : ''
+                                                                        formController === 9 ? 'Autorización de Consulta de Historial Crediticio' :
+                                                                            formController === 10 ? 'Resultado de la Evaluación' : ''
                                     }
                                 </div>
                                 <form action="">
@@ -102,6 +105,7 @@ class Precalificador extends Component {
                                     {formController === 7 && <LeadForm />}
                                     {formController === 8 && <NipForm />}
                                     {formController === 9 && <ConfirmNipForm />}
+                                    {formController === 10 && <CreditRequestResult />}
                                 </form>
                             </div>
                         </div>

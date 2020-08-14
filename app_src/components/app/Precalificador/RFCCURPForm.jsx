@@ -50,8 +50,8 @@ class RFCCURPForm extends Component {
             result = calcular(nombre, lastName, secondLastName, dateOfBirth, gender, entidadNacimiento)
 
             this.setState({
-                curp: result.curp,
-                rfc: result.rfc,
+                curp: curp ? curp : result.curp,
+                rfc: rfc ? rfc : result.rfc,
                 loading: false
             })
 

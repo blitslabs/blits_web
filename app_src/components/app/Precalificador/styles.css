@@ -96,3 +96,7 @@
     width: 18px;
     height: 18px;
 }
+
+.bold {
+    font-weight: bold;
+}

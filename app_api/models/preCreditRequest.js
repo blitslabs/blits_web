@@ -104,6 +104,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
+        hash: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         creditReportId: {
             type: DataTypes.INTEGER,
             allowNull: true,

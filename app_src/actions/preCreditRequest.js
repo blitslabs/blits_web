@@ -1,5 +1,5 @@
 export const SAVE_PRE_CREDIT_REQUEST = 'SAVE_PRE_CREDIT_REQUEST'
-export const SAVE_PRE_CREDIT_REQUEST_ID = 'SAVE_PRE_CREDIT_REQUEST_ID'
+export const SAVE_PRE_CREDIT_REQUEST_HASH = 'SAVE_PRE_CREDIT_REQUEST_HASH'
 export const SAVE_PRE_CREDIT_REQUEST_NIP = 'SAVE_PRE_CREDIT_REQUEST_NIP'
 
 export function saveCreditRequest(request) {
@@ -9,10 +9,10 @@ export function saveCreditRequest(request) {
     }
 }
 
-export function saveCreditRequestId(creditRequestId) {
+export function saveCreditRequestHash(creditRequestHash) {
     return {
-        type: SAVE_PRE_CREDIT_REQUEST_ID,
-        creditRequestId,
+        type: SAVE_PRE_CREDIT_REQUEST_HASH,
+        creditRequestHash,
     }
 }
 

@@ -21,6 +21,15 @@ export function checkCreditRequestNIP(params) {
     })
 }
 
+export function getCreditReport(params)  {
+    return fetch(API + 'circuloCredito/precalificador/' + params.preCreditRequestHash, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
 // PRECALIFICADOR END
 
 

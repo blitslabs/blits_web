@@ -2,11 +2,18 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 
 // Actions
-import { } from '../../../actions/preFormController'
+import { saveCreditRequest } from '../../../actions/preCreditRequest'
+import { nextFormController } from '../../../actions/preFormController'
 
 // Libraries
 import Checkbox from 'rc-checkbox'
 import 'rc-checkbox/assets/index.css'
+
+// Components
+import Loading from '../../Loading'
+
+// API
+import { getCreditReport } from '../../../utils/api'
 
 class ConfirmNipForm extends Component {
     state = {
@@ -42,16 +49,39 @@ class ConfirmNipForm extends Component {
     handleSubmitBtn = (e) => {
         console.log('CONFIRM_NIP_BTN')
         e.preventDefault()
+
         const { confirmNIP, confirmNIPIsInvalid, acceptTerms, acceptTermsIsInvalid } = this.state
-        // Check PART_7
+        const { creditRequest, dispatch } = this.props
+
+
         if (!confirmNIP || confirmNIPIsInvalid || !acceptTerms || acceptTermsIsInvalid) {
             if (!confirmNIP) this.setState({ confirmNIPIsInvalid: true })
             if (!acceptTerms) this.setState({ acceptTermsIsInvalid: true })
             return
         }
+
+        this.setState({ loading: true })
+
+        getCreditReport({ preCreditRequestHash: creditRequest.creditRequestHash })
+            .then(data => data.json())
+            .then((res) => {
+                this.setState({ loading: false }) 
+                if ('status' in res) {                 
+                    dispatch(saveCreditRequest({ saldoVencido: res.payload.saldoVencido, recordFound: res.payload.recordFound }))
+                    dispatch(nextFormController())
+                    return
+                }                
+            })
     }
 
     render() {
+
+        const { loading } = this.state
+
+        if (loading) {
+            return <Loading />
+        }
+
         return (
             <Fragment>
                 <div className="form-description mt-2" style={{ color: 'rgb(0, 0, 128)', fontWeight: '500' }}>Para continuar, y si estás de acuerdo con la consulta de tu historial crediticio, acepta los términos e ingresa nuevamente tu NIP, que te enviamos previamente. </div>

@@ -1,4 +1,4 @@
-import { SAVE_PRE_CREDIT_REQUEST, SAVE_PRE_CREDIT_REQUEST_ID, SAVE_PRE_CREDIT_REQUEST_NIP } from '../actions/preCreditRequest'
+import { SAVE_PRE_CREDIT_REQUEST, SAVE_PRE_CREDIT_REQUEST_HASH, SAVE_PRE_CREDIT_REQUEST_NIP } from '../actions/preCreditRequest'
 
 const initialState = {
     email: '',
@@ -35,10 +35,10 @@ export default function creditRequest(state = initialState, action) {
                 ...state,
                 ...action.request,
             }
-        case SAVE_PRE_CREDIT_REQUEST_ID:
+        case SAVE_PRE_CREDIT_REQUEST_HASH:
             return {
                 ...state,
-                creditRequestId: action.creditRequestId
+                creditRequestHash: action.creditRequestHash
             }
         case SAVE_PRE_CREDIT_REQUEST_NIP:
             return {

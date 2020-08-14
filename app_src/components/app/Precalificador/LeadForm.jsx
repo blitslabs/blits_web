@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import Loading from '../../Loading'
 
 // Actions
-import { saveCreditRequest, saveCreditRequestId, saveCreditRequestNIP } from '../../../actions/preCreditRequest'
+import { saveCreditRequest, saveCreditRequestHash, saveCreditRequestNIP } from '../../../actions/preCreditRequest'
 import { nextFormController, backFormController } from '../../../actions/preFormController'
 
 // API
@@ -113,7 +113,7 @@ class LeadForm extends Component {
             .then((res) => {
                 console.log(res)
                 if (res.status === 'OK') {
-                    dispatch(saveCreditRequestId(res.payload.credit_request_id))
+                    dispatch(saveCreditRequestHash(res.payload.hash))
                     dispatch(saveCreditRequestNIP(res.payload.nip))
                     // next form controller
                     dispatch(nextFormController())

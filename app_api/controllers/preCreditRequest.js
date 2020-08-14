@@ -4,6 +4,7 @@ const sequelize = require('../models/sequelize').sequelize
 const sendJSONresponse = require('../../utils/index').sendJSONresponse
 const sendSMS = require('../../utils/sms').sendSMS
 const sendEmail = require('../../utils/email').sendEmail
+const crypto = require('crypto')
 
 module.exports.createPreCreditRequest = (req, res) => {
     const firstName = req.body.firstName
@@ -32,6 +33,7 @@ module.exports.createPreCreditRequest = (req, res) => {
     const verifiableIncome = req.body.verifiableIncome
     const jobDescription = req.body.jobDescription
     const nip = Math.floor(1000 + Math.random() * 9000)
+    const hash = crypto.randomBytes(20).toString('hex')
 
     if (!firstName || !lastName || !secondLastName) {
         sendJSONresponse(res, 422, { status: 'ERROR', message: 'Ingresa tu nombre completo' })
@@ -116,6 +118,7 @@ module.exports.createPreCreditRequest = (req, res) => {
             unverifiableIncome,
             jobDescription,
             nip,
+            hash,
         }, { transaction: t })
 
         // SEND SMS

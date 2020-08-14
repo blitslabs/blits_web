@@ -37,6 +37,20 @@ class AddressForm extends Component {
         const { email, phone, firstName, secondName, lastName, secondLastName, dateOfBirth, gender,
             calle, numeroExt, colonia, municipio, entidadFederativa, postalCode, creditType, creditAmount, propertyValue,
             sourceOfResources, verifiableIncome, unverifiableIncome, jobDescription } = creditRequest
+
+        if (postalCode.length === 5) {
+            getAddressesByPostalCode({ postalCode })
+                .then(data => data.json())
+                .then((res) => {
+                    console.log(res)
+                    if (res.status === 'OK') {
+                        this.setState({                          
+                            addresses: res.payload,
+                        })
+                    }
+                })
+        }
+
         this.setState({
 
             calle, numeroExt, colonia, municipio, entidadFederativa, postalCode,

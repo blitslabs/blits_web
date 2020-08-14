@@ -28,7 +28,7 @@ router.post('/precalificador/creditRequest', preCreditRequest.createPreCreditReq
 router.get('/creditReport/pdf/:creditReportId', creditReportController.getCreditReportPDF)
 
 // circulo de credito
-router.get('/circuloCredito/precalificador/:preCreditRequestId', circuloCreditoController.getReporteCreditoConsolidadoPrecalificador)
+router.get('/circuloCredito/precalificador/:preCreditRequestHash', circuloCreditoController.getReporteCreditoConsolidadoPrecalificador)
 
 
 // SEPOMEX
