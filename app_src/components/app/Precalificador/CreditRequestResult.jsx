@@ -17,24 +17,8 @@ class CreditRequestResult extends Component {
     }
 
     componentDidMount() {
-        document.title = "Resultado de la Evaluación | SwayLending"
-        const { creditRequest } = this.props
-        let { saldoVencido, recordFound, creditAmount } = creditRequest
-        creditAmount = parseFloat(creditAmount.replace('$', '').replace(/,/g, ''))
-        console.log(creditAmount)
-        let resultado, montoMaximo
-
-        if (parseFloat(saldoVencido) > 0 || recordFound != 1) {
-            resultado = 'P.E.'
-            montoMaximo = currencyFormatter.format(creditAmount * 1.032, { code: 'USD' })
-            this.setState({ resultado, montoMaximo })
-            return
-        }
-
-        resultado = 'PRE-APROBADO'
-        montoMaximo = currencyFormatter.format(creditAmount * 1.17, { code: 'USD' })
-
-        this.setState({ resultado, montoMaximo })
+        document.title = "Resultado de la Evaluación | SwayLending"      
+        
     }
 
     handleDownloadBtn = (e) => {
@@ -60,8 +44,8 @@ class CreditRequestResult extends Component {
             <Fragment>
                 <div className="mt-2">Nombre completo: <span className="bold">{creditRequest.firstName + ' ' + creditRequest.secondName + ' ' + creditRequest.lastName + ' ' + creditRequest.secondLastName}</span></div>
                 <div className="mt-2">RFC: <span className="bold">{creditRequest.rfc}</span></div>
-                <div className="mt-2">Resultado: <span className="bold">{this.state.resultado}</span></div>
-                <div className="mt-2">Monto máximo que puede solicitar: <span className="bold">{this.state.montoMaximo}</span></div>
+                <div className="mt-2">Resultado: <span className="bold">{creditRequest.resultado}</span></div>
+                <div className="mt-2">Monto máximo que puede solicitar: <span className="bold">{creditRequest.montoMaximo}</span></div>
                 <div className="mt-2">Para más información agenda una visita en nuestra oficina</div>
                 <div className="text-center mt-4 mb-4">
                     <button onClick={this.handleCheckNIPBtn} className="btn btn-light btn-continue">Agendar cita</button>

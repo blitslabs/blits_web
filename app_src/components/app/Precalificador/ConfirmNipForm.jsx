@@ -67,7 +67,7 @@ class ConfirmNipForm extends Component {
             .then((res) => {
                 this.setState({ loading: false }) 
                 if ('status' in res) {                 
-                    dispatch(saveCreditRequest({ saldoVencido: res.payload.saldoVencido, recordFound: res.payload.recordFound }))
+                    dispatch(saveCreditRequest({ resultado: res.payload.resultado, montoMaximo: res.payload.montoMaximo }))
                     dispatch(nextFormController())
                     return
                 }                

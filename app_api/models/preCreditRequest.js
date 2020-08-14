@@ -108,6 +108,18 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
         },
+        saldoVencido: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        result: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        montoMaximo: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         creditReportId: {
             type: DataTypes.INTEGER,
             allowNull: true,

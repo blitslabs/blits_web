@@ -9,8 +9,10 @@ const CreditReportScore = require('../models/sequelize').CreditReportScore
 const sequelize = require('../models/sequelize').sequelize
 const sendJSONresponse = require('../../utils/index').sendJSONresponse
 const getStateCodeByName = require('../../utils/index').getStateCodeByName
+const sendWACreditResponse = require('../../utils/whatsapp').sendWACreditResponse
 const rp = require('request-promise')
 const moment = require('moment')
+const currencyFormatter = require('currency-formatter')
 
 module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
 
@@ -38,23 +40,6 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
 
         const URL = `https://services.circulodecredito.com.mx/sandbox/v1/rcc-ficoscore-pld`
 
-        // const params = {
-        //     "apellidoPaterno": "SESENTAYDOS",
-        //     "apellidoMaterno": "PRUEBA",
-        //     "primerNombre": "JUAN",
-        //     "fechaNacimiento": "1965-08-09",
-        //     "RFC": "SEPJ650809JG1",
-        //     "nacionalidad": "MX",
-        //     "domicilio": {
-        //         "direccion": "PASADISO ENCONTRADO 58",
-        //         "coloniaPoblacion": "MONTEVIDEO",
-        //         "delegacionMunicipio": "GUSTAVO A MADERO",
-        //         "ciudad": "CIUDAD DE MÉXICO",
-        //         "estado": "CDMX",
-        //         "CP": "07730"
-        //     }
-        // } 
-
         const params = {
             "apellidoPaterno": preCreditRequest.lastName.toUpperCase(),
             "apellidoMaterno": preCreditRequest.secondLastName.toUpperCase(),
@@ -64,8 +49,8 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
             "nacionalidad": "MX",
             "domicilio": {
                 "direccion": preCreditRequest.calle.toUpperCase() + ' ' + preCreditRequest.numeroExt,
-                "coloniaPoblacion": preCreditRequest.colonia.replace('.','').toUpperCase(),
-                "delegacionMunicipio": preCreditRequest.municipio.replace('.','').toUpperCase(),
+                "coloniaPoblacion": preCreditRequest.colonia.replace('.', '').toUpperCase(),
+                "delegacionMunicipio": preCreditRequest.municipio.replace('.', '').toUpperCase(),
                 "ciudad": preCreditRequest.entidadFederativa.toUpperCase(),
                 "estado": getStateCodeByName(preCreditRequest.entidadFederativa),
                 "CP": preCreditRequest.postalCode
@@ -73,6 +58,8 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
         }
 
         let response
+        let recordFound = 1
+        let saldoVencido = 0
 
         try {
             response = await rp(URL, {
@@ -89,139 +76,176 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
 
         } catch (e) {
             console.log(e)
-            sendJSONresponse(res, 200, { status: 'ERROR', payload: { saldoVencido: 0, recordFound: 0 }, message: 'No se encontró ningún registro con los datos ingresados' })
-            return
+            recordFound = 0
+            // sendJSONresponse(res, 200, { status: 'ERROR', payload: { saldoVencido, recordFound }, message: 'No se encontró ningún registro con los datos ingresados' })
+            // return
         }
 
-        const creditReport = await CreditReport.create({
-            folioConsulta: response.folioConsulta,
-            folioConsultaOtorgante: response.folioConsultaOtorgante,
-            claveOtorgante: response.claveOtorgante,
-            declaracionesConsumidor: response.declaracionesConsumidor,
-            apellidoPaterno: response.persona.apellidoPaterno,
-            apellidoMaterno: response.persona.apellidoMaterno,
-            nombres: response.persona.nombres,
-            fechaNacimiento: response.persona.fechaNacimiento,
-            RFC: response.persona.RFC,
-            nacionalidad: response.persona.nacionalidad,
-            residencia: response.persona.residencia,
-            estadoCivil: response.persona.estadoCivil,
-            sexo: response.persona.sexo,
-            numeroDependientes: response.persona.numeroDependientes
-        }, { transaction: t })
-
-        for (let consulta of response.consultas) {
-            await CreditReportConsulta.create({
-                creditReportId: creditReport.id,
-                fechaConsulta: consulta.fechaConsulta,
-                nombreOtorgante: consulta.nombreOtorgante,
-                telefonoOtorgante: consulta.telefonoOtorgante,
-                tipoCredito: consulta.tipoCredito,
-                claveUnidadMonetaria: consulta.claveUnidadMonetaria,
-                importeCredito: consulta.importeCredito,
+        if (recordFound === 1) {
+            const creditReport = await CreditReport.create({
+                folioConsulta: response.folioConsulta,
+                folioConsultaOtorgante: response.folioConsultaOtorgante,
+                claveOtorgante: response.claveOtorgante,
+                declaracionesConsumidor: response.declaracionesConsumidor,
+                apellidoPaterno: response.persona.apellidoPaterno,
+                apellidoMaterno: response.persona.apellidoMaterno,
+                nombres: response.persona.nombres,
+                fechaNacimiento: response.persona.fechaNacimiento,
+                RFC: response.persona.RFC,
+                nacionalidad: response.persona.nacionalidad,
+                residencia: response.persona.residencia,
+                estadoCivil: response.persona.estadoCivil,
+                sexo: response.persona.sexo,
+                numeroDependientes: response.persona.numeroDependientes
             }, { transaction: t })
+
+            for (let consulta of response.consultas) {
+                await CreditReportConsulta.create({
+                    creditReportId: creditReport.id,
+                    fechaConsulta: consulta.fechaConsulta,
+                    nombreOtorgante: consulta.nombreOtorgante,
+                    telefonoOtorgante: consulta.telefonoOtorgante,
+                    tipoCredito: consulta.tipoCredito,
+                    claveUnidadMonetaria: consulta.claveUnidadMonetaria,
+                    importeCredito: consulta.importeCredito,
+                }, { transaction: t })
+            }
+
+            for (let credito of response.creditos) {
+                saldoVencido += parseFloat(credito.saldoVencido)
+
+                await CreditReportCredito.create({
+                    creditReportId: creditReport.id,
+                    fechaActualizacion: credito.fechaActualizacion,
+                    registroImpugnado: credito.registroImpugnado,
+                    nombreOtorgante: credito.nombreOtorgante,
+                    cuentaActual: credito.cuentaActual,
+                    tipoResponsabilidad: credito.tipoResponsabilidad,
+                    tipoCuenta: credito.tipoCuenta,
+                    tipoCredito: credito.tipoCredito,
+                    claveUnidadMonetaria: credito.claveUnidadMonetaria,
+                    valorActivoValuacion: credito.valorActivoValuacion,
+                    numeroPagos: credito.numeroPagos,
+                    frecuenciaPagos: credito.frecuenciaPagos,
+                    montoPagar: credito.montoPagar,
+                    fechaAperturaCuenta: credito.fechaAperturaCuenta,
+                    fechaUltimoPago: credito.fechaUltimoPago,
+                    fechaUltimaCompra: credito.fechaUltimaCompra,
+                    fechaReporte: credito.fechaReporte,
+                    creditoMaximo: credito.creditoMaximo,
+                    saldoActual: credito.saldoActual,
+                    limiteCredito: credito.limiteCredito,
+                    saldoVencido: credito.saldoVencido,
+                    numeroPagosVencidos: credito.numeroPagosVencidos,
+                    pagoActual: credito.pagoActual,
+                    historicoPagos: credito.historicoPagos,
+                    totalPagosReportados: credito.totalPagosReportados,
+                    peorAtraso: credito.peorAtraso,
+                    fechaPeorAtraso: credito.fechaPeorAtraso,
+                    saldoVencidoPeorAtraso: credito.saldoVencidoPeorAtraso,
+                }, { transaction: t })
+            }
+
+            for (let domicilio of response.domicilios) {
+                await CreditReportDomicilio.create({
+                    creditReportId: creditReport.id,
+                    direccion: domicilio.direccion,
+                    coloniaPoblacion: domicilio.coloniaPoblacion,
+                    delegacionMunicipio: domicilio.delegacionMunicipio,
+                    ciudad: domicilio.ciudad,
+                    estado: domicilio.estado,
+                    CP: domicilio.CP,
+                    numeroTelefono: domicilio.numeroTelefono,
+                    fechaResidencia: domicilio.fechaResidencia,
+                    fechaRegistroDomicilio: domicilio.fechaRegistroDomicilio
+                }, { transaction: t })
+            }
+
+            for (let empleo of response.empleos) {
+                await CreditReportEmpleo.create({
+                    creditReportId: creditReport.id,
+                    nombreEmpresa: empleo.nombreEmpresa,
+                    direccion: empleo.direccion,
+                    coloniaPoblacion: empleo.coloniaPoblacion,
+                    delegacionMunicipio: empleo.delegacionMunicipio,
+                    ciudad: empleo.ciudad,
+                    estado: empleo.estado,
+                    CP: empleo.CP,
+                    numeroTelefono: empleo.numeroTelefono,
+                    extension: empleo.extension,
+                    fax: empleo.fax,
+                    puesto: empleo.puesto,
+                    fechaContratacion: empleo.fechaContratacion,
+                    claveMoneda: empleo.claveMoneda,
+                    salarioMensual: empleo.salarioMensual,
+                    fechaUltimoDiaEmpleo: empleo.fechaUltimoDiaEmpleo,
+                    fechaVerificacionEmpleo: empleo.fechaVerificacionEmpleo,
+                }, { transaction: t })
+            }
+
+            for (let score of response.scores) {
+                await CreditReportScore.create({
+                    creditReportId: creditReport.id,
+                    nombreScore: score.nombreScore,
+                    valor: score.valor,
+                    razones: JSON.stringify(score.razones)
+                }, { transaction: t })
+            }
+
+            for (let mensaje of response.mensajes) {
+                await CreditReportMensaje.create({
+                    creditReportId: creditReport.id,
+                    tipoMensaje: mensaje.tipoMensaje,
+                    leyenda: mensaje.leyenda,
+                }, { transaction: t })
+            }
+
+            // Update Credit Report ID
+            preCreditRequest.creditReportId = creditReport.id
         }
 
-        let saldoVencido = 0
 
-        for (let credito of response.creditos) {
-            saldoVencido += parseFloat(credito.saldoVencido)
+        // Calculate result
+        let resultado, montoMaximo
+        let creditAmount = parseFloat(preCreditRequest.creditAmount.replace('$', '').replace(/,/g, ''))
 
-            await CreditReportCredito.create({
-                creditReportId: creditReport.id,
-                fechaActualizacion: credito.fechaActualizacion,
-                registroImpugnado: credito.registroImpugnado,
-                nombreOtorgante: credito.nombreOtorgante,
-                cuentaActual: credito.cuentaActual,
-                tipoResponsabilidad: credito.tipoResponsabilidad,
-                tipoCuenta: credito.tipoCuenta,
-                tipoCredito: credito.tipoCredito,
-                claveUnidadMonetaria: credito.claveUnidadMonetaria,
-                valorActivoValuacion: credito.valorActivoValuacion,
-                numeroPagos: credito.numeroPagos,
-                frecuenciaPagos: credito.frecuenciaPagos,
-                montoPagar: credito.montoPagar,
-                fechaAperturaCuenta: credito.fechaAperturaCuenta,
-                fechaUltimoPago: credito.fechaUltimoPago,
-                fechaUltimaCompra: credito.fechaUltimaCompra,
-                fechaReporte: credito.fechaReporte,
-                creditoMaximo: credito.creditoMaximo,
-                saldoActual: credito.saldoActual,
-                limiteCredito: credito.limiteCredito,
-                saldoVencido: credito.saldoVencido,
-                numeroPagosVencidos: credito.numeroPagosVencidos,
-                pagoActual: credito.pagoActual,
-                historicoPagos: credito.historicoPagos,
-                totalPagosReportados: credito.totalPagosReportados,
-                peorAtraso: credito.peorAtraso,
-                fechaPeorAtraso: credito.fechaPeorAtraso,
-                saldoVencidoPeorAtraso: credito.saldoVencidoPeorAtraso,
-            }, { transaction: t })
-        }
-
-        for (let domicilio of response.domicilios) {
-            await CreditReportDomicilio.create({
-                creditReportId: creditReport.id,
-                direccion: domicilio.direccion,
-                coloniaPoblacion: domicilio.coloniaPoblacion,
-                delegacionMunicipio: domicilio.delegacionMunicipio,
-                ciudad: domicilio.ciudad,
-                estado: domicilio.estado,
-                CP: domicilio.CP,
-                numeroTelefono: domicilio.numeroTelefono,
-                fechaResidencia: domicilio.fechaResidencia,
-                fechaRegistroDomicilio: domicilio.fechaRegistroDomicilio
-            }, { transaction: t })
-        }
-
-        for (let empleo of response.empleos) {
-            await CreditReportEmpleo.create({
-                creditReportId: creditReport.id,
-                nombreEmpresa: empleo.nombreEmpresa,
-                direccion: empleo.direccion,
-                coloniaPoblacion: empleo.coloniaPoblacion,
-                delegacionMunicipio: empleo.delegacionMunicipio,
-                ciudad: empleo.ciudad,
-                estado: empleo.estado,
-                CP: empleo.CP,
-                numeroTelefono: empleo.numeroTelefono,
-                extension: empleo.extension,
-                fax: empleo.fax,
-                puesto: empleo.puesto,
-                fechaContratacion: empleo.fechaContratacion,
-                claveMoneda: empleo.claveMoneda,
-                salarioMensual: empleo.salarioMensual,
-                fechaUltimoDiaEmpleo: empleo.fechaUltimoDiaEmpleo,
-                fechaVerificacionEmpleo: empleo.fechaVerificacionEmpleo,
-            }, { transaction: t })
-        }
-
-        for (let score of response.scores) {
-            await CreditReportScore.create({
-                creditReportId: creditReport.id,
-                nombreScore: score.nombreScore,
-                valor: score.valor,
-                razones: JSON.stringify(score.razones)
-            }, { transaction: t })
-        }
-
-        for (let mensaje of response.mensajes) {
-            await CreditReportMensaje.create({
-                creditReportId: creditReport.id,
-                tipoMensaje: mensaje.tipoMensaje,
-                leyenda: mensaje.leyenda,
-            }, { transaction: t })
+        if (saldoVencido > 0 || recordFound !== 1) {
+            resultado = 'P.E.'
+            montoMaximo = currencyFormatter.format(creditAmount * 1.032, { code: 'USD' })
+        } else {
+            resultado = 'PRE-APROBADO'
+            montoMaximo = currencyFormatter.format(creditAmount * 1.17, { code: 'USD' })
         }
 
         // Update CreditReportId in PreCreditRequest
-        preCreditRequest.creditReportId = creditReport.id
+        preCreditRequest.saldoVencido = saldoVencido
+        preCreditRequest.result = resultado
+        preCreditRequest.montoMaximo = montoMaximo
         await preCreditRequest.save({ transaction: t })
 
-        // send response
-        // email
-        // whatsapp
+        // Send Credit Request Response
+        // Email
 
-        sendJSONresponse(res, 200, { status: 'OK', payload: { saldoVencido, recordFound: 1 }, message: 'Reporte de crédito guardado correctamente' })
+        // Whatsapp
+        const waData = {
+            phone: preCreditRequest.phone.length === 10 ? ('52' + preCreditRequest.phone) : preCreditRequest.phone,
+            primerNombre: preCreditRequest.firstName,
+            apellidoPaterno: preCreditRequest.lastName,
+            rfc: preCreditRequest.rfc,
+            resultado,
+            monto: montoMaximo,
+            enlaceHistorial: `${process.env.API_HOST}/creditReport/pdf/${preCreditRequest.hash}`
+        }
+
+        try {
+            if (process.env.ENABLE_WHATSAPP == 1) {
+                sendWACreditResponse(waData)
+            }
+        } catch (e) {
+            console.log(e)
+        }
+
+        sendJSONresponse(res, 200, { status: 'OK', payload: { resultado, montoMaximo }, message: 'Reporte de crédito guardado correctamente' })
         return
 
     })
