@@ -7,12 +7,15 @@ const CreditReportEmpleo = require('../models/sequelize').CreditReportEmpleo
 const CreditReportMensaje = require('../models/sequelize').CreditReportMensaje
 const CreditReportScore = require('../models/sequelize').CreditReportScore
 const sequelize = require('../models/sequelize').sequelize
+const { Op } = require('sequelize')
 const sendJSONresponse = require('../../utils/index').sendJSONresponse
 const getStateCodeByName = require('../../utils/index').getStateCodeByName
 const sendWACreditResponse = require('../../utils/whatsapp').sendWACreditResponse
 const rp = require('request-promise')
 const moment = require('moment')
 const currencyFormatter = require('currency-formatter')
+const fs = require('fs').promises
+const path = require('path')
 
 module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
 
@@ -202,6 +205,42 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
 
             // Update Credit Report ID
             preCreditRequest.creditReportId = creditReport.id
+
+            // Count today's records
+            const TODAY_START = new Date().setHours(0, 0, 0, 0)
+            const NOW = new Date()
+            const creditRequestsCount = await PreCreditRequest.count({
+                where: {
+                    createdAt: {
+                        [Op.gt]: TODAY_START,
+                        [Op.lt]: NOW,
+                    }
+                },
+                transaction: t
+            })
+
+            // Create Audit File
+            const auditData = {
+                folioConsulta: response.folioConsulta,
+                fechaConsulta: moment().format('YYYY/MM/DD'),
+                horaConsulta: moment().format('HH:mm:ss'),
+                nombreCliente: preCreditRequest.lastName.toUpperCase() + ' ' + preCreditRequest.secondLastName.toUpperCase() + ' ' + preCreditRequest.firstName.toUpperCase(),
+                rfc: preCreditRequest.rfc,
+                calleNumbero: preCreditRequest.calle.toUpperCase() + ' ' + preCreditRequest.numeroExt,
+                colonia: preCreditRequest.colonia.replace('.', '').toUpperCase(),
+                estado: preCreditRequest.entidadFederativa.replace('.', '').toUpperCase(),
+                codigoPostal: preCreditRequest.postalCode,
+                tipoConsulta: 'PF',
+                usuario: process.env.CIRUCLO_CREDITO_USER,
+                fechaAprobacionConsulta: moment().format('YYYY-MM-DD'), // Debe ser anterior (pueden ser segundos) a la fecha de consulta
+                horaAprobacionConsulta: moment().subtract(5, 'seconds').format('HH:mm:ss'),
+                ingresoNuevamenteNip: 'SI',
+                respuestaLeyendaAutorizacion: 'SI',
+                aceptacionTerminos: 'SI',
+                creditRequestsCount,
+            }
+
+            crearAuditFile(auditData)            
         }
 
 
@@ -256,3 +295,13 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
         })
 }
 
+
+
+async function crearAuditFile(data) {
+    let record = 'FOLIO_CDC|FECHA_CONSULTA|HORA_CONSULTA|NOMBRE_CLIENTE|RFC|CALLE_NUMERO|COLONIA|CIUDAD|Estado|TIPO_CONSULTA|USUARIO|FECHA_APROBACION_CONSULTA|HORA_APROBACION_CONSULTA|INGRESO_NUEVAMENTE_NIP|RESPUESTA_LEYENDA_AUTORIZACION|ACEPTACION_TERMINOS_Y_CONDICIONES|'
+    Object.values(data).map((d) => record += `${d}|`)
+    const consecutivo = data.creditRequestsCount.toString().length == 1 ? ('0' + data.creditRequestsCount.toString()) : data.creditRequestsCount
+    const fileName = `${process.env.NUMERO_OTORGANTE}${moment().format('YYMMDD')}${consecutivo}.txt`
+    console.log(fileName)
+    await fs.writeFile(path.resolve(APP_ROOT + '/uploads/auditoria/' + fileName), record, 'utf8');
+}
