@@ -115,13 +115,13 @@
 
         .subheader-data-label {
             font-weight: bold;
-            font-size: 20px;
+            font-size: 24px;
             text-align: right;
         }
 
         .subheader-data-val {
             font-weight: normal;
-            font-size: 20px;
+            font-size: 24px;
             text-align: left;
             padding-left: 20px;
         }
@@ -203,48 +203,50 @@
                 <img class="logo" src="<%= data.host %>/app_assets/images/logo.png" alt="">
             </div>
             <div class="col-6 text-right">
-                <div class="header-data-label">Fecha de consulta: <span class="header-data-val">Lunes 20 de julio de
-                        2020</span></div>
-                <div class="header-data-label">Folio consulta: <span class="header-data-val">655,456,345</span></div>
-                <div class="header-data-label">Folio consulta otra SIC: <span class="header-data-val">884,234,234</span>
+                <div class="header-data-label">Fecha de consulta: <span
+                        class="header-data-val"><%= data.fechaConsulta %></span></div>
+                <div class="header-data-label">Folio consulta: <span
+                        class="header-data-val"><%= data.creditReport.folioConsulta %></span></div>
+                <div class="header-data-label">Folio consulta otra SIC: <span
+                        class="header-data-val"><%= data.creditReport.folioConsultaOtorgante %></span>
                 </div>
             </div>
         </div>
         <div class="subheader-container">
             <div class="subheader-table-container">
-                <table style="width:100%">
+                <table style="width:100%; display: flex; align-items: center; justify-content: center;">
                     <tr>
                         <td class="subheader-data-label">Nombre(s):</td>
-                        <td class="subheader-data-val">ANA LAURA</td>
+                        <td class="subheader-data-val"><%= data.creditReport.nombres %></td>
                     </tr>
                     <tr>
                         <td class="subheader-data-label">Apellido Paterno:</td>
-                        <td class="subheader-data-val">MORALES</td>
+                        <td class="subheader-data-val"><%= data.creditReport.apellidoPaterno %></td>
                     </tr>
                     <tr>
                         <td class="subheader-data-label">Apellido Materno:</td>
-                        <td class="subheader-data-val">PEREYRA</td>
+                        <td class="subheader-data-val"><%= data.creditReport.apellidoMaterno %></td>
                     </tr>
                     <tr>
                         <td class="subheader-data-label">Fecha de nacimiento:</td>
-                        <td class="subheader-data-val">06/AGO/95</td>
+                        <td class="subheader-data-val"><%= data.fechaNacimiento %></td>
                     </tr>
                     <tr>
                         <td class="subheader-data-label">CURP:</td>
-                        <td class="subheader-data-val">MOPA950806MTCRRN19</td>
+                        <td class="subheader-data-val"><%= data.preCreditRequest.curp %></td>
                     </tr>
                     <tr>
                         <td class="subheader-data-label">RFC:</td>
-                        <td class="subheader-data-val">MOPA950806</td>
+                        <td class="subheader-data-val"><%= data.preCreditRequest.rfc %></td>
                     </tr>
                 </table>
 
 
             </div>
             <div class="medidor-container">
-                <img class="medidor-img" src="<%= data.host %>/app_assets/images/medidor-5.png" alt="">
-                <div class="score-label">FICO<span class="trademark-symbol">®</span> <span
-                        style="margin-left:10px">Score</span> <span class="score">676</span></div>
+                <img class="medidor-img" src="<%= data.host %>/app_assets/images/medidor-<%= data.scoreImage %>.png" alt="">
+                <div class="score-label"><%= data.score.nombreScore %><span class="trademark-symbol">®</span> <span
+                        style="margin-left:10px">Score</span> <span class="score"><%= data.score.valor %></span></div>
             </div>
         </div>
 
@@ -288,7 +290,7 @@
             </div>
         </div>
 
-        <div class="row mt-3 mr-2 ml-2">
+        <div class="row mt-4 mr-2 ml-2">
             <div class="col-12">
                 <h2>Empleos</h2>
                 <table class="table">
@@ -331,7 +333,7 @@
             </div>
         </div>
 
-        <div class="row mt-3 mr-2 ml-2">
+        <div class="row mt-4 mr-2 ml-2">
             <div class="col-12">
                 <h2>Resumen</h2>
                 <table class="table">
@@ -475,7 +477,7 @@
                         <td><%= c.tipoResponsabilidad.toUpperCase() %></td>
                         <td><%= c.tipoCredito.toUpperCase() %></td>
                         <td><%= c.nombreOtorgante.toUpperCase() %></td>
-                        <td><%= (c.numeroPagos ? c.numeroPagos : '') + ' ' + c.frecuenciaPagos %></td>
+                        <td><%= c.numeroPagos %></td>
                         <td><%= c.limiteCredito %></td>
                         <td><%= c.creditoMaximo %></td>
                         <td><%= c.limiteCredito %></td>
@@ -484,7 +486,7 @@
                         <td><%= c.fechaReporte %></td>
                         <td><%= c.fechaAperturaCuenta %></td>
                         <td><%= c.fechaCierreCuenta %></td>
-                        <td><%= c.fechaUltimaCompra %></td>
+                        <td><%= c.fechaUltimoPago %></td>
                         <td><%= c.historicoPagos %></td>
                         <td><%= c.saldoVencidoPeorAtraso %></td>
                     </tr>
@@ -511,14 +513,15 @@
                     <tr>
                         <td><%= c.fechaConsulta %></td>
                         <td><%= c.nombreOtorgante %></td>
-                        <td><%= c.tipoCredito %></td>
+                        <td><%= c.tipoCredito.toString().toUpperCase() %></td>
                         <td><%= c.importeCredito %></td>
                         <td>MXN</td>
                     </tr>
                     <% l++ %>
                     <% }} else { %>
                     <tr>
-                        <td colspan="11" style="font-weight: bold;text-align:center">No existen consultas registradas</td>                        
+                        <td colspan="11" style="font-weight: bold;text-align:center">No existen consultas registradas
+                        </td>
                     </tr>
                     <% }  %>
                 </table>
@@ -530,13 +533,35 @@
                 <h2>PLD CHECK</h2>
                 <table class="table">
                     <tr>
-                        <td class="table-header">Consecutivo</td>
-                        <td class="table-header">Mensaje</td>
+                        <td class="table-header">Listas</td>
+                        <td class="table-header">Tipo de Lista</td>
+                        <td class="table-header">Tipo de Coincidencia</td>
+                        <td class="table-header">Tipo de Parentesco</td>
                     </tr>
+
+                    <% if(data.pld.length > 0) {%>
+                    <% let pldIndex %>
+                    <% for(let r of data.pld) { %>
                     <tr>
-                        <td></td>
-                        <td></td>
+                        <td>
+                            <% for(let l of r.coincidenciaListas) { %>
+                            <span><%= `${l.name} - ${l.description}` %></span><br>
+                            <% } %>
+                        </td>
+                        <td><%= r.tipoLista %></td>
+                        <td><%= r.tipoCoincidencia %></td>
+                        <td><%= r.tipoParentesco %></td>
                     </tr>
+                    <% pldIndex++ %>
+                    <%  }} else { %>
+                    <tr>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                        <td>-</td>
+                    </tr>
+                    <% } %>
+
                 </table>
             </div>
         </div>
@@ -545,10 +570,16 @@
             <div class="col-12">
                 <h2>Mensajes</h2>
                 <table class="table">
+                    <tr>
+                        <td class="table-header">Tipo Mensaje</td>
+                        <td class="table-header">Leyenda</td>
+                        
+                    </tr>
                     <%if(data.mensajes.length > 0) { %>
                     <%let n = 1  %>
                     <% for(let m of data.mensajes) { %>
                     <tr>
+                        <td><%= m.tipoMensajeText %></td>
                         <td><%= m.leyenda %></td>
                     </tr>
                     <% m++ %>

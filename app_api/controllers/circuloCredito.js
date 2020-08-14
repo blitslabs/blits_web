@@ -92,6 +92,7 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
             apellidoPaterno: response.persona.apellidoPaterno,
             apellidoMaterno: response.persona.apellidoMaterno,
             nombres: response.persona.nombres,
+            fechaNacimiento: response.persona.fechaNacimiento,
             RFC: response.persona.RFC,
             nacionalidad: response.persona.nacionalidad,
             residencia: response.persona.residencia,

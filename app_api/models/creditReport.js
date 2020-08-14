@@ -28,6 +28,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
+        fechaNacimiento: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
         RFC: {
             type: DataTypes.STRING,
             allowNull: true
