@@ -1,9 +1,11 @@
 const rp = require('request-promise')
 const CryptoJS = require("crypto-js")
+const { AdminSettings } = require('../app_api/models/sequelize')
 
 module.exports.sendSMS = async function send(phone, message, origin) {
-    const apiKey = process.env.SMS_API_KEY
-    const apiSecret = process.env.SMS_API_SECRET
+    const adminSettings = await AdminSettings.findOne({ where: { id: 1 } })
+    const apiKey = adminSettings.SMS_API_KEY
+    const apiSecret = adminSettings.SMS_API_SECRET
     const ts = Math.floor(Date.now() / 1000)
     const nonce = Math.random().toString(36).substring(5)
     const requestMethod = 'POST'

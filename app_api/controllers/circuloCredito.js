@@ -1,3 +1,4 @@
+const { AdminSettings } = require('../models/sequelize')
 const PreCreditRequest = require('../models/sequelize').PreCreditRequest
 const CreditReport = require('../models/sequelize').CreditReport
 const CreditReportConsulta = require('../models/sequelize').CreditReportConsulta
@@ -28,6 +29,8 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
 
     // Create CreditReport
     sequelize.transaction(async (t) => {
+
+        const adminSettings = await AdminSettings.findOne({ where: { id: 1 }, transaction: t })
 
         const preCreditRequest = await PreCreditRequest.findOne({
             where: {
@@ -69,7 +72,7 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-api-key': process.env.CIRCULO_CREDITO_API_KEY,
+                    'x-api-key': adminSettings.CIRCULO_CREDITO_API_KEY,
                     'x-full-report': true
                 },
                 body: JSON.stringify(params)
@@ -231,16 +234,17 @@ module.exports.getReporteCreditoConsolidadoPrecalificador = (req, res) => {
                 estado: preCreditRequest.entidadFederativa.replace('.', '').toUpperCase(),
                 codigoPostal: preCreditRequest.postalCode,
                 tipoConsulta: 'PF',
-                usuario: process.env.CIRUCLO_CREDITO_USER,
+                usuario: adminSettings.CIRUCLO_CREDITO_USER,
                 fechaAprobacionConsulta: moment().format('YYYY-MM-DD'), // Debe ser anterior (pueden ser segundos) a la fecha de consulta
                 horaAprobacionConsulta: moment().subtract(5, 'seconds').format('HH:mm:ss'),
                 ingresoNuevamenteNip: 'SI',
                 respuestaLeyendaAutorizacion: 'SI',
                 aceptacionTerminos: 'SI',
                 creditRequestsCount,
+                numeroOtorgante: adminSettings.NUMERO_OTORGANTE
             }
 
-            crearAuditFile(auditData)            
+            crearAuditFile(auditData)
         }
 
 
@@ -301,7 +305,7 @@ async function crearAuditFile(data) {
     let record = 'FOLIO_CDC|FECHA_CONSULTA|HORA_CONSULTA|NOMBRE_CLIENTE|RFC|CALLE_NUMERO|COLONIA|CIUDAD|Estado|TIPO_CONSULTA|USUARIO|FECHA_APROBACION_CONSULTA|HORA_APROBACION_CONSULTA|INGRESO_NUEVAMENTE_NIP|RESPUESTA_LEYENDA_AUTORIZACION|ACEPTACION_TERMINOS_Y_CONDICIONES|'
     Object.values(data).map((d) => record += `${d}|`)
     const consecutivo = data.creditRequestsCount.toString().length == 1 ? ('0' + data.creditRequestsCount.toString()) : data.creditRequestsCount
-    const fileName = `${process.env.NUMERO_OTORGANTE}${moment().format('YYMMDD')}${consecutivo}.txt`
+    const fileName = `${data.numeroOtorgante}${moment().format('YYMMDD')}${consecutivo}.txt`
     console.log(fileName)
     await fs.writeFile(path.resolve(APP_ROOT + '/uploads/auditoria/' + fileName), record, 'utf8');
 }

@@ -1,3 +1,4 @@
+const { AdminSettings } = require('../models/sequelize')
 const PreCreditRequest = require('../models/sequelize').PreCreditRequest
 const CreditReport = require('../models/sequelize').CreditReport
 const CreditReportConsulta = require('../models/sequelize').CreditReportConsulta

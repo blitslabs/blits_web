@@ -1,14 +1,17 @@
 const nodemailer = require('nodemailer')
+const { AdminSettings } = require('../app_api/models/sequelize')
 
 module.exports.sendEmail = async function send(toEmail, subject, nip) {
+    const adminSettings = await AdminSettings.findOne({ where: { id: 1 } })
+
     const transporter = nodemailer.createTransport({
-        host: process.env.SMTP_HOST,
-        port: process.env.SMTP_PORT,
+        host: adminSettingsSMTP_HOST,
+        port: adminSettings.SMTP_PORT,
         secure: false,
         use_authentication: true,
         auth: {
-            user: process.env.SMTP_USER,
-            pass: process.env.SMTP_PORT
+            user: adminSettings.SMTP_USER,
+            pass: adminSettings.SMTP_PORT
         }
     })
 
@@ -16,7 +19,7 @@ module.exports.sendEmail = async function send(toEmail, subject, nip) {
 
     try {
         response = await transporter.sendMail({
-            from: `"Sway Lending" <${process.env.SMTP_USER}>`,
+            from: `"Sway Lending" <${adminSettings.SMTP_USER}>`,
             to: toEmail,
             subject: subject,
             text: 'Hello World',

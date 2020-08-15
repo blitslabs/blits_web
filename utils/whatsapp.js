@@ -1,12 +1,13 @@
 const rp = require('request-promise')
+const { AdminSettings } = require('../app_api/models/sequelize')
 
 module.exports.sendWACreditResponse = async (data) => {
-    
+    const adminSettings = await AdminSettings.findOne({ where: { id: 1 } })
     const message = `*${data.primerNombre} ${data.apellidoPaterno},* tenemos Lista tu Pre-Calificación: \n\n RFC: \n _${data.rfc}_ \n\n Resultado: *${data.resultado}* \n\n Monto máximo que puede solicitar: *${data.monto}* \n\n Para más información agenda una visita en nuestra oficina en el siguiente enlace \n\n https://swaylending.com/agendar-cita \n[para poder pulsar el enlace registra este teléfono a tus contactos] \n\n Visita nuestra oficina en Villahermosa Tab, Plaza Deportiva (MEGA) dentro de la plaza arriba de Starbucks.\n\n *Descarga el análisis de tu historial crediticio en el siguiente enlace:* \n ${data.enlaceHistorial}\n\n *Atte. Equipo Sway Lending*`
 
     const params = {
-        token: process.env.WHATSAPP_API_KEY,
-        uid: process.env.WHATSAPP_PHONE_NUMBER,
+        token: adminSettings.WHATSAPP_API_KEY,
+        uid: adminSettings.WHATSAPP_PHONE_NUMBER,
         to: data.phone,
         custom_uid: 'msg-' + Math.floor(100000 + Math.random() * 900000),
         text: message
@@ -26,8 +27,8 @@ module.exports.sendWACreditResponse = async (data) => {
 module.exports.sendWhatsappMessage = async (toPhoneNumber, textMessage) => {
 
     const params = {
-        token: process.env.WHATSAPP_API_KEY,
-        uid: process.env.WHATSAPP_PHONE_NUMBER,
+        token: adminSettings.WHATSAPP_API_KEY,
+        uid: adminSettings.WHATSAPP_PHONE_NUMBER,
         to: toPhoneNumber,
         custom_uid: 'msg-' + Math.floor(100000 + Math.random() * 900000),
         text: textMessage

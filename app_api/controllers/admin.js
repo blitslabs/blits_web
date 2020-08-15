@@ -10,7 +10,7 @@ const emailValidator = require('email-validator')
 // ADMIN KEYS
 module.exports.setAdminKeys = (req, res) => {
     const SMTP_HOST = req.body.SMTP_HOST
-    const SMTP_POST = req.body.SMTP_PORT
+    const SMTP_PORT = req.body.SMTP_PORT
     const SMTP_USER = req.body.SMTP_USER
     const SMTP_PASS = req.body.SMTP_PASS
     const SMS_API_KEY = req.body.SMS_API_KEY
@@ -28,7 +28,7 @@ module.exports.setAdminKeys = (req, res) => {
         const [adminSettings, created] = await AdminSettings.findOrCreate({
             defaults: {
                 SMTP_HOST,
-                SMTP_POST,
+                SMTP_PORT,
                 SMTP_USER,
                 SMTP_PASS,
                 SMS_API_KEY,
@@ -50,7 +50,7 @@ module.exports.setAdminKeys = (req, res) => {
 
         if (!created) {
             adminSettings.SMTP_HOST = SMTP_HOST
-            adminSettings.SMTP_POST = SMTP_POST
+            adminSettings.SMTP_PORT = SMTP_PORT
             adminSettings.SMTP_USER = SMTP_USER
             adminSettings.SMTP_PASS = SMTP_PASS
             adminSettings.SMS_API_KEY = SMS_API_KEY
