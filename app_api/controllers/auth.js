@@ -12,10 +12,7 @@ const emailValidator = require('email-validator')
 const moment = require('moment')
 
 module.exports.signup = function (req, res) {
-    const name = req.body.name
-    const email = req.body.email
-    const dialCode = req.body.dialCode
-    const phone = req.body.phone
+    const email = req.body.email    
     const password = req.body.password
     const rpassword = req.body.rpassword
     const accountType = req.body.accountType
@@ -303,7 +300,7 @@ module.exports.verifyEmail = function (req, res) {
 module.exports.login = function (req, res) {
     const email = req.body.email
     const password = req.body.password
-    console.log(email)
+   
     if (!email || !password) {
         sendJSONresponse(res, 404, { message: 'Ingresa todos los campos requeridos' })
         return

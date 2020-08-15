@@ -1,483 +1,159 @@
 const User = require('../models/sequelize').User
-const Balance = require('../models/sequelize').Balance
-const AdminPermission = require('../models/sequelize').AdminPermission
-const Picture = require('../models/sequelize').Picture
-const passport = require('passport')
 const sequelize = require('../models/sequelize').sequelize
 const sendJSONresponse = require('../../utils/index').sendJSONresponse
 const crypto = require('crypto')
 const fs = require('fs')
+const { GoogleSpreadsheet } = require('google-spreadsheet')
+const { AdminSettings } = require('../models/sequelize')
+const emailValidator = require('email-validator')
 
-module.exports.getAdminData = (req, res) => {
-    const userId = req.user.id
-
-    if (!userId) {
-        sendJSONresponse(res, 422, { status: 'ERROR', message: 'Missing authentication token' })
-        return
-    }
+// ADMIN KEYS
+module.exports.setAdminKeys = (req, res) => {
+    const SMTP_HOST = req.body.SMTP_HOST
+    const SMTP_POST = req.body.SMTP_PORT
+    const SMTP_USER = req.body.SMTP_USER
+    const SMTP_PASS = req.body.SMTP_PASS
+    const SMS_API_KEY = req.body.SMS_API_KEY
+    const SMS_API_SECRET = req.body.SMS_API_SECRET
+    const CIRCULO_CREDITO_API_KEY = req.body.CIRCULO_CREDITO_API_KEY
+    const CIRUCLO_CREDITO_USER = req.body.CIRUCLO_CREDITO_USER
+    const NUMERO_OTORGANTE = req.body.NUMERO_OTORGANTE
+    const WHATSAPP_API_KEY = req.body.WHATSAPP_API_KEY
+    const WHATSAPP_PHONE_NUMBER = req.body.WHATSAPP_PHONE_NUMBER
+    const GOOGLE_CLIENT_EMAIL = req.body.GOOGLE_CLIENT_EMAIL
+    const GOOGLE_SPREADSHEET_ID = req.body.GOOGLE_SPREADSHEET_ID
+    const GOOGLE_SHEET_ID = req.body.GOOGLE_SHEET_ID
 
     sequelize.transaction(async (t) => {
-        const user = await User.findOne({ where: { id: userId }, transaction: t })
-        sendJSONresponse(res, 200, { status: 'OK', payload: user })
+        const [adminSettings, created] = await AdminSettings.findOrCreate({
+            defaults: {
+                SMTP_HOST,
+                SMTP_POST,
+                SMTP_USER,
+                SMTP_PASS,
+                SMS_API_KEY,
+                SMS_API_SECRET,
+                CIRCULO_CREDITO_API_KEY,
+                CIRUCLO_CREDITO_USER,
+                NUMERO_OTORGANTE,
+                WHATSAPP_API_KEY,
+                WHATSAPP_PHONE_NUMBER,
+                GOOGLE_CLIENT_EMAIL,
+                GOOGLE_SPREADSHEET_ID,
+                GOOGLE_SHEET_ID
+            },
+            where: {
+                id: 1,
+            },
+            transaction: t
+        })
+
+        if (!created) {
+            adminSettings.SMTP_HOST = SMTP_HOST
+            adminSettings.SMTP_POST = SMTP_POST
+            adminSettings.SMTP_USER = SMTP_USER
+            adminSettings.SMTP_PASS = SMTP_PASS
+            adminSettings.SMS_API_KEY = SMS_API_KEY
+            adminSettings.SMS_API_SECRET = SMS_API_SECRET
+            adminSettings.CIRCULO_CREDITO_API_KEY = CIRCULO_CREDITO_API_KEY
+            adminSettings.CIRUCLO_CREDITO_USER = CIRUCLO_CREDITO_USER
+            adminSettings.NUMERO_OTORGANTE = NUMERO_OTORGANTE
+            adminSettings.WHATSAPP_API_KEY = WHATSAPP_API_KEY
+            adminSettings.WHATSAPP_PHONE_NUMBER = WHATSAPP_PHONE_NUMBER
+            adminSettings.GOOGLE_CLIENT_EMAIL = GOOGLE_CLIENT_EMAIL
+            adminSettings.GOOGLE_SPREADSHEET_ID = GOOGLE_SPREADSHEET_ID
+            adminSettings.GOOGLE_SHEET_ID = GOOGLE_SHEET_ID
+
+            await adminSettings.save({ transaction: t })
+        }
+
+        sendJSONresponse(res, 200, { status: 'OK', message: 'Admin Keys updated!' })
         return
+
     })
         .catch((err) => {
             console.log(err)
-            sendJSONresponse(res, 422, { status: 'ERROR', message: 'Ocurrió un error al intentar realizar la operación' })
+            sendJSONresponse(res, 422, { status: 'ERROR', message: 'Ocurrió un error al intentar realizar la acción' })
             return
         })
 }
 
-module.exports.adminLogin = (req, res) => {
 
+module.exports.setupAdminGoogleSheet = async (req, res) => {
+    // Spreadsheet key is the long id in the sheets URL
+    const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID)
+
+    // User service account creds
+    await doc.useServiceAccountAuth(require('../config/google_sheets_auth.json'))
+
+    // Load document properties and worksheets
+    await doc.loadInfo()
+
+    // Create Sheet
+    const sheet = await doc.addSheet({
+        headerValues: [
+            'Fecha', 'email', 'Teléfono Móvil', 'Nombre del solicitante', 'Buro (archivo PDF)'
+        ]
+    })
+}
+
+module.exports.adminSignup = (req, res) => {
     const email = req.body.email
-    const password = req.body.password
-
-    if (!email || !password) {
-        sendJSONresponse(res, 404, { message: 'Ingresa todos los campos requeridos' })
-        return
-    }
-
-    passport.authenticate('local', function (err, token, info) {
-        if (err) {
-            sendJSONresponse(res, 404, err)
-            return
-        }
-        if (!token) {
-            sendJSONresponse(res, 401, info)
-            return
-        }
-
-        User.findOne({
-            where: {
-                accountType: 'ADMIN',
-                status: 'ACTIVE'
-            },
-
-        })
-            .then((admin) => {
-                if (!admin) {
-                    sendJSONresponse(res, 404, { status: 'ERROR', message: 'El usuario no existe o no tiene suficientes privilegios' })
-                    return
-                }
-                sendJSONresponse(res, 200, { status: 'OK', token: token })
-                return
-            })
-
-    })(req, res)
-
-}
-
-
-
-module.exports.checkPrivileges = function (req, res) {
-    const userId = req.user.id
-
-    if (!userId) {
-        sendJSONresponse(res, 404, { message: 'Ingresa todos los campos requeridos' })
-        return
-    }
-
-    User.findOne({
-        where: {
-            id: userId,
-            accountType: 'ADMIN',
-            status: 'ACTIVE'
-        },
-        attributes: ['id', 'email', 'accountType', 'accountLevel']
-    })
-        .then((user) => {
-            if (!user) {
-                sendJSONresponse(res, 401, { status: 'ERROR', message: 'Your account does not have enough privileges' })
-                return
-            }
-
-            sendJSONresponse(res, 200, { status: 'OK', payload: 'AUTHORIZED', user })
-            return
-        })
-}
-
-
-module.exports.getAdminPermissions = (req, res) => {
-    const userId = req.user.id
-
-    sequelize.transaction(async (t) => {
-        const permissions = await AdminPermission.findOne({
-            where: {
-                userId
-            },
-            transaction: t
-        })
-
-        sendJSONresponse(res, 200, { status: 'OK', payload: permissions })
-        return
-    })
-        .catch(function (err) {
-            console.log(err)
-            sendJSONresponse(res, 404, { message: 'Error al intentar realizar la operación' })
-            return
-        })
-}
-
-module.exports.getAdminUsers = (req, res) => {
-
-    sequelize.transaction(async (t) => {
-        const adminUsers = await User.findAll({
-            where: {
-                accountType: 'ADMIN'
-            },
-            status: 'ACTIVE'
-        })
-
-        sendJSONresponse(res, 200, { status: 'OK', payload: adminUsers })
-        return
-    })
-        .catch(function (err) {
-            console.log(err)
-            sendJSONresponse(res, 404, { message: 'Error al intentar realizar la operación' })
-            return
-        })
-}
-
-module.exports.getAdminUser = (req, res) => {
-
-    const userId = req.params.userId
-
-    sequelize.transaction(async (t) => {
-        const permissions = await AdminPermission.findOne({
-            where: {
-                userId
-            },
-            transaction: t
-        })
-
-        sendJSONresponse(res, 200, { status: 'OK', payload: permissions })
-        return
-    })
-        .catch(function (err) {
-            console.log(err)
-            sendJSONresponse(res, 404, { message: 'Error al intentar realizar la operación' })
-            return
-        })
-}
-
-module.exports.createAdminUser = (req, res) => {
-    const userId = req.user.id
-
-    // account data
-    const name = req.body.name
-    const email = req.body.email
-    const phone = req.body.phone
     const password = req.body.password
     const rpassword = req.body.rpassword
-    const pictureData = req.body.pictureData
 
-    // permissions
-    const dashboard = req.body.dashboard
-    const globalMap = req.body.globalMap
-    const users = req.body.users
-    const drivers = req.body.drivers
-    const admins = req.body.admins
-    const documents = req.body.documents
-    const rides = req.body.rides
-    const vehicles = req.body.vehicles
-    const vehicleMapping = req.body.vehicleMapping
-    const zones = req.body.zones
-    const farePlans = req.body.farePlans
-    const wallets = req.body.wallets
-    const finances = req.body.finances
-    const paymentHistory = req.body.paymentHistory
-    const bankAccounts = req.body.bankAccounts
-    const reviews = req.body.reviews
-    const promoCodes = req.body.promoCodes
-    const referrals = req.body.referrals
-    const pushNotifications = req.body.pushNotifications
-    const support = req.body.support
-    const lostItems = req.body.lostItems
-    const businessSettings = req.body.businessSettings
-    const paymentSettings = req.body.paymentSettings
-    
-    if (!userId || !name || !email || !phone || !password || !rpassword) {
+    // check if all field were sent
+    if (!email || !password || !rpassword) {
         sendJSONresponse(res, 422, { status: 'ERROR', message: 'Ingresa todos los campos requeridos' })
         return
     }
 
+    // check that the passwords are the same
     if (password !== rpassword) {
         sendJSONresponse(res, 422, { status: 'ERROR', message: 'Las contraseñas ingresadas no coinciden' })
         return
     }
 
-    sequelize.transaction(async (t) => {
+    if (!emailValidator.validate(email)) {
+        sendJSONresponse(res, 404, { status: 'ERROR', message: 'Ingresa un email válido' })
+        return
+    }
 
-        // Check that user has permissions
-        const permissions = await AdminPermission.findOne({
+    sequelize.transaction(async function (t) {
+
+        // Check if there are admin accounts
+        const adminAccountsExist = await User.count({
             where: {
-                userId,
+                accountType: 'ADMIN'
             },
-            transaction: t
+            transaction: t 
         })
-
-        if (!permissions || permissions.admins == 0) {
-            sendJSONresponse(res, 404, { status: 'ERROR', message: 'No tienes suficientes permisos para realizar la acción' })
+        
+        if(adminAccountsExist > 0) {
+            sendJSONresponse(res, 422, { status: 'ERROR', message: 'An Admin Account already exists'})
             return
         }
 
         const [user, created] = await User.findOrCreate({
             where: {
-                $or: [
-                    { email: { $eq: email } },
-                    { phone: { $eq: phone } }
-                ]
+                email,
             },
             defaults: {
-                name, email, phone,
-                accountType: 'ADMIN',
-                emailVerified: 1,
-                phoneVerified: 1
+                email,
+                accountType: 'ADMIN'
             },
             transaction: t
         })
 
-        let imageBuffer, newName, imagePath, picture
-        if (pictureData) {
-            imageBuffer = new Buffer(pictureData, 'base64')
-            newName = crypto.randomBytes(16).toString('hex')
-            imagePath = './uploads/images/' + newName + '.png'
-
-            try {
-                let saveImage = new Promise((resolve, reject) => {
-                    fs.writeFile(imagePath, imageBuffer, (err) => {
-                        if (err) {
-                            reject(err)
-                        }
-                        resolve(true)
-                    })
-                })
-                await saveImage
-                picture = await Picture.create({
-                    userId: user.id,
-                    path: imagePath
-                }, { transaction: t })
-            }
-            catch (error) {
-                console.log(error)
-                sendJSONresponse(res, 404, { status: 'ERROR', message: 'Ocurrió un error al intentar guardar la imagen' })
-                return
-            }
+        if (!created) {
+            sendJSONresponse(res, 404, { status: 'ERROR', message: 'El email ingresado ya se encuentra registrado' })
+            return
         }
 
         user.setPassword(password)
-        user.pictureId = pictureData ? picture.id : null
         await user.save({ transaction: t })
 
-        await Balance.create({
-            userId: user.id,
-            currency: 'MXN',
-            available: 0,
-            locked: 0
-        }, { transaction: t })
-
-        if (!created) {
-            await AdminPermission.update({
-                dashboard,
-                globalMap,
-                users,
-                drivers,
-                admins,
-                documents,
-                rides,
-                vehicles,
-                vehicleMapping,
-                zones,
-                farePlans,
-                wallets,
-                finances,
-                paymentHistory,
-                bankAccounts,
-                reviews,
-                promoCodes,
-                referrals,
-                pushNotifications,
-                support,
-                lostItems,
-                businessSettings,
-                paymentSettings,
-            }, {
-                where: {
-                    userId: user.id,
-                },
-                transaction: t
-            })
-        } else {
-            await AdminPermission.create({
-                userId: user.id,
-                dashboard,
-                globalMap,
-                users,
-                drivers,
-                admins,
-                documents,
-                rides,
-                vehicles,
-                vehicleMapping,
-                zones,
-                farePlans,
-                wallets,
-                finances,
-                paymentHistory,
-                bankAccounts,
-                reviews,
-                promoCodes,
-                referrals,
-                pushNotifications,
-                support,
-                lostItems,
-                businessSettings,
-                paymentSettings,
-            }, { transaction: t })
-        }
-
-        const payload = await User.findOne({
-            where: {
-                id:  user.id
-            },
-            include: [
-                { model: AdminPermission }
-            ],
-            transaction: t
-        })
-
-        sendJSONresponse(res, 200, { status: 'OK', payload: payload, message: 'Usuario y permisos creados correctamente' })
-        return
-
-    })
-        .catch(function (err) {
-            console.log(err)
-            sendJSONresponse(res, 404, { message: 'Error al intentar realizar la operación' })
-            return
-        })
-}
-
-module.exports.updateAdminUserPermissions = (req, res) => {
-
-    const adminId = req.user.id    
-    const userId = req.body.userId
-
-    // permissions
-    const dashboard = req.body.dashboard
-    const globalMap = req.body.globalMap
-    const users = req.body.users
-    const drivers = req.body.drivers
-    const admins = req.body.admins
-    const documents = req.body.documents
-    const rides = req.body.rides
-    const vehicles = req.body.vehicles
-    const vehicleMapping = req.body.vehicleMapping
-    const zones = req.body.zones
-    const farePlans = req.body.farePlans
-    const wallets = req.body.wallets
-    const finances = req.body.finances
-    const paymentHistory = req.body.paymentHistory
-    const bankAccounts = req.body.bankAccounts
-    const reviews = req.body.reviews
-    const promoCodes = req.body.promoCodes
-    const referrals = req.body.referrals
-    const pushNotifications = req.body.pushNotifications
-    const support = req.body.support
-    const lostItems = req.body.lostItems
-    const businessSettings = req.body.businessSettings
-    const paymentSettings = req.body.paymentSettings
-
-    if(!adminId || !userId) {
-        sendJSONresponse(res, 422, { status: 'ERROR', message: 'Ingresa todos los campos requeridos'})
-        return
-    }
-
-    sequelize.transaction(async (t) => {
-
-        // Check that user has permissions
-        let permissions = await AdminPermission.findOne({
-            where: {
-                userId: adminId,
-            },
-            transaction: t
-        })
-
-        if (!permissions || permissions.admins == 0) {
-            sendJSONresponse(res, 404, { status: 'ERROR', message: 'No tienes suficientes permisos para realizar la acción' })
-            return
-        }
-
-        await AdminPermission.update({
-            dashboard,
-            globalMap,
-            users,
-            drivers,
-            admins,
-            documents,
-            rides,
-            vehicles,
-            vehicleMapping,
-            zones,
-            farePlans,
-            wallets,
-            finances,
-            paymentHistory,
-            bankAccounts,
-            reviews,
-            promoCodes,
-            referrals,
-            pushNotifications,
-            support,
-            lostItems,
-            businessSettings,
-            paymentSettings,
-        }, {
-            where: {
-                userId,
-            },
-            transaction: t
-        })
-
-        sendJSONresponse(res, 200, { status: 'OK', payload: permissions, message: 'Permisos actualizados correctamente' })
-        return
-
-    })
-        .catch(function (err) {
-            console.log(err)
-            sendJSONresponse(res, 404, { message: 'Error al intentar realizar la operación' })
-            return
-        })
-}
-
-module.exports.deleteAdminUser = (req, res) => {
-    const adminId = req.user.id
-    const userId = req.params.userId
-
-    sequelize.transaction(async (t) => {
-
-        // Check that user has permissions
-        const permissions = await AdminPermission.findOne({
-            where: {
-                userId: adminId,
-            },
-            transaction: t
-        })
-
-        if (!permissions || permissions.admins == 0) {
-            sendJSONresponse(res, 404, { status: 'ERROR', message: 'No tienes suficientes permisos para realizar la acción' })
-            return
-        }
-
-        await User.destroy({
-            where: {
-                id: userId,
-            },
-            limit: 1,
-            transaction: t
-        })
-
-        sendJSONresponse(res, 200, { status: 'OK', message: 'Administrador eliminado correctamente' })
+        sendJSONresponse(res, 200, { status: 'OK', message: 'Cuenta creada correctamente'})
         return
     })
         .catch(function (err) {
@@ -485,4 +161,5 @@ module.exports.deleteAdminUser = (req, res) => {
             sendJSONresponse(res, 404, { message: 'Error al intentar realizar la operación' })
             return
         })
+
 }

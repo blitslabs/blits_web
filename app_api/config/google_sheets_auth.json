@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "softbot",
+  "private_key_id": "69105c7ee42a6a33f30819585377207456b4e90a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCP5BU0vxloP6KF\nD682G+shJDejvDWOJ+7k6OyHSjDlycvvrlT1Jxyh6aJx8RIMZfheuvIXvgTshme8\nHKtsYD26Pr15KEt/fkv9VkPYYvL5E51EElpMuosE1Rc5cN3UsBcWHWdsTRUuFqiD\n9BKVk6THWP1LcgreitkDN9dYyViqQqN9mJCIJI3zNvruJ9c4OdPgYB8tV4cHmrnx\nCx7DmSHS2Y1S1Ep69JveUjVBUGHkUFjbckZZZGHxlgJIyr+xmdX1Zs4RaCBKIPO1\nKlNvpF6tiVFc39zN5pS9FXbR2vH7MMNiFEVpSCfzf7yEMLdAJ3tHqGJIJBJTgGt+\nFpOOfF6fAgMBAAECggEAB+yuePfdVQR21Y/bknCkg8Vphbb5LBm+6mnO56nfr4gW\n7IhUCCcInfzZWXUcDVrAUaycu09Xw2mo5OSfUZoAoZ/lnM/p+IeNdSepwje7h0Qx\nRm0hqVV3ZTi8eAljQ4dp02n4fC/H7tXd9LEdz5G7Ys81LqaFOrm4N0PStFfCblNQ\nEA0gJrzIiUVH/Jt6+Km4ORyYaEoWFB4eFIQvZ8SzrgFynKnAeMU9UBl3c1d+EaE6\nLczCml9VfFpuu0Rt2zWk+6KHkvMyK5yTyNNnXDqXxtzHTv0FIxWxvic9wI2DPrcp\nFrbHLxx1Tf1NWbZegKJgLBzAw0vhJxsrVgW/ci2jIQKBgQDE2OAC7sy5kzAqEetA\no1Hg8BrvHkUoSRCilbE0kpvnt0LzbE0sl4lsz5rqEOw4MduUgpOxJx30f/aQQakU\nZFwWHMz5pDpn61jhXjSrMUZiK/0YMlFbhaDAP56VV04pgtQDd70vrjXnWDotxe+R\noLBnYaLYwpgmrc3pWbeu3qjiUwKBgQC7IV+85L5MzkKvDz9cUQz1GhtHu6xx+Yl2\nZtKXWgZYRcfsNyt+K6ShA3RGl6RGjkkvFzgEYJJITNdOcZT243QEyotqr+/7OJHU\n3U5ZrqwBgnQ83vjjD1SGMn7U0ixuVEFWnvpFo1wU7k7fSrXUpb0w8a7BODzUE6iw\nZYv+UgfhBQKBgQCwn7hAaWyghoUM+o8PrHtnTYmdTJfZEdYvTAl4lqP1QeZ87IxC\nmqXgUFc79ns94N6ZXqCOr/6cx8TAo2nGtlY6MRVqWgVeATn63cB8avYwWC/8agm+\nCSS32127ul6TuKPriKDkC3iqX+uz7oqLLJeb62tm+xPygLjlzG6YJYl7qQKBgQCj\nUpKLe513zYG35nfna7oCZgGvTuZIJ4HJPB7LCECHZIgD63bjTNYHzcr7Hbi79815\n8yrp7xtdTOuRxGI+RPBqihi6ScoLGil1fp22elQXkTNAOV9CVYvxADtgJfuvY4wP\nPPu0McrZXdCq5Drk2K7R++4JJ7s3Yd0V79sKYbAMvQKBgCUZ2ncQAR27p9ua9lbL\n7NyRnVO4UUmyoqDANhVlui6w4OyIgVYAz5+JisjV1SZXB5zzz6vBzZW7m6QrDSrf\nV6zlKPonYiYv5ip4kEpL3ldhd6hcX5PEUZoDOu5YNefRT6NDXM6nC9JNG2Bo+lSz\ntyrDeGxGI4M4R2g+td/Gwn+k\n-----END PRIVATE KEY-----\n",
+  "client_email": "swaylending@softbot.iam.gserviceaccount.com",
+  "client_id": "106363793598689818274",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/swaylending%40softbot.iam.gserviceaccount.com"
+}

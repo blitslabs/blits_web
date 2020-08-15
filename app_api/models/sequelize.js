@@ -8,6 +8,8 @@ const CreditReportDomicilioModel = require('./creditReportDomicilio')
 const CreditReportEmpleoModel = require('./creditReportEmpleo')
 const CreditReportMensajeModel = require('./creditReportMensaje')
 const CreditReportScoreModel = require('./creditReportScore')
+const AdminSettingsModel = require('./adminSettings')
+const UserModel = require('./user')
 
 const sequelize = new Sequelize(
     process.env.DB_NAME,
@@ -34,6 +36,8 @@ const CreditReportDomicilio = CreditReportDomicilioModel(sequelize, Sequelize)
 const CreditReportEmpleo = CreditReportEmpleoModel(sequelize, Sequelize)
 const CreditReportMensaje = CreditReportMensajeModel(sequelize, Sequelize)
 const CreditReportScore = CreditReportScoreModel(sequelize, Sequelize)
+const AdminSettings = AdminSettingsModel(sequelize, Sequelize)
+const User = UserModel(sequelize, Sequelize)
 
 sequelize
     .query('SET FOREIGN_KEY_CHECKS = 0', { raw: true })
@@ -54,5 +58,7 @@ module.exports = {
     CreditReportEmpleo,
     CreditReportMensaje,
     CreditReportScore,
+    AdminSettings,
+    User,
     sequelize,
 }

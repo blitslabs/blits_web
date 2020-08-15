@@ -36,15 +36,16 @@ app.use('/', routesAdmin)
 global.APP_ROOT = path.resolve(__dirname)
 
 app.use((err, req, res, next) => {
+    console.log(err)
     if (err.name === 'UnauthorizedError') {
         res.status(401)
-        res.json({ message: 'Unauthorized user' })
+        res.json({ status: 'ERROR', message: 'Unauthorized user' })
     } else if (err.code === 'EBADCSRFTOKEN') {
         res.status(403)
         res.send('CSRF verification failed')
     } else if (err.message === 'missing_token_cookie') {
         res.status(401)
-        res.json({ message: 'User not authenticated' })
+        res.json({ status: 'ERROR', message: 'User not authenticated' })
         res.end()
     }
 })
