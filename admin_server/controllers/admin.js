@@ -18,13 +18,6 @@ module.exports.renderApp = function(req, res) {
     })
 }
 
-module.exports.renderPrecalificador = (req, res) => {
-    res.render('precalificador_container', {
-        host: process.env.SERVER_HOST,
-        react_host: process.env.REACT_HOST
-    })
-}
-
 module.exports.renderHome = (req, res) => {
     res.render('home', {
         host: process.env.SERVER_HOST,

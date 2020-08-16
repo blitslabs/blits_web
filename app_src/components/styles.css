@@ -1,181 +1,62 @@
-.preloader {
-    display: inline-block;
+.welcome-area {
+    /* background: rgba(0, 0, 0, 0) url("https://images.pexels.com/photos/2471234/pexels-photo-2471234.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260") no-repeat scroll center center / cover; */
+    background: none;
+}
+.bg-overlay::after {
+    /* background: linear-gradient(-47deg, #00000000 0%, #000000 100%); */
+    background: none;
 }
 
-.btn-icon {
-    font-size: 0.8em !important;
+.navbar-dark .navbar-nav .nav-link {
+    color: black;
 }
 
-.action-btn {
-    margin-right: 5px;
+.navbar-brand-regular{
+    height: 40px;
 }
 
-.dropzone {
-    border-collapse: separate;
-    caption-side: top;
-    caret-color: auto;
-    cursor: auto;
-    empty-cells: show;
-    font-feature-settings: normal;
-    font-kerning: auto;
-    hyphens: none;
-    image-rendering: auto;
-    letter-spacing: normal;
-    list-style-image: none;
-    list-style-position: outside;
-    list-style-type: disc;
-    orphans: 2;
-    pointer-events: auto;
-    quotes: initial;
-    tab-size: 8;
-    text-align: initial;
-    text-align-last: auto;
-    text-combine-upright: none;
-    text-indent: 0px;
-    text-orientation: mixed;
-    text-rendering: auto;
-    text-shadow: none;
-    text-transform: none;
-    text-underline-position: auto;
-    visibility: visible;
-    white-space: normal;
-    widows: 2;
-    word-break: normal;
-    word-spacing: normal;
-    overflow-wrap: normal;
-    writing-mode: horizontal-tb;
-    border-spacing: 0px;
-    font: inherit;
-    font-family: sans-serif;
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-    border-width: 2px;
-    border-radius: 2px;
-    border-color: #eeeeee;
-    border-style: dashed;
-    background-color: #fafafa;
-    color: #bdbdbd;
-    outline: none;
-    transition: border .24s ease-in-out;
-    border: 2px dashed !important;
+.page-subtitle {
+    font-weight: lighter;
+    font-size: 28px;
+    line-height: 40px;
 }
 
-.dropzone-container {
-    border-collapse: separate;
-    caption-side: top;
-    caret-color: auto;
-    color: inherit;
-    cursor: auto;
-    empty-cells: show;
-    font-feature-settings: normal;
-    font-kerning: auto;
-    hyphens: none;
-    image-rendering: auto;
-    letter-spacing: normal;
-    list-style-image: none;
-    list-style-position: outside;
-    list-style-type: disc;
-    orphans: 2;
-    pointer-events: auto;
-    quotes: initial;
-    tab-size: 8;
-    text-align: initial;
-    text-align-last: auto;
-    text-combine-upright: none;
-    text-indent: 0px;
-    text-orientation: mixed;
-    text-rendering: auto;
-    text-shadow: none;
-    text-transform: none;
-    text-underline-position: auto;
-    visibility: visible;
-    white-space: normal;
-    widows: 2;
-    word-break: normal;
-    word-spacing: normal;
-    overflow-wrap: normal;
-    writing-mode: horizontal-tb;
-    border-spacing: 0px;
-    font: inherit;
-    display: flex;
-    flex-direction: column;
-    font-family: sans-serif;
+.btn-blits {
+    background: #32CCDD;
 }
 
-.dropzone-text {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 200px;
-    width: 100%;
+.image-box {
+    background: white;
 }
 
-.time-picker {
-    width: 33.3%;
-    margin-right: 10px;
+.feature-text {
+    font-size: 18px;
 }
 
-.time-picker-sm {
-    width: 25%;
-    margin-right: 10px;
+footer {
+    background:black !important;
 }
 
-.dayFareContainer {
-    display: flex;
-    margin-top: 10px;
+.footer-link {
+    color: white;
 }
 
-/* width */
-
-.sidebar-body::-webkit-scrollbar {
-    width: 10px;
+.social-icons > a.blits {
+    background-color: black !important;
 }
 
-/* Track */
-
-.sidebar-body::-webkit-scrollbar-track {
-    background: #0c1427;
+.download-area {
+    background: rgba(0, 0, 0, 0) url("https://images.pexels.com/photos/2471234/pexels-photo-2471234.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260") no-repeat fixed center center / cover;
 }
 
-/* Handle */
-
-.sidebar-body::-webkit-scrollbar-thumb {
-    background: #0c1427;
+.overylay-blits::after {
+    background-color: rgb(16 16 45 / 54%) !important;
 }
 
-/* Handle on hover */
-
-.sidebar-body::-webkit-scrollbar-thumb:hover {
-    background: #3b3e47;
+.dark-link {
+    color: #32ccdd;
 }
 
-/* Toast styles */
-.Toastify__toast--success {
-    background-color: rgb(16, 183, 89) !important;
-}
-.Toastify__toast--error {
-    background-color: rgb(233, 30, 99) !important;    
-}
-
-.daterange-btn {
-    display: flex;
-    background-color:rgb(239, 242, 247);
-   
-}
-
-.date-container {
-    background-color: white;
-    border-radius: 4px;
-    background-color: rgb(255, 255, 255);
-    box-shadow: 0 1px 2px 0 rgba(35, 57, 66, 0.21);
-    border: 1px solid transparent;
-    cursor: pointer;
-    height: 2.5em;
-    line-height: 2.5em;
-    border: 0px;
-    margin: 0.833em;
-    width: 100%;
+.dark-link:hover {
+    color: white;
 }

@@ -2,17 +2,20 @@ import React, { Component, Fragment } from 'react'
 import { BrowserRouter as Router, Route, Redirect } from 'react-router-dom'
 import { connect } from 'react-redux'
 
-// components
-import Loading from './Loading'
+
 
 import withAuth from './withAuth'
 import withAdminAuth from './withAdminAuth'
+
+import Home from './app/Home/Home'
 
 // App Router
 import AppRouter from './app/AppRouter'
 
 // Admin Router
-import Admin from './admin/Admin'
+// import Admin from './admin/Admin'
+
+import './styles.css'
 
 class App extends Component {
 
@@ -23,7 +26,7 @@ class App extends Component {
   render() {
     
     const { loading, match } = this.props
-    console.log(this.props)
+    
     return (
       <Router>
         <Fragment>
@@ -32,9 +35,9 @@ class App extends Component {
             ? <Loading />
             :
             <Fragment>       
-              { }       
-              <Route path='/app' component={AppRouter} />
-              <Route path='/admin' component={Admin} />
+              <Route path='/' component={AppRouter} />
+              
+              {/* <Route path='/admin' component={Admin} /> */}
             </Fragment>
           }
         </Fragment>
