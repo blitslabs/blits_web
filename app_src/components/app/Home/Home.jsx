@@ -220,7 +220,7 @@ class Home extends Component {
 
                                     {/* Service Thumb */}
                                     <div className="service-thumb mx-auto  text-center">
-                                        <img style={{ borderRadius: '1.5rem', maxWidth: '80%' }} className="vcenter" src="assets/images/blits3.gif" />
+                                        <img style={{ borderRadius: '1.5rem', maxWidth: '80%' }} className="vcenter" src="assets/images/blits_compressed.gif" />
                                     </div>
                                 </div>
                             </div>
@@ -240,15 +240,13 @@ class Home extends Component {
                                 <div className="col-12 col-lg-6 order-1 order-lg-2">
                                     {/* Discover Text */}
                                     <div className="discover-text pt-4 pt-lg-0">
-                                        <h2 className="pb-4 pb-sm-0">
-                                            Atomic Loans
-              </h2>
+                                        <h2 className="pb-4 pb-sm-0">Atomic Loans</h2>
+
+
                                         <p className="d-none d-sm-block pt-3 pb-4">
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                            Similique dolor ut iusto vitae autem neque eum ipsam, impedit
-                                            asperiores vel cumque laborum dicta repellendus inventore
-                                            voluptatibus et explicabo nobis unde.
-              </p>
+                                            Cross-chain collaterized loans allow people to borrow Ethereum-based stablecoins while locking Harmony as collateral, or vice versa.
+                                            
+                                        </p>
                                         {/* Check List */}
                                         <ul className="check-list">
                                             <li className="py-1">
@@ -260,7 +258,7 @@ class Home extends Component {
                                                     <span className="media-body pl-2">
                                                         Combined with a handful of model sentence structures looks
                                                         reasonable.
-                    </span>
+                                                    </span>
                                                 </div>
                                             </li>
                                             <li className="py-1">
@@ -270,9 +268,8 @@ class Home extends Component {
                                                         <i className="fas fa-check" />
                                                     </span>
                                                     <span className="media-body pl-2">
-                                                        Contrary to popular belief, Lorem Ipsum is not simply
-                                                        random text.
-                    </span>
+                                                        Without intermediaries (Non-custodial).
+                                                    </span>
                                                 </div>
                                             </li>
                                             <li className="py-1">
@@ -282,9 +279,8 @@ class Home extends Component {
                                                         <i className="fas fa-check" />
                                                     </span>
                                                     <span className="media-body pl-2">
-                                                        Sed ut perspiciatis unde omnis iste natus error sit
-                                                        voluptatem accusantium.
-                    </span>
+                                                        Across Blockchains (Cross-chain).
+                                                    </span>
                                                 </div>
                                             </li>
                                             <li className="py-1">
@@ -294,21 +290,20 @@ class Home extends Component {
                                                         <i className="fas fa-check" />
                                                     </span>
                                                     <span className="media-body pl-2">
-                                                        All the Lorem Ipsum generators on the Internet tend to
-                                                        repeat necessary.
-                    </span>
+                                                        Get liquidity without selling your assets.
+                                                    </span>
                                                 </div>
                                             </li>
                                         </ul>
                                         <div className="icon-box d-flex mt-3">
                                             <div className="service-icon">
                                                 <span>
-                                                    <i className="fas fa-bell" />
+                                                    <i className="fas fa-book" />
                                                 </span>
                                             </div>
                                             <div className="service-icon px-3">
                                                 <span>
-                                                    <i className="fas fa-envelope-open" />
+                                                    <i className="fab fa-github" />
                                                 </span>
                                             </div>
                                             <div className="service-icon">
@@ -330,7 +325,7 @@ class Home extends Component {
                                 <div className="col-12 col-lg-6">
                                     {/* Work Content */}
                                     <div className="work-content text-center">
-                                        <h2 className="text-white">How do <span style={{ color: '#32ccdd' }}>Atomic Loans</span> Work?</h2>
+                                        <h2 className="text-white">How to get an <span style={{ color: '#32ccdd' }}>Atomic Loan</span>?</h2>
                                         <p className="text-white my-3 mt-sm-4 mb-sm-5">
                                             Non-custodial Cross-chain loans (Atomic Loans) allow users to borrow/lend assets across different Blockchains
                                         </p>
@@ -404,15 +399,12 @@ class Home extends Component {
                                     {/* Section Heading */}
                                     <div className="section-heading text-center">
                                         <h2 className="text-capitalize">Frequently asked questions</h2>
-                                        <p className="d-none d-sm-block mt-4">
+                                        {/* <p className="d-none d-sm-block mt-4">
                                             Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                                             Laborum obcaecati dignissimos quae quo ad iste ipsum officiis
                                             deleniti asperiores sit.
-              </p>
-                                        <p className="d-block d-sm-none mt-4">
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                            Laborum obcaecati.
-              </p>
+                                        </p> */}
+                                        
                                     </div>
                                 </div>
                             </div>
@@ -430,19 +422,14 @@ class Home extends Component {
                                                         <div className="card-header bg-inherit border-0 p-0">
                                                             <h2 className="mb-0">
                                                                 <button className="btn px-0 py-3" type="button">
-                                                                    How to install sApp?
-                          </button>
+                                                                    How do Atomic Loans work?
+                                                                </button>
                                                             </h2>
                                                         </div>
                                                         {/* Card Body */}
                                                         <div className="card-body px-0 py-3">
-                                                            The point of using Lorem Ipsum is that it has a
-                                                            more-or-less normal distribution of letters, as opposed
-                                                            to using 'Content here, content here', making it look
-                                                            like readable English. Many desktop publishing packages
-                                                            and web page editors now use Lorem Ipsum as their
-                                                            default model text.
-                      </div>
+                                                            The protocol uses Hashed Time Lock Contracts (HTLC) on the Harmony and Ethereum blockchains to facilitate trustless exchange and the collateralization of loans without a central authority.
+                                                        </div>
                                                     </div>
                                                     {/* Single Card */}
                                                     <div className="card border-0">
@@ -450,21 +437,14 @@ class Home extends Component {
                                                         <div className="card-header bg-inherit border-0 p-0">
                                                             <h2 className="mb-0">
                                                                 <button className="btn px-0 py-3" type="button">
-                                                                    Can I get support from the Author?
-                          </button>
+                                                                    Why do we need Non-custodial Cross-chain loans?
+                                                                </button>
                                                             </h2>
                                                         </div>
                                                         {/* Card Body */}
                                                         <div className="card-body px-0 py-3">
-                                                            Contrary to popular belief, Lorem Ipsum is not simply
-                                                            random text. It has roots in a piece of classical Latin
-                                                            literature from 45 BC, making it over 2000 years old.
-                                                            Richard McClintock, a Latin professor at Hampden-Sydney
-                                                            College in Virginia, looked up one of the more obscure
-                                                            Latin words, consectetur, from a Lorem Ipsum passage,
-                                                            and going through the cites of the word in classical
-                                                            literature, discovered the undoubtable source.
-                      </div>
+                                                            Atomic Loans allow us to create interoperability between Ethereum (where the majority of the DEFI ecosystem is locked) and other blockains like Harmony where we can take advantage of the lower fees and fast finality.
+                                                        </div>
                                                     </div>
                                                     {/* Single Card */}
                                                     <div className="card border-0">
@@ -472,20 +452,14 @@ class Home extends Component {
                                                         <div className="card-header bg-inherit border-0 p-0">
                                                             <h2 className="mb-0">
                                                                 <button className="btn px-0 py-3" type="button">
-                                                                    Do you have a free trail?
-                          </button>
+                                                                   What's a Hashed Time Lock Contract (HTLC)?
+                                                                </button>
                                                             </h2>
                                                         </div>
                                                         {/* Card Body */}
                                                         <div className="card-body px-0 py-3">
-                                                            It has survived not only five centuries, but also the
-                                                            leap into electronic typesetting, remaining essentially
-                                                            unchanged. It was popularised in the 1960s with the
-                                                            release of Letraset sheets containing Lorem Ipsum
-                                                            passages, and more recently with desktop publishing
-                                                            software like Aldus PageMaker including versions of
-                                                            Lorem Ipsum.
-                      </div>
+                                                            A HTLC enables a user to lock funds and have another part redeem them using a preimage (or secret). If they do not redeem the funds within the lock time, the original party can refund the amount.
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div className="col-12 col-md-6">
@@ -495,20 +469,14 @@ class Home extends Component {
                                                         <div className="card-header bg-inherit border-0 p-0">
                                                             <h2 className="mb-0">
                                                                 <button className="btn px-0 py-3" type="button">
-                                                                    How can I edit my personal information?
-                          </button>
+                                                                    What Assets will it support?
+                                                                </button>
                                                             </h2>
                                                         </div>
                                                         {/* Card Body */}
                                                         <div className="card-body px-0 py-3">
-                                                            Sed ut perspiciatis unde omnis iste natus error sit
-                                                            voluptatem accusantium doloremque laudantium, totam rem
-                                                            aperiam, eaque ipsa quae ab illo inventore veritatis et
-                                                            quasi architecto beatae vitae dicta sunt explicabo. Nemo
-                                                            enim ipsam voluptatem quia voluptas sit aspernatur aut
-                                                            odit aut fugit, sed quia consequuntur magni dolores eos
-                                                            qui ratione voluptatem sequi nesciunt.
-                      </div>
+                                                            At launch, users will be able to borrow/lend stablecoins (on the Harmony or Ethereum blockchains) using ONE or ETH as collateral.
+                                                        </div>
                                                     </div>
                                                     {/* Single Card */}
                                                     <div className="card border-0">
@@ -516,20 +484,14 @@ class Home extends Component {
                                                         <div className="card-header bg-inherit border-0 p-0">
                                                             <h2 className="mb-0">
                                                                 <button className="btn px-0 py-3" type="button">
-                                                                    Contact form isn't working?
-                          </button>
+                                                                    How to interact with the Smart Contracts?
+                                                                </button>
                                                             </h2>
                                                         </div>
                                                         {/* Card Body */}
                                                         <div className="card-body px-0 py-3">
-                                                            There are many variations of passages of Lorem Ipsum
-                                                            available, but the majority have suffered eration in
-                                                            some form, by injected humour, or randomised words which
-                                                            don't look even slightly believable. If you are going to
-                                                            use a passage of Lorem Ipsum, you need to be sure there
-                                                            isn't anything embarrassing hidden in the middle of
-                                                            text.
-                      </div>
+                                                            Users will be able to interact with the Smart Contracts system through a web interface using browser extensions and through the Blits mobile wallet.
+                                                        </div>
                                                     </div>
                                                     {/* Single Card */}
                                                     <div className="card border-0">
@@ -537,27 +499,21 @@ class Home extends Component {
                                                         <div className="card-header bg-inherit border-0 p-0">
                                                             <h2 className="mb-0">
                                                                 <button className="btn px-0 py-3" type="button">
-                                                                    Contact form isn't working?
-                          </button>
+                                                                    Why should I use it instead of Centralized Crypto-Backed Loans?
+                                                                </button>
                                                             </h2>
                                                         </div>
                                                         {/* Card Body */}
                                                         <div className="card-body px-0 py-3">
-                                                            There are many variations of passages of Lorem Ipsum
-                                                            available, but the majority have suffered eration in
-                                                            some form, by injected humour, or randomised words which
-                                                            don't look even slightly believable. If you are going to
-                                                            use a passage of Lorem Ipsum, you need to be sure there
-                                                            isn't anything embarrassing hidden in the middle of
-                                                            text.
-                      </div>
+                                                            Centralized lending solutions require users to deposit assets into a centralized escrow. Thus, these loans require users to trust a central party that can seize or steal the funds at any moment. With Non-custodial loans you never have to give up your private keys or trust a central escrow.
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className="row justify-content-center">
                                                 <p className="text-body text-center pt-4 fw-5">
                                                     Haven't find suitable answer?{" "}
-                                                    <a href="#">Tell us what you need.</a>
+                                                    <a href="#">Contact Us</a>
                                                 </p>
                                             </div>
                                         </div>
