@@ -1,15 +1,5 @@
 const Sequelize = require('sequelize')
-const SepomexModel = require('./sepomex')
-const PreCreditRequestModel = require('./preCreditRequest')
-const CreditReportModel = require('./creditReport')
-const CreditReportConsultaModel = require('./creditReportConsulta')
-const CreditReportCreditoModel = require('./creditReportCredito')
-const CreditReportDomicilioModel = require('./creditReportDomicilio')
-const CreditReportEmpleoModel = require('./creditReportEmpleo')
-const CreditReportMensajeModel = require('./creditReportMensaje')
-const CreditReportScoreModel = require('./creditReportScore')
-const AdminSettingsModel = require('./adminSettings')
-const UserModel = require('./user')
+const NewsletterLeadModel = require('./newsletterLead')
 
 const sequelize = new Sequelize(
     process.env.DB_NAME,
@@ -26,18 +16,7 @@ const sequelize = new Sequelize(
 }
 )
 
-
-const Sepomex = SepomexModel(sequelize, Sequelize)
-const PreCreditRequest = PreCreditRequestModel(sequelize, Sequelize)
-const CreditReport = CreditReportModel(sequelize, Sequelize)
-const CreditReportConsulta = CreditReportConsultaModel(sequelize, Sequelize)
-const CreditReportCredito = CreditReportCreditoModel(sequelize, Sequelize)
-const CreditReportDomicilio = CreditReportDomicilioModel(sequelize, Sequelize)
-const CreditReportEmpleo = CreditReportEmpleoModel(sequelize, Sequelize)
-const CreditReportMensaje = CreditReportMensajeModel(sequelize, Sequelize)
-const CreditReportScore = CreditReportScoreModel(sequelize, Sequelize)
-const AdminSettings = AdminSettingsModel(sequelize, Sequelize)
-const User = UserModel(sequelize, Sequelize)
+const NewsletterLead = NewsletterLeadModel(sequelize, Sequelize)
 
 sequelize
     .query('SET FOREIGN_KEY_CHECKS = 0', { raw: true })
@@ -49,16 +28,6 @@ sequelize
     })
 
 module.exports = {
-    Sepomex,
-    PreCreditRequest,
-    CreditReport,
-    CreditReportConsulta,
-    CreditReportCredito,
-    CreditReportDomicilio,
-    CreditReportEmpleo,
-    CreditReportMensaje,
-    CreditReportScore,
-    AdminSettings,
-    User,
+    NewsletterLead,
     sequelize,
 }

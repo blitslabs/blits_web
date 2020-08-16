@@ -7,20 +7,109 @@ import Navbar from './Navbar'
 import Header from './Header'
 import Footer from './Footer'
 
+// Components
+import Modal from 'react-modal'
+
+// API
+import { subscribeEmail } from '../../../utils/api'
+
+// Styles
+const customStyles = {
+    content: {
+        top: '50%',
+        left: '50%',
+        right: 'auto',
+        bottom: 'auto',
+        marginRight: '-50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: '#212529',
+
+    },
+    overlay: {
+        backgroundColor: '#0000004a',
+        zIndex: 1000
+    },
+    parent: {
+        overflow: 'hidden',
+        position: 'absolute',
+        width: '100%',
+        height: '100%'
+    },
+}
+
+Modal.setAppElement('body')
+
 // styles
 import '../styles.css'
+
 
 class Home extends Component {
 
     state = {
-        loading: true
+        modalIsOpen: false,
+        email: '',
+        emailIsInvalid: false,
+        subscribed: false,
+        serverMsg: ''
+    }
+
+    handleOpenModal = (e) => {
+        e.preventDefault()
+        this.setState({ modalIsOpen: true })
+    }
+
+    handleCloseModal = (e) => {
+        e.preventDefault()
+        this.setState({ modalIsOpen: false })
+    }
+
+    handleEmailChange = (e) => {
+
+        if (!this.validateEmail(e.target.value)) {
+            this.setState({ emailIsInvalid: true, emailErrorMsg: 'Ingresa un correo electrónico válido' })
+        } else {
+            this.setState({ emailIsInvalid: false, emailErrorMsg: 'Este campo es obligatorio.' })
+        }
+
+        this.setState({ email: e.target.value })
+    }
+
+    validateEmail(email) {
+        const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+        return re.test(String(email).toLowerCase());
+    }
+
+    handleSubscribeBtn = (e) => {
+        e.preventDefault()
+        const { email, emailIsInvalid } = this.state
+
+        if (!email || emailIsInvalid) {
+            this.setState({ emailIsInvalid: true })
+            return
+        }
+
+        subscribeEmail({ email })
+            .then(data => data.json())
+            .then((res) => {
+                console.log(res)
+                if (res.status === 'OK') {
+                    this.setState({ email: '', subscribed: true, serverMsg: res.message })
+                }
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     }
 
     componentDidMount() {
-
-        setTimeout(() => this.setState({ loading: false }), 1000)
+        
     }
 
+    handleScrollToTop() {
+        window.scrollTo(0, 0)
+    }
+
+    
     render() {
         const { loading } = this.state
 
@@ -30,8 +119,8 @@ class Home extends Component {
 
         return (
             <div>
-                {this.state.loading ? <Loading /> : null}
-
+                {/* {this.state.loading ? <Loading /> : null} */}
+                
                 <div className="preloader-main">
                     <div className="preloader-wapper">
                         <svg className="preloader" xmlns="http://www.w3.org/2000/svg" version="1.1" width="600" height="200">
@@ -53,11 +142,11 @@ class Home extends Component {
                     </div>
                 </div>
                 {/*====== Scroll To Top Area Start ======*/}
-                <div id="scrollUp" title="Scroll To Top">
+                <div onClick={this.handleScrollToTop} id="scrollUp" title="Scroll To Top">
                     <i className="fas fa-arrow-up" />
                 </div>
                 {/*====== Scroll To Top Area End ======*/}
-                <div className="main">
+                <div ref={ this.cointainer} className="main">
 
                     <Navbar />
                     <Header />
@@ -534,12 +623,8 @@ class Home extends Component {
                                         <h2 className="text-white">Coming Soon!</h2>
                                         <p className="text-white my-3 d-none d-sm-block">
                                             Blits Wallet will available on iOS and Android devices. Subscribe to get updates and get early access.
-              </p>
-                                        <p className="text-white my-3 d-block d-sm-none">
-                                            sApp is available for all devices, consectetur adipisicing elit.
-                                            Vel neque, cumque. Temporibus eligendi veniam, necessitatibus
-                                            aut id labore nisi quisquam.
-              </p>
+                                        </p>
+                                        
                                         {/* Store Buttons */}
                                         <div className="button-group store-buttons d-flex justify-content-center">
                                             <a href="#">
@@ -550,8 +635,8 @@ class Home extends Component {
                                             </a>
                                         </div>
                                         <span className="d-inline-block text-white fw-3 font-italic mt-3">
-                                            * Available on iPhone, iPad and all Android devices
-              </span>
+                                            * Android and iOS devices
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -566,13 +651,11 @@ class Home extends Component {
                                     <div className="subscribe-content text-center">
                                         <h2>Subscribe to get updates</h2>
                                         <p className="my-4">
-                                            By subscribing you will get newsleter, promotions adipisicing
-                                            elit. Architecto beatae, asperiores tempore repudiandae saepe
-                                            aspernatur unde voluptate sapiente quia ex.
-              </p>
+                                            By subscribing you will get newsleter, you will be able to get Early Access and other amazing benefits!
+                                            </p>
                                         {/* Subscribe Form */}
-                                        <form className="subscribe-form">
-                                            <div className="form-group">
+                                        <div className="subscribe-form">
+                                            {/* <div className="form-group">
                                                 <input
                                                     type="email"
                                                     className="form-control"
@@ -580,11 +663,11 @@ class Home extends Component {
                                                     aria-describedby="emailHelp"
                                                     placeholder="Enter your email"
                                                 />
-                                            </div>
-                                            <button type="submit" className="btn btn-lg btn-block">
+                                            </div> */}
+                                            <button onClick={this.handleOpenModal} className="btn btn-lg btn-block">
                                                 Subscribe
-                </button>
-                                        </form>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -596,7 +679,34 @@ class Home extends Component {
                     <div className="height-emulator d-none d-lg-block" />
                     {/*====== Height Emulator Area End ======*/}
 
+                    <Modal
+                        isOpen={this.state.modalIsOpen}
+                        onAfterOpen={this.afterOpenModal}
+                        onRequestClose={this.closeModal}
+                        style={customStyles}
+                        contentLabel="Modal"
+                    >
+                        <div className="row">
+                            <div className="col-12 text-center p-5">
+                                <div style={{ position: 'absolute', right: '10px', top: '-10px' }}><button onClick={this.handleCloseModal} className="icon-btn"><i style={{ color: 'white' }} className="fa fa-times-circle" style={{ fontSize: '26px', color: 'white' }}></i></button></div>
+                                <h2 className="modal-title">Subscribe to Get Early Access!</h2>
+                                <img className="modal-image mt-4" src="assets/images/blits_rocket.png" alt="" />
 
+                                {this.state.subscribed === false
+                                    ?
+                                    <Fragment>
+                                        <div className="form-group">
+                                            <input onChange={this.handleEmailChange} placeholder="Enter your email" type="text" className={this.state.emailIsInvalid ? 'form-control is-invalid mt-4' : 'form-control mt-4'} />
+                                            <div className="invalid-feedback">Enter a valid email</div>
+                                        </div>
+                                        <button onClick={this.handleSubscribeBtn} className="btn btn-blits " style={{ width: '100%' }}>Subscribe</button>
+                                    </Fragment>
+                                    :
+                                    <h3 className="text-white mt-3">{this.state.serverMsg}</h3>
+                                }
+                            </div>
+                        </div>
+                    </Modal>                       
                     <Footer />
                 </div>
             </div>
@@ -605,7 +715,7 @@ class Home extends Component {
     }
 }
 
-function mapStateToProps({ preCreditRequest, preFormController }) {
+function mapStateToProps({  }) {
     return {
 
     }

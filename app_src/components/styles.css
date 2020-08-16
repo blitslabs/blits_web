@@ -60,3 +60,24 @@ footer {
 .dark-link:hover {
     color: white;
 }
+
+.icon-btn {
+	width: 20px;
+    padding: 0px 20px !important;
+    background: none;
+    border: none;
+}
+
+.icon-btn:focus {
+    border: none;
+}
+
+.modal-title {
+    font-size: 28px;    
+    text-align: center;
+    color: white;
+}
+
+.modal-image {
+    height: 100px;
+}
