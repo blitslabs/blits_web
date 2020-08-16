@@ -169,14 +169,12 @@ class Home extends Component {
 
                                         <h2>Products</h2>
                                         <p className="d-none d-sm-block mt-4">
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                            Laborum obcaecati dignissimos quae quo ad iste ipsum officiis
-                                            deleniti asperiores sit.
+                                            Access the future of finance
                                         </p>
-                                        <p className="d-block d-sm-none mt-4">
+                                        {/* <p className="d-block d-sm-none mt-4">
                                             Lorem ipsum dolor sit amet, consectetur adipisicing elit.
                                             Laborum obcaecati.
-                                        </p>
+                                        </p> */}
                                     </div>
                                 </div>
                             </div>
