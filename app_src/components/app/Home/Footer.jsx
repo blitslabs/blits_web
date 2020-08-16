@@ -19,19 +19,19 @@ class Footer extends Component {
 
                                     {/* Social Icons */}
                                     <div className="social-icons d-flex" >
-                                        <a className="blits" style={{ background: 'black !important' }} href="#">
+                                        <a className="blits" style={{ background: 'black !important' }} href="https://twitter.com/blitslabs">
                                             <i className="fab fa-twitter" />
                                             <i className="fab fa-twitter" />
                                         </a>
-                                        <a className="blits" href="#">
+                                        <a className="blits" href="https://t.me/blitslabs">
                                             <i className="fab fa-telegram" />
                                             <i className="fab fa-telegram" />
                                         </a>
-                                        <a className="blits" href="#">
+                                        <a className="blits" href="https://medium.com/@blitslabs">
                                             <i className="fab fa-medium" />
                                             <i className="fab fa-medium" />
                                         </a>
-                                        <a className="blits" href="#">
+                                        <a className="blits" href="https://github.com/blitslabs">
                                             <i className="fab fa-github" />
                                             <i className="fab fa-github" />
                                         </a>
