@@ -81,3 +81,49 @@ footer {
 .modal-image {
     height: 100px;
 }
+
+.app-section {
+    margin-top: 16rem;
+   
+}
+
+@media only screen and (max-width: 480px) {
+    .app-section {
+        margin-top: 6rem;
+    }
+}
+
+.app-option-btn {
+    padding: 60px;
+    color: white;
+    border-radius: 10px;
+    min-height: 250px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    cursor: pointer;
+    /* max-width: 400px;
+    margin-left: auto;
+    margin-right: auto; */
+}
+
+.main-color-bg {
+    background-color: #32CCDD;
+}
+
+.secondary-color-bg {
+    background-color: black;
+}
+
+.option-title {
+    font-weight: bold;
+    font-size: 36px;
+}
+
+.option-desc {
+    font-size: 18px;
+}
+
+.text-black {
+    color: black !important;
+}

@@ -10,15 +10,15 @@ const csurf = require('csurf')
 const cookieParser = require('cookie-parser')
 
 require('./app_api/config/passport')
-const routesAdmin = require('./admin_server/routes/admin')
+const routesAdmin = require('./app_server/routes/index')
 const routesApi = require('./app_api/routes/index')
 const app = express()
 
-app.use(cors({ origin: '*', credentials: true, origin: 'http://genesisblock.ddns.net:3000/' }))
+app.use(cors({ origin: '*', credentials: true, origin: process.env.SERVER_HOST }))
 app.use(fileUpload({ limits: { fileSize: 10 * 1024 * 1024 } }))
 
 // view engine setup
-app.set('views', path.join(__dirname, 'admin_server', 'views'))
+app.set('views', path.join(__dirname, 'app_server', 'views'))
 app.set('view engine', 'ejs')
 
 app.use(bodyParser.json({ limit: '50mb' }))

@@ -4,8 +4,8 @@ import { connect } from 'react-redux'
 
 
 
-import withAuth from './withAuth'
-import withAdminAuth from './withAdminAuth'
+// import withAuth from './withAuth'
+// import withAdminAuth from './withAdminAuth'
 
 import Home from './app/Home/Home'
 
