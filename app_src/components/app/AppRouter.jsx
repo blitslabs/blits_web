@@ -8,6 +8,8 @@ import LoansHome from './Loans/LoansHome'
 import NewBorrow from './Loans/NewBorrow'
 import NewLend from './Loans/NewLend'
 import SelectAsset from './Loans/SelectAsset'
+import SelectBorrower from './Loans/SelectBorrower'
+import LoanTerms from './Loans/LoanTerms'
 
 class AppRouter extends Component {
     render() {
@@ -18,8 +20,9 @@ class AppRouter extends Component {
                 <Route path={match.path} exact component={Home} />
                 <Route path={`${match.path}app/loans`} exact component={LoansHome} />
                 <Route path={`${match.path}app/loans/select-asset`} component={SelectAsset} />
-                {/* <Route path={`${match.path}app/borrow/new`}  component={NewBorrow} />
-                <Route path={`${match.path}app/lend/new`}  component={NewLend} /> */}
+                <Route path={`${match.path}app/lend/select-loan`}  component={SelectBorrower} /> 
+                <Route path={`${match.path}app/lend/select-borrower`}  component={SelectBorrower} /> 
+                <Route path={`${match.path}app/lend/new`}  component={LoanTerms} />
             </Fragment>
         )
     }

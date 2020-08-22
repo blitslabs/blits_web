@@ -25,6 +25,15 @@
     background: #32CCDD;
 }
 
+.btn-blits-black {
+    background: black;
+}
+
+.btn-blits-white {
+    background: white !important;
+    color: black;
+}
+
 .image-box {
     background: white;
 }
@@ -91,6 +100,9 @@ footer {
     .app-section {
         margin-top: 6rem;
     }
+    .app-card {
+        padding: 60px 30px !important;
+    }
 }
 
 .app-option-btn {
@@ -105,6 +117,17 @@ footer {
     /* max-width: 400px;
     margin-left: auto;
     margin-right: auto; */
+}
+
+.app-card {
+    padding: 60px;
+    color: white;
+    border-radius: 10px;
+    min-height: 250px;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    
 }
 
 .main-color-bg {
@@ -126,4 +149,43 @@ footer {
 
 .text-black {
     color: black !important;
+}
+
+.app-page-subtitle {
+    font-size: 22px;
+}
+
+.label-title {
+    color: black;
+}
+
+.label-value {
+    font-weight: 600;
+    font-size: 24px;
+}
+
+.app-form-label {
+    font-weight: 600;
+    font-size:18px;
+}
+.rc-slider-track {
+    height: 14px;
+    background-color: transparent !important;
+}
+
+.rc-slider-rail {
+    height: 14px;
+    background: linear-gradient(to right, #d60199 0%, #0790cc 100%) !important;
+}
+
+.rc-slider-handle {
+    width: 28px;
+    height: 28px;
+    margin-top: -8px;
+    background-color: black !important;
+    border-color: white !important;
+}
+
+.rc-slider-handle:hover {
+    border-color: white !important;
 }
