@@ -13,7 +13,10 @@ import { saveLoanRequestAsset } from '../../../actions/loanRequest'
 
 class LoanTerms extends Component {
     state = {
-
+        amount: '',
+        collateralizationRate: '',
+        apr: '',
+        duration: ''
     }
 
     componentDidMount() {
@@ -35,7 +38,7 @@ class LoanTerms extends Component {
     render() {
 
         const { loanRequest } = this.props
-        const { requestType } = loanRequest
+        const { asset } = loanRequest
 
         return (
             <Fragment>
@@ -52,9 +55,9 @@ class LoanTerms extends Component {
                                     <div className="app-card shadow-lg">
                                         <div className="app-form-label text-black">1. Amount to Lend</div>
                                         <div className="input-group mb-3">
-                                            <input type="number" className="form-control" placeholder="Amount" />
+                                            <input value={this.state.amount} onChange={this.handleAmountChange} type="number" className="form-control" placeholder="Amount" />
                                             <div className="input-group-append">
-                                                <span className="input-group-text">DAI</span>
+                                                <span className="input-group-text">{asset.toUpperCase()}</span>
                                             </div>
                                         </div>
                                         <div className="text-right text-black">Min: 20 | Max: 100 </div>
@@ -68,7 +71,7 @@ class LoanTerms extends Component {
 
                                         <div className="app-form-label text-black mt-4">3. Annual Percentage Rate</div>
                                         <div className="input-group mb-3">
-                                            <input type="number" className="form-control" placeholder="APR" />
+                                            <input value={this.state.apr} onChange={this.handleAPRChange} type="number" className="form-control" placeholder="APR" />
                                             <div className="input-group-append">
                                                 <span className="input-group-text">%</span>
                                             </div>
@@ -78,7 +81,7 @@ class LoanTerms extends Component {
 
                                         <div className="app-form-label text-black mt-4">4. Loan duration</div>
                                         <div className="input-group mb-3">
-                                            <input type="number" className="form-control" placeholder="Days" />
+                                            <input value={this.state.duration} onChange={this.handleDurationChange} type="number" className="form-control" placeholder="Days" />
                                             <div className="input-group-append">
                                                 <span className="input-group-text">DAYS</span>
                                             </div>
@@ -87,10 +90,10 @@ class LoanTerms extends Component {
 
                                         <div className="row">
                                             <div className="col-sm-12 col-md-5 offset-md-1">
-                                                <button className="btn btn-blits-white mt-4" style={{width: '100%'}}>Back</button>
+                                                <button onClick={this.handleBackBtn} className="btn btn-blits-white mt-4" style={{width: '100%'}}>Back</button>
                                             </div>
                                             <div className="c0l-sm-12 col-md-5">
-                                                <button className="btn btn-blits mt-4" style={{width: '100%'}}>Next</button>
+                                                <button onClick={this.handleContinueBtn} className="btn btn-blits mt-4" style={{width: '100%'}}>Next</button>
                                             </div>
                                         </div>
                                     </div>

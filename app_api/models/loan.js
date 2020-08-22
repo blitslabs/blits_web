@@ -1,5 +1,13 @@
 module.exports = (sequelize, DataTypes) => {
     return sequelize.define('loan', {
+        aCoinLoanId: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        bCoinLoanId: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
         lender: {
             type: DataTypes.STRING,
             allowNull: true
