@@ -97,7 +97,7 @@ class LoanTerms extends Component {
         const secretHashB1 = `0x${sha256(secretB1)}`
 
         // dispatch save secretHashB1
-        // dispatch(saveSecretHashB1(secretHashB1))
+        dispatch(saveSecretHashB1(secretHashB1))
         this.setState({ signed: true })
     }
 
@@ -151,11 +151,15 @@ class LoanTerms extends Component {
                     ).send({ from })
                     console.log(tx)
                     const extLoanId = tx.events.LoanCreated.returnValues.loanId
+                    console.log('External Loan ID:', extLoanId)
+
                     dispatch(saveLoanRequestTerms({ ...loan, extLoanId }))
+
                     saveExtLoanId({ loanId: loan.id, extLoanId: extLoanId, coin: 'BCOIN' })
                         .then(data2 => data2.json())
                         .then((res2) => {
                             if (res2.status === 'OK') {
+                                console.log('EXT_LOAN_ID_SAVED')
                                 updateLoanState({ loanId: loan.id, coin: 'BCOIN', loanState: 'OPEN' })
                                     .then(data3 => data3.json())
                                     .then((res3) => {

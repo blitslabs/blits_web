@@ -19679,6 +19679,119 @@
     "version": "0.6.2+commit.bacdbe57.Emscripten.clang"
   },
   "networks": {
+    "2": {
+      "events": {
+        "0x5589c03e648fc70418510da9bec8b941e0b1bd6247ccee782830c17972f15666": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "loanId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "lender",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "SeizeCollateral",
+          "type": "event"
+        },
+        "0x32032825d60ca8ae1e54725d3c49e9ce09344634b19e5154a891de9f3058899b": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "loanId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "borrower",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "sCollateral",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "rCollateral",
+              "type": "uint256"
+            }
+          ],
+          "name": "UnlockAndClose",
+          "type": "event"
+        },
+        "0xba118e126c88ecfcc215c2ef2b547f315d13358c986ec33e2f424141d613180c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "loanId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "borrower",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "UnlockRefundableCollateral",
+          "type": "event"
+        },
+        "0x10cd1b795402643d7006cca8a223fc0f6891b19bae8ccb5651609c8986397c5d": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "loanId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "borrower",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            }
+          ],
+          "name": "UnlockSeizableCollateral",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0xf193EF8a329eA302319b69F29A71A5D8cDEAae55",
+      "transactionHash": "0x16f34a58f55612917144eb8ef7d78acfff2f166e80de04b459ed72c03a5b072f"
+    },
     "5777": {
       "events": {
         "0x5589c03e648fc70418510da9bec8b941e0b1bd6247ccee782830c17972f15666": {
@@ -19794,7 +19907,7 @@
     }
   },
   "schemaVersion": "3.2.3",
-  "updatedAt": "2020-08-23T04:54:31.169Z",
+  "updatedAt": "2020-08-23T17:46:20.355Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}

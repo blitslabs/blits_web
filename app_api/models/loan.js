@@ -20,6 +20,14 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
         },
+        aCoinLender: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },
+        aCoinBorrower: {
+            type: DataTypes.STRING,
+            allowNull: true,
+        },        
         secretHashA1: {
             type: DataTypes.STRING,
             allowNull: true,
@@ -27,16 +35,24 @@ module.exports = (sequelize, DataTypes) => {
         secretHashB1: {
             type: DataTypes.STRING,
             allowNull: true,
-        },
-        secretHashAutoB1: {
-            type: DataTypes.STRING,
-            allowNull: true
-        },
+        },        
         secretA1: {
             type: DataTypes.STRING,
             allowNull: true
         },
         secretB1: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        secretHashAutoA1: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        secretHashAutoB1: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        secretAutoA1: {
             type: DataTypes.STRING,
             allowNull: true
         },

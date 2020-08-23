@@ -12,18 +12,19 @@ const loanController = require('../controllers/loan')
 const assetController = require('../controllers/asset')
 const contractController = require('../controllers/contract')
 
-// loan
-router.get('/loans/:state?', loanController.getLoansByStatus)
-
 // asset
 router.get('/assets/savePrices', assetController.saveAssetPrices)
 router.get('/assets', assetController.getAssets)
 
 // loans
+router.get('/loan/:loanId', loanController.getLoanDetails)
+router.get('/loans/:state?', loanController.getLoansByStatus)
 router.post('/loan', loanController.saveLoan)
 router.put('/loan/saveExtLoanId', loanController.saveLoanId)
 router.get('/loans/:account/:userType/:loanState?', loanController.getLoans)
 router.put('/loan/updateLoanState', loanController.updateLoanState)
+router.post('/loan/saveBorrower', loanController.saveBorrowerRequest)
+
 
 // contract
 router.get('/contract/abi/:contractName', contractController.getABIByContractName)

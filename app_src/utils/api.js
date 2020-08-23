@@ -76,3 +76,31 @@ export function getContractsData() {
         }
     })
 }
+
+export function getLoansByStatus(params) {
+    return fetch(API + `loans/${params.status}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+export function getLoanDetails(params) {
+    return fetch(API + `loan/${params.loanId}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+export function saveBorrowerRequest(params) {
+    return fetch(API + 'loan/saveBorrower', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params)
+    })
+}

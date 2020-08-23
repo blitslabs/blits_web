@@ -28,7 +28,7 @@ class SelectAsset extends Component {
     handleOptionClick = (option) => {
         const { loanRequest, dispatch, history } = this.props
         dispatch(saveLoanRequestAsset(option))
-        const r = loanRequest.requestType === 'borrow' ? '/app/borrow/new' : '/app/lend/new'
+        const r = loanRequest.requestType === 'borrow' ? '/app/borrow/dashboard' : '/app/lend/new'
         history.push(r)
     }
 

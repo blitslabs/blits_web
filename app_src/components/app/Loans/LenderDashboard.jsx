@@ -12,7 +12,7 @@ import '../styles.css'
 import { saveLoanRequestAsset } from '../../../actions/loanRequest'
 
 // API
-import { getContractABI, getAccountLoans, getContractsData } from '../../../utils/api'
+import { getContractABI, getAccountLoans, getContractsData, updateLoanState } from '../../../utils/api'
 
 // Libraries
 import Web3 from 'web3'
@@ -38,7 +38,7 @@ class LenderDashboard extends Component {
         const accounts = await web3.eth.getAccounts()
         const account = accounts[0]
 
-        getAccountLoans({ account, userType: 'LENDER', loanState: 'OPEN' })
+        getAccountLoans({ account, userType: 'LENDER', loanState: 'ALL' })
             .then(data => data.json())
             .then((res) => {
                 console.log(res)
@@ -57,7 +57,7 @@ class LenderDashboard extends Component {
             })
     }
 
-    handleDepositPrincipal = async (loanId) => {
+    handleDepositPrincipal = async (loanId, assetSymbol, principal) => {
         console.log('DEPOSIT_PRINCIPAL_BTN')
         console.log(loanId)
         const { contracts } = this.state
@@ -66,12 +66,39 @@ class LenderDashboard extends Component {
         const accounts = await web3.eth.getAccounts()
         const from = accounts[0]
 
-        const blitsLoans = await new web3.eth.Contract(contracts.bCoin.abi.abi, contracts.bCoin.contractAddress)
-        console.log(blitsLoans)
+        // check allowance
+        const stablecoin = await new web3.eth.Contract(contracts[assetSymbol].abi.abi, contracts[assetSymbol].contractAddress)
 
-        // metamask
+        let allowance = await stablecoin.methods.allowance(from, contracts.bCoin.contractAddress).call()
+        allowance = web3.utils.fromWei(allowance)
+        console.log('Allowance:', allowance)
+
+        if (!allowance || allowance < principal) {
+            await stablecoin.methods.approve(contracts.bCoin.contractAddress, web3.utils.toWei(principal)).send({ from })
+            return
+        }
+
+        const blitsLoans = await new web3.eth.Contract(contracts.bCoin.abi.abi, contracts.bCoin.contractAddress)
+
+        // fund loan
         const tx = await blitsLoans.methods.fund(loanId).send({ from })
         console.log(tx)
+
+        if ('blockHash' in tx) {
+            updateLoanState({ loanId: loanId, coin: 'BCOIN', loanState: 'FUNDED' })
+                .then(data => data.json())
+                .then((res) => {
+                    getAccountLoans({ from, userType: 'LENDER', loanState: 'ALL' })
+                        .then(data2 => data2.json())
+                        .then((res2) => {
+                            console.log(res2)
+                            if (res2.status === 'OK') {
+                                console.log(res2.payload)
+                                this.setState({ loans: res2.payload })
+                            }
+                        })
+                })
+        }
     }
 
     render() {
@@ -111,11 +138,11 @@ class LenderDashboard extends Component {
                                                             <div className="label-title mt-3">Accept Repayment Expiration</div>
                                                             <div className="label-value active-loan-details">{moment.unix(l.bCoinAcceptExpiration).format('MM/DD/YY HH:mm')}</div>
                                                             <div className="label-title mt-3">Status</div>
-                                                            <div className="label-value active-loan-details">{l.bCoinState === 'OPEN' ? 'NOT FUNDED' : l.bCoinState}</div>
+                                                            <div className="label-value active-loan-details">{l.bCoinState === 'OPEN' ? 'NOT FUNDED' : l.bCoinState === 'FUNDED' ? 'WAITING FOR BORROWER' : l.bCoinState}</div>
 
                                                             {
                                                                 l.bCoinState === 'OPEN'
-                                                                    ? <button onClick={() => this.handleDepositPrincipal(l.bCoinLoanId)} className="btn btn-blits mt-4">Deposit Principal</button>
+                                                                    ? <button onClick={() => this.handleDepositPrincipal(l.bCoinLoanId, l.assetSymbol, l.principal)} className="btn btn-blits mt-4">Deposit Principal</button>
                                                                     : ''
                                                             }
 

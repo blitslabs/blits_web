@@ -1,6 +1,6 @@
 import {
     SAVE_LOAN_REQUEST_TYPE, SAVE_LOAN_REQUEST_ASSET, SAVE_LOAN_REQUEST_TERMS,
-    SAVE_SECRET_HASH_B1,
+    SAVE_SECRET_HASH_B1, SAVE_SECRET_HASH_A1
 } from '../actions/loanRequest'
 
 const initialState = {
@@ -29,6 +29,11 @@ export default function creditRequest(state = initialState, action) {
             return {
                 ...state,
                 secretHashB1: action.secretHashB1,
+            }
+        case SAVE_SECRET_HASH_A1:
+            return {
+                ...state,
+                secretHashA1: action.secretHashA1,
             }
         default:
             return state

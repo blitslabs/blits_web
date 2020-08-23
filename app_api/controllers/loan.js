@@ -27,7 +27,7 @@ module.exports.getLoansByStatus = (req, res) => {
             })
         }
 
-        sendJSONresponse(res, 200, { status: 200, payload: loans })
+        sendJSONresponse(res, 200, { status: 'OK', payload: loans })
         return
     })
         .catch((err) => {
@@ -46,8 +46,8 @@ module.exports.saveLoan = (req, res) => {
     const period = parseInt(req.body.period)
     const collateralizationRatio = req.body.collateralizationRatio
 
-    if(!lender || !secretHashB1 || !principal || !interest || !assetSymbol || !period || !collateralizationRatio) {
-        sendJSONresponse(res, 422, { status: 'ERROR', message: 'Missing required arguments'})
+    if (!lender || !secretHashB1 || !principal || !interest || !assetSymbol || !period || !collateralizationRatio) {
+        sendJSONresponse(res, 422, { status: 'ERROR', message: 'Missing required arguments' })
         return
     }
 
@@ -99,7 +99,7 @@ module.exports.saveLoan = (req, res) => {
             assetSymbol,
             tokenAddress: asset.contractAddress,
             secretAutoB1,
-            secretHashAutoB1,            
+            secretHashAutoB1,
             bCoinLoanExpiration: loanExpiration,
             bCoinApproveExpiration: approveExpiration,
             bCoinAcceptExpiration: acceptExpiration,
@@ -112,6 +112,57 @@ module.exports.saveLoan = (req, res) => {
         }
 
         sendJSONresponse(res, 200, { status: 'OK', payload: payload })
+        return
+    })
+        .catch((err) => {
+            console.log('test')
+            console.log(err)
+            sendJSONresponse(res, 422, { status: 'ERROR', message: 'An error occurred. Please try again.' })
+            return
+        })
+}
+
+module.exports.saveBorrowerRequest = (req, res) => {
+    const loanId = req.body.loanId
+    const secretHashA1 = req.body.secretHashA1
+    const aCoinBorrower = req.body.aCoinBorrower
+    const bCoinBorrower = req.body.bCoinBorrower
+
+    if (!loanId || !secretHashA1 || !aCoinBorrower || !bCoinBorrower) {
+        sendJSONresponse(res, 422, { status: 'ERROR', message: 'Missing required arguments' })
+        return
+    }
+
+    sequelize.transaction(async (t) => {
+        const loan = await Loan.findOne({ where: { id: loanId }, transaction: t })
+
+        if (!loan) {
+            sendJSONresponse(res, 404, { status: 'ERROR', message: 'Loan not found' })
+            return
+        }
+
+        const collateralAsset = await Asset.findOne({ where: { assetSymbol: 'ONE'}, transaction: t })
+
+        // Generate SecretHashAutoB1
+        const messageAutoA1 = Math.random().toString()
+        const secretAutoA1 = sha256(messageAutoA1)
+        const secretHashAutoA1 = `0x${sha256(secretAutoA1)}`
+
+        const seizableCollateral = parseFloat(loan.principal) / parseFloat(collateralAsset.priceUSD)
+        const totalCollateral = (seizableCollateral * parseFloat(loan.collateralizationRatio) / 100)
+        const refundableCollateral = totalCollateral - seizableCollateral
+
+        loan.secretHashA1 = secretHashA1
+        loan.secretHashAutoA1 = secretHashAutoA1
+        loan.aCoinSeizableCollateral = seizableCollateral
+        loan.aCoinRefundableCollateral = refundableCollateral
+        loan.aCoinBorrower = aCoinBorrower
+        loan.borrower = bCoinBorrower
+        loan.aCoinLoanExpiration = loan.bCoinAcceptExpiration
+        loan.aCoinSeizureExpiration = parseFloat(loan.bCoinAcceptExpiration) + (86400 * 3)
+
+        await loan.save({ transaction: t })
+        sendJSONresponse(res, 200, { status: 'OK', payload: loan })
         return
     })
         .catch((err) => {
@@ -232,3 +283,29 @@ module.exports.getLoans = (req, res) => {
         })
 
 }
+
+module.exports.getLoanDetails = (req, res) => {
+    const loanId = req.params.loanId
+
+    if (!loanId) {
+        sendJSONresponse(res, 422, { status: 'ERROR', message: 'Missing required parameters' })
+        return
+    }
+
+    sequelize.transaction(async (t) => {
+        const loan = await Loan.findOne({ where: { id: loanId }, transaction: t })
+        if (!loan) {
+            sendJSONresponse(res, 404, { status: 'ERROR', message: 'Loan not found' })
+            return
+        }
+
+        sendJSONresponse(res, 200, { status: 'OK', payload: loan })
+        return
+    })
+        .catch((err) => {
+            console.log(err)
+            sendJSONresponse(res, 422, { status: 'ERROR', message: 'An error occurred. Please try again.' })
+            return
+        })
+}
+
