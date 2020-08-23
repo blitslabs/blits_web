@@ -16,6 +16,13 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true,
         },
-        
+        aCoinContractAddress: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        bCoinContractAddress: {
+            type: DataTypes.STRING,
+            allowNull: true
+        }
     })
 }

@@ -27,6 +27,7 @@ router.put('/loan/updateLoanState', loanController.updateLoanState)
 
 // contract
 router.get('/contract/abi/:contractName', contractController.getABIByContractName)
+router.get('/contracts', contractController.getContracts)
 
 // newsletter
 router.post('/newsletter/subscribe', newsletterController.subscribeEmail)

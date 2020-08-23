@@ -115,6 +115,7 @@ module.exports.saveLoan = (req, res) => {
         return
     })
         .catch((err) => {
+            console.log('test')
             console.log(err)
             sendJSONresponse(res, 422, { status: 'ERROR', message: 'An error occurred. Please try again.' })
             return

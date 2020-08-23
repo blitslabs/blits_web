@@ -67,3 +67,12 @@ export function getAccountLoans(params) {
         }
     })
 }
+
+export function getContractsData() {
+    return fetch(API + `contracts`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}

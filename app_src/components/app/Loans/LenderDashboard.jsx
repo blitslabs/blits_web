@@ -12,7 +12,7 @@ import '../styles.css'
 import { saveLoanRequestAsset } from '../../../actions/loanRequest'
 
 // API
-import { getAccountLoans } from '../../../utils/api'
+import { getContractABI, getAccountLoans, getContractsData } from '../../../utils/api'
 
 // Libraries
 import Web3 from 'web3'
@@ -20,7 +20,8 @@ import moment from 'moment'
 
 class LenderDashboard extends Component {
     state = {
-        loans: ''
+        loans: '',
+        contracts: ''
     }
 
     async componentDidMount() {
@@ -47,14 +48,30 @@ class LenderDashboard extends Component {
                 }
             })
 
-
+        getContractsData()
+            .then(data => data.json())
+            .then((res) => {
+                if (res.status === 'OK') {
+                    this.setState({ contracts: res.payload })
+                }
+            })
     }
 
-    handleOptionClick = (option) => {
-        const { loanRequest, dispatch, history } = this.props
-        dispatch(saveLoanRequestAsset(option))
-        const r = loanRequest.requestType === 'borrow' ? '/app/borrow/new' : '/app/lend/new'
-        history.push(r)
+    handleDepositPrincipal = async (loanId) => {
+        console.log('DEPOSIT_PRINCIPAL_BTN')
+        console.log(loanId)
+        const { contracts } = this.state
+        const web3 = new Web3(window.ethereum)
+        await window.ethereum.enable()
+        const accounts = await web3.eth.getAccounts()
+        const from = accounts[0]
+
+        const blitsLoans = await new web3.eth.Contract(contracts.bCoin.abi.abi, contracts.bCoin.contractAddress)
+        console.log(blitsLoans)
+
+        // metamask
+        const tx = await blitsLoans.methods.fund(loanId).send({ from })
+        console.log(tx)
     }
 
     render() {
@@ -94,11 +111,15 @@ class LenderDashboard extends Component {
                                                             <div className="label-title mt-3">Accept Repayment Expiration</div>
                                                             <div className="label-value active-loan-details">{moment.unix(l.bCoinAcceptExpiration).format('MM/DD/YY HH:mm')}</div>
                                                             <div className="label-title mt-3">Status</div>
-                                                            <div className="label-value active-loan-details">{l.bCoinState}</div>
+                                                            <div className="label-value active-loan-details">{l.bCoinState === 'OPEN' ? 'NOT FUNDED' : l.bCoinState}</div>
+
+                                                            {
+                                                                l.bCoinState === 'OPEN'
+                                                                    ? <button onClick={() => this.handleDepositPrincipal(l.bCoinLoanId)} className="btn btn-blits mt-4">Deposit Principal</button>
+                                                                    : ''
+                                                            }
 
 
-
-                                                            <button className="btn btn-blits mt-4">{l.bCoinState === 'OPEN' ? 'Deposit Principal' : ''}</button>
                                                         </div>
                                                     </div>
                                                 ))
@@ -112,7 +133,7 @@ class LenderDashboard extends Component {
                     </section>
 
                 </div>
-            </Fragment>
+            </Fragment >
         )
     }
 }

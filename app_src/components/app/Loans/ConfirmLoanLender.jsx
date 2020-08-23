@@ -12,7 +12,7 @@ import '../styles.css'
 import { saveSecretHashB1, saveLoanRequestTerms, } from '../../../actions/loanRequest'
 
 // API
-import { getAssets, saveLoan, getContractABI, saveExtLoanId, updateLoanState } from '../../../utils/api'
+import { getAssets, saveLoan, getContractABI, saveExtLoanId, updateLoanState, getContractsData } from '../../../utils/api'
 
 // Libraries
 import Web3 from 'web3'
@@ -28,6 +28,7 @@ class LoanTerms extends Component {
         assets: [],
         abi: '',
         signed: false,
+        contracts: ''
     }
 
     componentDidMount() {
@@ -38,11 +39,12 @@ class LoanTerms extends Component {
             history.push('/app/loans')
         }
 
-        getContractABI({ contractName: 'BLITS' })
+        getContractsData()
             .then(data => data.json())
             .then((res) => {
-                if (res.status === 'OK') {
-                    this.setState({ abi: res.payload })
+                if (res.status === 'OK') {          
+                    console.log(res.payload)          
+                    this.setState({ contracts: res.payload })
                 }
             })
 
@@ -106,7 +108,7 @@ class LoanTerms extends Component {
             secretHashB1, amount, duration, asset, collateralizationRatio
         } = loanRequest
 
-        const { interestAmount, tokenAddress, assets, abi } = this.state
+        const { interestAmount, tokenAddress, assets, contracts } = this.state
 
         const web3 = new Web3(window.ethereum)
         await window.ethereum.enable()
@@ -116,7 +118,7 @@ class LoanTerms extends Component {
         const token = assets.filter(a => a.assetSymbol === asset)
         const networkId = await web3.eth.net.getId()
 
-        const blitsLoans = await new web3.eth.Contract(abi.abi, '0x4F923756c956e2A14629cC1aBa8AacbA230Ac93b')
+        const blitsLoans = await new web3.eth.Contract(contracts.bCoin.abi.abi, contracts.bCoin.contractAddress)
         console.log(blitsLoans)
         // Save loan details
         const params = {
