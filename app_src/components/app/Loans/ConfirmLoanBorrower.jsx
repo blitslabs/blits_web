@@ -94,6 +94,69 @@ class ConfirmLoanBorrower extends Component {
 
     }
 
+    handleTestBtn = async (e) => {
+        const { contracts, loan } = this.state
+        const { loanRequest } = this.props
+        const address = '0xE90075b75772A4d0f865A8ccfc061e4E0E001327';
+        const harmonyExt = await new HarmonyExtension(window.onewallet, { chainId: 2, chainType: ChainType.Harmony, shardID: 0, chainUrl: 'https://api.s0.b.hmny.io' });
+        const account = await harmonyExt.login()
+        const from = hmy.crypto.getAddress(account.address).checksum
+        const harmonyLock = await harmonyExt.contracts.createContract(contracts.aCoin.abi.abi, address)
+        const tx = await harmonyLock.methods.fetchLoan(1).call({
+            gasLimit: '4000000',
+            gasPrice: new hmy.utils.Unit('1').asGwei().toWei(),
+        })
+        console.log(tx)
+        return
+
+        const params = {
+            loanId: loan.id,
+            secretHashA1: loanRequest.secretHashA1,
+            aCoinBorrower: from, // Harmony
+            bCoinBorrower: loanRequest.bCoinBorrower, // Ethereum
+        }
+
+
+        saveBorrowerRequest(params)
+            .then(data => data.json())
+            .then(async (res) => {
+                console.log(res)
+
+                try {
+
+                    const tx = await harmonyLock.methods.lockCollateral(
+                        hmy.crypto.getAddress(res.payload.aCoinLender).checksum,
+                        res.payload.secretHashA1,
+                        res.payload.secretHashB1,
+                        res.payload.secretHashAutoA1,
+                        res.payload.secretHashAutoB1,
+                        res.payload.aCoinLoanExpiration,
+                        res.payload.aCoinSeizureExpiration,
+                        150
+                    ).send({
+                        value: new hmy.utils.Unit(100).asOne().toWei(),
+                        gasLimit: '1000001',
+                        gasPrice: new hmy.utils.Unit('10').asGwei().toWei(),
+                    }).on('transactionHash', function (hash) {
+                        console.log('hash', hash)
+                    }).on('receipt', function (receipt) {
+                        console.log('receipt', receipt)
+                    }).on('confirmation', async (confirmation) => {
+                        console.log('confirmation', confirmation)
+                        if (confirmation !== 'REJECTED') alert('TX was rejected')
+                    }).on('error', console.error)
+
+
+
+                    console.log(tx)
+                } catch (e) {
+                    console.log(e)
+                }
+
+
+            })
+    }
+
     handleGenerateSecretBtn = async (e) => {
         e.preventDefault()
         const { dispatch } = this.props
@@ -122,12 +185,13 @@ class ConfirmLoanBorrower extends Component {
         this.setState({ signed: true })
     }
 
+    // https://johnwhitton.dev/docs/docs/contribute/develop/deploy-your-first-dapp/
     handleOneWalletBtn = async (e) => {
         const { contracts, loan } = this.state
         const { loanRequest } = this.props
 
         const harmonyExt = await new HarmonyExtension(window.onewallet);
-
+        console.log(harmonyExt)
         harmonyExt.setShardID(0)
         harmonyExt.contracts.wallet = harmonyExt.wallet
 
@@ -136,6 +200,11 @@ class ConfirmLoanBorrower extends Component {
         const from = hmy.crypto.getAddress(account.address).checksum
 
         const harmonyLock = await harmonyExt.contracts.createContract(contracts.aCoin.abi.abi, contracts.aCoin.contractAddress)
+
+        harmonyLock.wallet.defaultSigner = from
+
+
+        let options = { gasPrice: 1000000000, gasLimit: 6721900 };
         // console.log(harmonyLock)
         // let options2 = { gasPrice: 1000000000, gasLimit: 21000 }
         const contractResponse = await harmonyLock.methods.fetchLoan(0).call({
@@ -161,24 +230,23 @@ class ConfirmLoanBorrower extends Component {
             .then(async (res) => {
                 console.log(res)
 
+                try {
 
-                const tx = await harmonyLock.methods.lockCollateral(
-                    hmy.crypto.getAddress(res.payload.aCoinLender).checksum,
-                    res.payload.secretHashA1,
-                    res.payload.secretHashB1,
-                    res.payload.secretHashAutoA1,
-                    res.payload.secretHashAutoB1,
-                    res.payload.aCoinLoanExpiration,
-                    res.payload.aCoinSeizureExpiration,
-                    res.payload.collateralizationRatio
-                ).send({
-                    value: '10000000000000000000000000',
-                    gasLimit: '3321900',
-                    gasPrice: '1000000000',
-                })
+                    const tx = await harmonyLock.methods.lockCollateral(
+                        hmy.crypto.getAddress(res.payload.aCoinLender).checksum,
+                        res.payload.secretHashA1,
+                        res.payload.secretHashB1,
+                        res.payload.secretHashAutoA1,
+                        res.payload.secretHashAutoB1,
+                        res.payload.aCoinLoanExpiration,
+                        res.payload.aCoinSeizureExpiration,
+                        res.payload.collateralizationRatio
+                    ).send(options)
 
-                console.log(tx)
-
+                    console.log(tx)
+                } catch (e) {
+                    console.log(e)
+                }
                 // const txn = hmy.transactions.newTx({
                 //     from: from,
                 //     to: hmy.crypto.getAddress(res.payload.aCoinLender).checksum,
@@ -333,7 +401,7 @@ class ConfirmLoanBorrower extends Component {
                                                             <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
                                                     Generate Secret</button>
                                                         :
-                                                        <button onClick={this.handleOneWalletBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                        <button onClick={this.handleTestBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
                                                             <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/one_logo.png'} alt="" />
                                                     Lock Collateral</button>
                                                 }
