@@ -21,6 +21,9 @@ router.get('/assets', assetController.getAssets)
 
 // loans
 router.post('/loan', loanController.saveLoan)
+router.put('/loan/saveExtLoanId', loanController.saveLoanId)
+router.get('/loans/:account/:userType/:loanState?', loanController.getLoans)
+router.put('/loan/updateLoanState', loanController.updateLoanState)
 
 // contract
 router.get('/contract/abi/:contractName', contractController.getABIByContractName)

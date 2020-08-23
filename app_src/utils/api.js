@@ -38,3 +38,32 @@ export function getContractABI(params) {
         }
     })
 }
+
+export function saveExtLoanId(params) {
+    return fetch(API + 'loan/saveExtLoanId', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params)
+    })
+}
+
+export function updateLoanState(params) {
+    return fetch(API + 'loan/updateLoanState', {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(params)
+    })
+}
+
+export function getAccountLoans(params) {
+    return fetch(API + `loans/${params.account}/${params.userType}/${params.loanState}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}

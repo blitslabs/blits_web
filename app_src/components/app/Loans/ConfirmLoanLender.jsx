@@ -12,7 +12,7 @@ import '../styles.css'
 import { saveSecretHashB1, saveLoanRequestTerms, } from '../../../actions/loanRequest'
 
 // API
-import { getAssets, saveLoan, getContractABI } from '../../../utils/api'
+import { getAssets, saveLoan, getContractABI, saveExtLoanId, updateLoanState } from '../../../utils/api'
 
 // Libraries
 import Web3 from 'web3'
@@ -26,7 +26,8 @@ class LoanTerms extends Component {
         collateralAmount: 0,
         liquidationPrice: 0,
         assets: [],
-        abi: ''
+        abi: '',
+        signed: false,
     }
 
     componentDidMount() {
@@ -56,14 +57,14 @@ class LoanTerms extends Component {
                     const repaymentAmount = interestAmount + parseFloat(loanRequest.amount)
                     const baseCollateral = parseFloat(loanRequest.amount) / parseFloat(collateralAsset[0].priceUSD)
                     const collateralAmount = (baseCollateral * parseFloat(loanRequest.collateralizationRatio) / 100).toFixed(2)
-                    const liquidationPrice = ((parseFloat(loanRequest.collateralizationRatio) - 100) / 100) * parseFloat(collateralAsset[0].priceUSD)
+                    const liquidationPrice = collateralAsset[0].priceUSD - ((parseFloat(loanRequest.collateralizationRatio) - 100) / 100) * parseFloat(collateralAsset[0].priceUSD)
 
                     this.setState({
                         interestRate,
                         interestAmount,
                         repaymentAmount,
                         collateralAmount,
-                        liquidationPrice,
+                        liquidationPrice: liquidationPrice.toFixed(6),
                         tokenAddress: token.contractAddress,
                         assets: res.payload,
                     })
@@ -94,14 +95,15 @@ class LoanTerms extends Component {
         const secretHashB1 = `0x${sha256(secretB1)}`
 
         // dispatch save secretHashB1
-        dispatch(saveSecretHashB1(secretHashB1))
+        // dispatch(saveSecretHashB1(secretHashB1))
+        this.setState({ signed: true })
     }
 
     handleCreateLoanBtn = async (e) => {
         e.preventDefault()
         const { loanRequest, payload, history, dispatch } = this.props
         const {
-            secretHashB1, amount, period, asset, collateralizationRatio
+            secretHashB1, amount, duration, asset, collateralizationRatio
         } = loanRequest
 
         const { interestAmount, tokenAddress, assets, abi } = this.state
@@ -123,7 +125,7 @@ class LoanTerms extends Component {
             principal: amount,
             interest: interestAmount,
             assetSymbol: asset,
-            period,
+            period: duration,
             collateralizationRatio,
             tokenAddress,
         }
@@ -134,7 +136,7 @@ class LoanTerms extends Component {
                 if (res.status === 'OK') {
                     console.log(res.payload)
                     const loan = res.payload
-                    dispatch(saveLoanRequestTerms(loan))
+
                     // metamask
                     const tx = await blitsLoans.methods.createLoan(
                         loan.lenderAuto,
@@ -144,9 +146,22 @@ class LoanTerms extends Component {
                         web3.utils.toWei(loan.principal.toString()),
                         web3.utils.toWei(loan.interest.toString()),
                         loan.tokenAddress
-                    )
+                    ).send({ from })
                     console.log(tx)
-                    tx.send({ from })
+                    const extLoanId = tx.events.LoanCreated.returnValues.loanId
+                    dispatch(saveLoanRequestTerms({ ...loan, extLoanId }))
+                    saveExtLoanId({ loanId: loan.id, extLoanId: extLoanId, coin: 'BCOIN' })
+                        .then(data2 => data2.json())
+                        .then((res2) => {
+                            if (res2.status === 'OK') {
+                                updateLoanState({ loanId: loan.id, coin: 'BCOIN', loanState: 'OPEN' })
+                                    .then(data3 => data3.json())
+                                    .then((res3) => {
+                                        history.push('/app/lend/dashboard')
+                                    })
+                            }
+                        })
+
                 }
             })
     }
@@ -205,7 +220,7 @@ class LoanTerms extends Component {
                                             </div>
                                             <div className="c0l-sm-12 col-md-5">
                                                 {
-                                                    !loanRequest.secretHashB1
+                                                    !this.state.signed
                                                         ?
                                                         <button onClick={this.handleGenerateSecretBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
                                                             <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />

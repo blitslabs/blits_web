@@ -16,7 +16,7 @@ class LoanTerms extends Component {
         amount: '',
         amountIsInvalid: false,
         amountErrorMsg: 'This field is required',
-        collateralizationRatio: 20,
+        collateralizationRatio: 150,
         apr: '',
         aprIsInvalid: false,
         aprErrorMsg: 'This field is required',
@@ -81,10 +81,10 @@ class LoanTerms extends Component {
         const { amount, collateralizationRatio, apr, duration } = this.state
         const { dispatch, history } = this.props
 
-        if(!amount || !collateralizationRatio || !apr || !duration) {
-            if(!amount) this.setState({ amountIsInvalid: true })
-            if(!apr) this.setState({ aprIsInvalid: true })
-            if(!duration) this.setState({ durationIsInvalid: true })
+        if (!amount || !collateralizationRatio || !apr || !duration) {
+            if (!amount) this.setState({ amountIsInvalid: true })
+            if (!apr) this.setState({ aprIsInvalid: true })
+            if (!duration) this.setState({ durationIsInvalid: true })
             return
         }
 
@@ -138,7 +138,10 @@ class LoanTerms extends Component {
                                         <div className="mt-3">
                                             <Slider min={100} max={200} step={10} value={this.state.collateralizationRatio} onChange={this.handleCRateChange} />
                                         </div>
-                                        <div className="text-right text-black mt-3">Min: 100% | Max: 200% </div>
+                                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                            <div className="text-black mt-3">Value: {this.state.collateralizationRatio}</div>
+                                            <div className="text-black mt-3">Min: 100% | Max: 200% </div>
+                                        </div>
 
                                         <div className="app-form-label text-black mt-4">3. Annual Percentage Rate</div>
                                         <div className="input-group mb-3">

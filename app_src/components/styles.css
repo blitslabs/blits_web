@@ -200,3 +200,7 @@ footer {
     margin-right: 10px;
     margin-left: -20px;
 }
+
+.active-loan-details {
+    font-size: 18px !important;
+}
