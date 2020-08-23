@@ -34,6 +34,10 @@
     color: black;
 }
 
+.btn-blits-white:hover {
+    color: black;
+}
+
 .image-box {
     background: white;
 }
@@ -162,6 +166,7 @@ footer {
 .label-value {
     font-weight: 600;
     font-size: 24px;
+    color: black;
 }
 
 .app-form-label {
@@ -188,4 +193,10 @@ footer {
 
 .rc-slider-handle:hover {
     border-color: white !important;
+}
+
+.metamask-btn-img {
+    height: 16px;
+    margin-right: 10px;
+    margin-left: -20px;
 }

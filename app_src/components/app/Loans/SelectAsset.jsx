@@ -50,7 +50,7 @@ class SelectAsset extends Component {
                                     </div>
                                     <div className="row mt-5 ">
                                         <div className="col-sm-12 col-md-6 mb-2 text-center">
-                                            <div onClick={() => this.handleOptionClick('dai')} className="app-option-btn shadow-lg">
+                                            <div onClick={() => this.handleOptionClick('DAI')} className="app-option-btn shadow-lg">
                                                 <div><img src={process.env.SERVER_HOST + '/assets/images/dai_logo.png'} alt="" /></div>
                                                 <div className="option-title text-black mt-4">DAI</div>
                                                 <div className="option-desc text-black mt-3">{requestType === 'borrow' ? 'Borrow DAI on Ethereum\'s blockchain using ONE as collateral' : 'Lend DAI on Ethereum\'s blockchain to earn interest.'}</div>
@@ -58,7 +58,7 @@ class SelectAsset extends Component {
                                             </div>
                                         </div>
                                         <div className="col-sm-12 col-md-6 mb-2 text-center">
-                                            <div onClick={() => this.handleOptionClick('busd')} className="app-option-btn shadow-lg">
+                                            <div onClick={() => this.handleOptionClick('BUSD')} className="app-option-btn shadow-lg">
                                                 <div><img src={process.env.SERVER_HOST + '/assets/images/busd_logo.png'} alt="" /></div>
                                                 <div className="option-title text-black mt-4">BUSD</div>
                                                 <div className="option-desc text-black mt-3">{requestType === 'borrow' ? 'Borrow BUSD on Ethereum\'s blockchain using ONE as collateral' : 'Lend BUSD on Ethereum\'s blockchain to earn interest.'}</div>

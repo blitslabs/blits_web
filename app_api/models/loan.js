@@ -68,7 +68,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: true
         },
-        token: {
+        assetSymbol: {
+            type: DataTypes.STRING,
+            allowNull: true
+        },
+        tokenAddress: {
             type: DataTypes.STRING,
             allowNull: true
         },

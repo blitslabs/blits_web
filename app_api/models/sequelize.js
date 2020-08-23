@@ -1,6 +1,8 @@
 const Sequelize = require('sequelize')
 const NewsletterLeadModel = require('./newsletterLead')
 const LoanModel = require('./loan')
+const AssetModel = require('./asset')
+const SettingsModel = require('./settings')
 
 const sequelize = new Sequelize(
     process.env.DB_NAME,
@@ -19,6 +21,9 @@ const sequelize = new Sequelize(
 
 const NewsletterLead = NewsletterLeadModel(sequelize, Sequelize)
 const Loan = LoanModel(sequelize, Sequelize)
+const Asset = AssetModel(sequelize, Sequelize)
+const Settings = SettingsModel(sequelize, Sequelize)
+
 
 sequelize
     .query('SET FOREIGN_KEY_CHECKS = 0', { raw: true })
@@ -32,5 +37,7 @@ sequelize
 module.exports = {
     NewsletterLead,
     Loan,
+    Asset,
+    Settings,
     sequelize,
 }
