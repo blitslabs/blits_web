@@ -106,8 +106,7 @@ class ConfirmLoanBorrower extends Component {
             gasLimit: '4000000',
             gasPrice: new hmy.utils.Unit('1').asGwei().toWei(),
         })
-        console.log(tx)
-        return
+        
 
         const params = {
             loanId: loan.id,
@@ -122,10 +121,11 @@ class ConfirmLoanBorrower extends Component {
             .then(async (res) => {
                 console.log(res)
 
-                try {
+                    const lender = hmy.crypto.getAddress(res.payload.aCoinLender).checksum
+                
 
                     const tx = await harmonyLock.methods.lockCollateral(
-                        hmy.crypto.getAddress(res.payload.aCoinLender).checksum,
+                        lender,
                         res.payload.secretHashA1,
                         res.payload.secretHashB1,
                         res.payload.secretHashAutoA1,
@@ -134,7 +134,7 @@ class ConfirmLoanBorrower extends Component {
                         res.payload.aCoinSeizureExpiration,
                         150
                     ).send({
-                        value: new hmy.utils.Unit(100).asOne().toWei(),
+                        value: new hmy.utils.Unit(res.payload.principal).asOne().toWei(),
                         gasLimit: '1000001',
                         gasPrice: new hmy.utils.Unit('10').asGwei().toWei(),
                     }).on('transactionHash', function (hash) {
@@ -149,9 +149,7 @@ class ConfirmLoanBorrower extends Component {
 
 
                     console.log(tx)
-                } catch (e) {
-                    console.log(e)
-                }
+                
 
 
             })
