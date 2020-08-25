@@ -26454,6 +26454,231 @@
       "address": "0xc1619A80Bf76b585c05CbC19B7106e773BA05ceD",
       "transactionHash": "0xd6c6ed6bcfa0da31927b0b10ae6dc9b24840e4f9fee8070ea341d35785e0e866"
     },
+    "3": {
+      "events": {
+        "0xc3b6086c2216f501645189efd73c16e4944088e00825015aadf85b5d02cd42bb": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "loanId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "secretB1",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "enum BlitsLoans.State",
+              "name": "state",
+              "type": "uint8"
+            }
+          ],
+          "name": "CancelLoan",
+          "type": "event"
+        },
+        "0x15561d455d8a54d15a2764d6dd5847891c1e2c39fe453ba40a80cb6b08d58f97": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "loanId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "borrower",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "secretHashA1",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "enum BlitsLoans.State",
+              "name": "state",
+              "type": "uint8"
+            }
+          ],
+          "name": "LoanAssignedAndApproved",
+          "type": "event"
+        },
+        "0x2abd59ed776138fb6191e8e3313cd669b51d5a2cab430c2ba0bf2f0cf0c0c425": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "loanId",
+              "type": "uint256"
+            }
+          ],
+          "name": "LoanCreated",
+          "type": "event"
+        },
+        "0xa8f5536865250e649f5cbb6ad7e2813718f1185bbef4904f2e4a5dcb6d249baa": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "loanId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "enum BlitsLoans.State",
+              "name": "state",
+              "type": "uint8"
+            }
+          ],
+          "name": "LoanFunded",
+          "type": "event"
+        },
+        "0x827fa5e65785b8b19e886d94ed9dbb8910fe17b3d88481e8923a10eeee93d22c": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "loanId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "borrower",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "bytes32",
+              "name": "secretA1",
+              "type": "bytes32"
+            },
+            {
+              "indexed": false,
+              "internalType": "enum BlitsLoans.State",
+              "name": "state",
+              "type": "uint8"
+            }
+          ],
+          "name": "LoanPrincipalWithdrawn",
+          "type": "event"
+        },
+        "0x472a39207739f0adbff7e384ba71ae18ccc452bc830640838d019807eb69589e": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "loanId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "enum BlitsLoans.State",
+              "name": "state",
+              "type": "uint8"
+            }
+          ],
+          "name": "LoanRepaymentAccepted",
+          "type": "event"
+        },
+        "0x03fade9da3e18fb30bbc3ccea1b3ac98916572447b9f0d5820b46cd2f464f405": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "loanId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "borrower",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "enum BlitsLoans.State",
+              "name": "state",
+              "type": "uint8"
+            }
+          ],
+          "name": "Payback",
+          "type": "event"
+        },
+        "0x8ad072c1cbc9b48ec085df07189c587a9f11d6da57d32e34178804b26753e754": {
+          "anonymous": false,
+          "inputs": [
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "loanId",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "address",
+              "name": "borrower",
+              "type": "address"
+            },
+            {
+              "indexed": false,
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "indexed": false,
+              "internalType": "enum BlitsLoans.State",
+              "name": "state",
+              "type": "uint8"
+            }
+          ],
+          "name": "RefundPayback",
+          "type": "event"
+        }
+      },
+      "links": {},
+      "address": "0x10Fc2d86Dfb1A4303577e0689BAb1BA7c42C03d6",
+      "transactionHash": "0x844c5cefced83c569d21387643538394343cbba668b90aa713b7ded34a99abbf"
+    },
     "5777": {
       "events": {
         "0xc3b6086c2216f501645189efd73c16e4944088e00825015aadf85b5d02cd42bb": {
@@ -26676,12 +26901,12 @@
         }
       },
       "links": {},
-      "address": "0x633Ae391297C60EEe1A8190d8113CBfa1bC436F8",
-      "transactionHash": "0x02efa0cdf4a4327f5e938e0300544e33f80271b7674f947b7222a18d83eca14e"
+      "address": "0xD92D283a471877046aCbb5b561944A4C1c2BE001",
+      "transactionHash": "0xd683aa5a9bc733a3a8eb6dea20669a4255c94be18dbc86a7d74248968a6af183"
     }
   },
   "schemaVersion": "3.2.3",
-  "updatedAt": "2020-08-25T01:05:23.380Z",
+  "updatedAt": "2020-08-25T20:08:56.145Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}
