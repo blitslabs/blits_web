@@ -113,3 +113,12 @@ export function assignBorrower(params) {
         }
     })
 }
+
+export function acceptRepayment(params) {
+    return fetch(API + 'loan/acceptRepayment/' + params.loanId, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}

@@ -26,7 +26,7 @@ router.put('/loan/updateLoanState', loanController.updateLoanState)
 router.post('/loan/saveBorrower', loanController.saveBorrowerRequest)
 router.get('/loan/approve/:loanId', loanController.assignBorrowerAndApprove)
 router.get('/loanInBcoin/:bCoinLoanId', loanController.fetchLoanInBCoin)
-
+router.get('/loan/acceptRepayment/:loanId', loanController.acceptRepayment)
 
 // contract
 router.get('/contract/abi/:contractName', contractController.getABIByContractName)

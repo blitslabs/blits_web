@@ -12,7 +12,7 @@ import '../styles.css'
 import { saveLoanRequestTerms, saveSecretHashA1 } from '../../../actions/loanRequest'
 
 // API
-import { getAssets, saveBorrowerRequest, getLoanDetails, saveExtLoanId, updateLoanState, getContractsData } from '../../../utils/api'
+import { getAssets, acceptRepayment, getLoanDetails, saveExtLoanId, updateLoanState, getContractsData } from '../../../utils/api'
 
 // Libraries
 import Web3 from 'web3'
@@ -94,250 +94,133 @@ class LoanDetails extends Component {
 
     }
 
-    handleTestBtn = async (e) => {
-        const { contracts, loan } = this.state
-        const { loanRequest } = this.props
-        const address = '0xE90075b75772A4d0f865A8ccfc061e4E0E001327';
-        const harmonyExt = await new HarmonyExtension(window.onewallet, { chainId: 2, chainType: ChainType.Harmony, shardID: 0, chainUrl: 'https://api.s0.b.hmny.io' });
-        const account = await harmonyExt.login()
-        const from = hmy.crypto.getAddress(account.address).checksum
-        const harmonyLock = await harmonyExt.contracts.createContract(contracts.aCoin.abi.abi, address)
-        const tx = await harmonyLock.methods.fetchLoan(1).call({
-            gasLimit: '4000000',
-            gasPrice: new hmy.utils.Unit('1').asGwei().toWei(),
-        })
 
-
-        const params = {
-            loanId: loan.id,
-            secretHashA1: loanRequest.secretHashA1,
-            aCoinBorrower: from, // Harmony
-            bCoinBorrower: loanRequest.bCoinBorrower, // Ethereum
-        }
-
-
-        saveBorrowerRequest(params)
-            .then(data => data.json())
-            .then(async (res) => {
-                console.log(res)
-
-                if (res.status === 'OK') {
-                    const lender = hmy.crypto.getAddress(res.payload.aCoinLender).checksum
-                    const totalCollateral = parseFloat(res.payload.aCoinRefundableCollateral) + parseFloat(res.payload.aCoinSeizableCollateral)
-
-                    const tx = await harmonyLock.methods.lockCollateral(
-                        lender,
-                        res.payload.secretHashA1,
-                        res.payload.secretHashB1,
-                        res.payload.secretHashAutoA1,
-                        res.payload.secretHashAutoB1,
-                        res.payload.aCoinLoanExpiration,
-                        res.payload.aCoinSeizureExpiration,
-                        150
-                    ).send({
-                        value: new hmy.utils.Unit(res.payload.principal).asOne().toWei(),
-                        gasLimit: '1000001',
-                        gasPrice: new hmy.utils.Unit(totalCollateral.toFixed(2).toString()).asGwei().toWei(),
-                    }).on('transactionHash', function (hash) {
-                        console.log('hash', hash)
-                    }).on('receipt', function (receipt) {
-                        console.log('receipt', receipt)
-                    }).on('confirmation', async (confirmation) => {
-                        console.log('confirmation', confirmation)
-                        if (confirmation === 'REJECTED') alert('TX was rejected')
-                    }).on('error', console.error)
-
-                    console.log(tx)
-
-                }
-            })
-                
-    }
-
-    handleGenerateSecretBtn = async (e) => {
+    handleWithdrawBtn = async (e) => {
         e.preventDefault()
-        const { dispatch } = this.props
+        const { loanRequest } = this.props
+        const { contracts, loan } = this.state
 
-        const message = 'You are signing this message to generate secrets for the Hash Time Locked Contracts required to create the loan.'
+        console.log('WITHDRAW_LOAN_BTN')
 
         if (!window.ethereum) {
-            console.log('error no ethereum')
+            console.log('error: no ethereum')
+            return
         }
 
         const web3 = new Web3(window.ethereum)
         await window.ethereum.enable()
-
         const accounts = await web3.eth.getAccounts()
         const from = accounts[0]
-        // sign message
-        const messageA1 = await web3.eth.personal.sign(message, from)
-        // generate secretB1
-        const secretA1 = sha256(messageA1)
-        // generate secretHashB1
-        const secretHashA1 = `0x${sha256(secretA1)}`
 
-        // dispatch save secretHashB1
-        dispatch(saveSecretHashA1(secretHashA1))
-        dispatch(saveLoanRequestTerms({ bCoinBorrower: from }))
-        this.setState({ signed: true })
+        const blitsLoans = await new web3.eth.Contract(contracts.bCoin.abi.abi, contracts.bCoin.contractAddress)
+        const tx = await blitsLoans.methods.withdraw(loan.bCoinLoanId, ('0x' + loanRequest.secretA1)).send({ from })
+        console.log(tx)
+
+        if ('blockHash' in tx) {
+            updateLoanState({ loanId: loan.bCoinLoanId, coin: 'BCOIN', loanState: 'WITHDRAWN' })
+                .then(data => data.json())
+                .then((res) => {
+                    this.setState({ loan: { ...this.state.loan, bCoinState: 'WITHDRAWN' } })
+                })
+        }
     }
 
-    // https://johnwhitton.dev/docs/docs/contribute/develop/deploy-your-first-dapp/
-    handleOneWalletBtn = async (e) => {
+    handleRepayBtn = async (e) => {
+        console.log('REPAY_LOAN_BTN')
+        e.preventDefault()
+        const { loanRequest, dispatch } = this.props
         const { contracts, loan } = this.state
-        const { loanRequest } = this.props
 
-        const harmonyExt = await new HarmonyExtension(window.onewallet);
-        console.log(harmonyExt)
-        harmonyExt.setShardID(0)
-        harmonyExt.contracts.wallet = harmonyExt.wallet
+        if (!window.ethereum) {
+            console.log('error: no ethereum')
+            return
+        }
 
-        // Get account
+        const web3 = new Web3(window.ethereum)
+        await window.ethereum.enable()
+        const accounts = await web3.eth.getAccounts()
+        const from = accounts[0]
+
+        // Check allowance
+        const stablecoin = await new web3.eth.Contract(contracts[loanRequest.assetSymbol].abi.abi, contracts[loanRequest.assetSymbol].contractAddress)
+        let allowance = await stablecoin.methods.allowance(from, contracts.bCoin.contractAddress).call()
+        allowance = web3.utils.fromWei(allowance)
+        console.log('Allowance:', allowance)
+
+        const repaymentAmount = Math.ceil(parseFloat(loan.principal) + parseFloat(loan.interest))
+        
+        if (!allowance || parseFloat(allowance) < repaymentAmount) {
+            await stablecoin.methods.approve(contracts.bCoin.contractAddress, web3.utils.toWei(repaymentAmount.toString())).send({ from })
+            return
+        }
+
+        // Repay loan
+        const blitsLoans = await new web3.eth.Contract(contracts.bCoin.abi.abi, contracts.bCoin.contractAddress)
+        let tx
+
+        try {
+            tx = await blitsLoans.methods.payback(loan.bCoinLoanId.toString()).send({ from })
+        } catch (e) {
+            console.log(e)
+            return
+        }
+
+        if ('blockHash' in tx) {
+            updateLoanState({ loanId: loan.bCoinLoanId, coin: 'BCOIN', loanState: 'REPAID' })
+                .then(data => data.json())
+                .then((res) => {
+                    if (res.status === 'OK') {
+                        this.setState({ loan: { ...this.state.loan, bCoinState: 'REPAID' } })
+                        acceptRepayment({ loanId: loan.id })
+                            .then(data2 => data2.json())
+                            .then((res2) => {
+                                if (res2.status === 'OK') {
+                                    this.setState({ loan: { ...this.state.loan, bCoinState: 'CLOSED' } })
+                                    dispatch(saveLoanRequestTerms({ secretAutoB1: res2.payload.secretAutoB1 }))
+                                }
+                            })
+                    }
+                })
+        }
+    }
+
+    handleUnlockCollateralBtn = async (e) => {
+        console.log('UNLOCK_COLLATERAL_BTN')
+        e.preventDefault()
+        const { loanRequest, dispatch } = this.props
+        const { contracts, loan } = this.state
+        const harmonyExt = await new HarmonyExtension(window.onewallet, { chainId: 2, chainType: ChainType.Harmony, shardID: 0, chainUrl: 'https://api.s0.b.hmny.io' });
         const account = await harmonyExt.login()
         const from = hmy.crypto.getAddress(account.address).checksum
-
         const harmonyLock = await harmonyExt.contracts.createContract(contracts.aCoin.abi.abi, contracts.aCoin.contractAddress)
 
-        harmonyLock.wallet.defaultSigner = from
+        // Unlock collateral
+        const tx = await harmonyLock.methods.unlockCollateralAndCloseLoan(
+            loan.aCoinLoanId,
+            loanRequest.secretAutoB1
+        ).send({
+            value: new hmy.utils.Unit(0).asOne().toWei(),
+            gasLimit: '1000001',
+            gasPrice: new hmy.utils.Unit(1000000000).asGwei().toWei(),
+        }).on('transactionHash', function (hash) {
+            console.log('hash', hash)
+        }).on('receipt', function (receipt) {
+            console.log('receipt', receipt)
+        }).on('confirmation', async (confirmation) => {
+            console.log('confirmation', confirmation)
+            if (confirmation === 'REJECTED') alert('TX was rejected')
 
+            updateLoanState({ loanId: loan.aCoinLoanId, coin: 'ACOIN', loanState: 'CLOSED' })
+                .then(data => data.json())
+                .then((res) => {
+                    console.log(res)
+                    if (res.status === 'OK') {
+                        this.setState({ loan: { ...this.state.loan, aCoinState: 'CLOSED' } })
+                    }
+                })
 
-        let options = { gasPrice: 1000000000, gasLimit: 6721900 };
-        // console.log(harmonyLock)
-        // let options2 = { gasPrice: 1000000000, gasLimit: 21000 }
-        const contractResponse = await harmonyLock.methods.fetchLoan(0).call({
-            gasLimit: '1000000',
-            gasPrice: new hmy.utils.Unit('1000').asGwei().toWei(),
-        })
-
-        console.log(contractResponse)
-
-        // return
-        // harmonyLock.wallet.addByPrivateKey('01F903CE0C960FF3A9E68E80FF5FFC344358D80CE1C221C3F9711AF07F83A3BD');
-        // Save Borrower Request
-        const params = {
-            loanId: loan.id,
-            secretHashA1: loanRequest.secretHashA1,
-            aCoinBorrower: from, // Harmony
-            bCoinBorrower: loanRequest.bCoinBorrower, // Ethereum
-        }
-
-
-        saveBorrowerRequest(params)
-            .then(data => data.json())
-            .then(async (res) => {
-                console.log(res)
-
-                try {
-
-                    const tx = await harmonyLock.methods.lockCollateral(
-                        hmy.crypto.getAddress(res.payload.aCoinLender).checksum,
-                        res.payload.secretHashA1,
-                        res.payload.secretHashB1,
-                        res.payload.secretHashAutoA1,
-                        res.payload.secretHashAutoB1,
-                        res.payload.aCoinLoanExpiration,
-                        res.payload.aCoinSeizureExpiration,
-                        res.payload.collateralizationRatio
-                    ).send(options)
-
-                    console.log(tx)
-                } catch (e) {
-                    console.log(e)
-                }
-                // const txn = hmy.transactions.newTx({
-                //     from: from,
-                //     to: hmy.crypto.getAddress(res.payload.aCoinLender).checksum,
-                //     value: '10000000000000000000000000',
-                //     shardID: 0,
-                //     toShardID: 0,
-                //     gasLimit: '1000001',
-                //     gasPrice: new hmy.utils.Unit('10').asGwei().toWei(),
-                //     data,
-                // })
-
-                // const signed = await window.onewallet.signTransaction(txn)
-                // console.log(signed)
-
-            })
+        }).on('error', console.error)
     }
-
-    handleLockCollateralBtn = async (e) => {
-        e.preventDefault()
-
-        const { contracts, loan } = this.state
-        const { loanRequest } = this.props
-
-        // Ethereum
-        // const web3 = new Web3(window.ethereum)
-        // await window.ethereum.enable()
-        // const accounts = await web3.eth.getAccounts()
-        // const from = accounts[0]
-
-        // Harmony
-        // const harmonyExt = await new HarmonyExtension(window.onewallet)
-        // const from = await harmonyExt.login()
-        // console.log(from)
-        // return
-        // https://github.com/mathwallet/math-harmonyjs
-        console.log(window.harmony)
-        const account = await window.harmony.getAccount()
-        // https://github.com/harmony-one/ethhmy-bridge.appengine/blob/b63893f6125273cd0a8f160de11bcc3f5306e139/src/blockchain/hmySdk.ts
-        const from = hmy.crypto.getAddress(account.address).checksum
-
-        // Contract
-        // const harmonyLock = await new web3.eth.Contract(contracts.aCoin.abi.abi, contracts.aCoin.contractAddress)
-        const harmonyLock = await hmy.contracts.createContract(contracts.aCoin.abi.abi, '0xf193EF8a329eA302319b69F29A71A5D8cDEAae55')
-        // const harmonyLock = await harmonyExt.contracts.createContract(contracts.aCoin.abi.abi, contracts.aCoin.cointractAddress)
-
-        // Save Borrower Request
-        const params = {
-            loanId: loan.id,
-            secretHashA1: loanRequest.secretHashA1,
-            aCoinBorrower: from, // Harmony
-            bCoinBorrower: loanRequest.bCoinBorrower, // Ethereum
-        }
-        console.log(params)
-
-        saveBorrowerRequest(params)
-            .then(data => data.json())
-            .then(async (res) => {
-                console.log(res)
-                harmonyLock.wallet.setSigner(from)
-                const data = await harmonyLock.methods.lockCollateral(
-                    hmy.crypto.getAddress(res.payload.aCoinLender).checksum,
-                    res.payload.secretHashA1,
-                    res.payload.secretHashB1,
-                    res.payload.secretHashAutoA1,
-                    res.payload.secretHashAutoB1,
-                    res.payload.aCoinLoanExpiration,
-                    res.payload.aCoinSeizureExpiration,
-                    res.payload.collateralizationRatio
-                )
-                console.log(data)
-            })
-
-        // saveBorrowerRequest(params)
-        //     .then(data => data.json())
-        //     .then(async (res) => {
-        //         console.log(res)
-        //         // if (res.status === 'OK') {
-        //         //     const tx = await harmonyLock.methods.lockCollateral(
-        //         //         res.payload.aCoinLender,
-        //         //         res.payload.secretHashA1,
-        //         //         res.payload.secretHashB1,
-        //         //         res.payload.secretHashAutoA1,
-        //         //         res.payload.secrestHashAutoB1,
-        //         //         res.payload.aCoinLoanExpiration,
-        //         //         res.payload.aCoinSeizureExpiration,
-        //         //         res.payload.collateralizationRatio
-        //         //     ).send()
-        //         // }
-        //     })
-
-
-
-    }
-
 
 
     handleBackBtn = (e) => {
@@ -359,8 +242,8 @@ class LoanDetails extends Component {
                             <div className="row">
                                 <div className="col-sm-12 col-md-8 offset-md-2">
                                     <div className="mb-4 text-center">
-                                        <h2>Confirm Loan</h2>
-                                        <div className="app-page-subtitle mt-2">You are about to get a loan with the following details</div>
+                                        <h2>Loan Details </h2>
+                                        <div className="app-page-subtitle mt-2">ID #{this.state.loan.id}</div>
                                     </div>
                                     <div className="app-card shadow-lg">
                                         <div className="row">
@@ -387,20 +270,27 @@ class LoanDetails extends Component {
                                         </div>
 
                                         <div className="row mt-4">
-                                            <div className="col-sm-12 col-md-5 offset-md-1">
-                                                <button onClick={this.handleBackBtn} className="btn btn-blits-white mt-4" style={{ width: '100%' }}>Back</button>
-                                            </div>
-                                            <div className="c0l-sm-12 col-md-5">
+
+                                            <div className="c0l-sm-12 col-md-12 text-center">
                                                 {
-                                                    !this.state.signed
+                                                    this.state.loan.bCoinState === 'APPROVED'
                                                         ?
-                                                        <button onClick={this.handleGenerateSecretBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                        <button onClick={this.handleWithdrawBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
                                                             <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
-                                                    Generate Secret</button>
+                                                    Withdraw Principal</button>
                                                         :
-                                                        <button onClick={this.handleTestBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
-                                                            <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/one_logo.png'} alt="" />
-                                                    Lock Collateral</button>
+                                                        this.state.loan.bCoinState === 'WITHDRAWN'
+                                                            ?
+                                                            <button onClick={this.handleRepayBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                                <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
+                                                    Repay Loan</button>
+                                                            :
+                                                            this.state.loan.bCoinState === 'CLOSED' && this.state.loan.aCoinState === 'LOCKED'
+                                                                ? <button onClick={this.handleUnlockCollateralBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                                    <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/one_logo.png'} alt="" />Unlock Collateral</button>
+
+                                                                : null
+
                                                 }
 
                                             </div>

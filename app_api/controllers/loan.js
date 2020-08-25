@@ -232,8 +232,9 @@ module.exports.updateLoanState = (req, res) => {
 
         if (coin === 'BCOIN') {
             loan = await Loan.findOne({ where: { bCoinLoanId: loanId }, transaction: t })
+        } else if (coin === 'ACOIN') {
+            loan = await Loan.findOne({ where: { aCoinLoanId: loanId }, transaction: t })
         }
-
 
         if (!loan) {
             sendJSONresponse(res, 404, { status: 'ERROR', message: 'Contract not found' })
@@ -394,9 +395,99 @@ module.exports.assignBorrowerAndApprove = (req, res) => {
 
             // Update Loan
             loan.bCoinState = 'APPROVED'
+            loan.aCoinState = 'LOCKED'
             await loan.save({ transaction: t })
 
             sendJSONresponse(res, 200, { status: 'OK', message: 'Loan Approved', payload: txHash })
+            return
+
+        })
+    })
+        .catch((err) => {
+            console.log(err)
+            sendJSONresponse(res, 422, { status: 'ERROR', message: 'An error occurred. Please try again.' })
+            return
+        })
+}
+
+module.exports.acceptRepayment = (req, res) => {
+    const loanId = req.params.loanId
+
+    if (!loanId) {
+        sendJSONresponse(res, 422, { status: 'ERROR', message: 'Missing required arguments' })
+        return
+    }
+
+    sequelize.transaction(async (t) => {
+        const loan = await Loan.findOne({ where: { id: loanId }, transaction: t })
+
+        if (!loan) {
+            sendJSONresponse(res, 404, { status: 'ERROR', message: 'Loan not found' })
+            return
+        }
+
+        if (loan.bCoinState !== 'REPAID') {
+            sendJSONresponse(res, 422, { status: 'ERROR', message: 'Invalid laon state' })
+            return
+        }
+
+        const settings = await Settings.findOne({ where: { id: 1 }, transaction: t })
+
+        // Get Contract ABI
+        const bCoinAbi = JSON.parse(fs.readFileSync(path.resolve(APP_ROOT + '/app_api/config/BlitsLoans.json')))
+
+        // Connect to HTTP Provider
+        const web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETH_HTTP_PROVIDER))
+
+        // Instantiate Contract
+        const blitsLoans = await new web3.eth.Contract(bCoinAbi.abi, settings.bCoinContractAddress)
+
+        // Get Nonce
+        const count = await web3.eth.getTransactionCount(settings.bCoinPubKey)
+
+        // List of ChainIDs
+        // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
+        // Prepare Raw Transaction
+
+        const chainId = await web3.eth.getChainId()
+        const chainName = await web3.eth.net.getNetworkType()
+
+        const secretAutoB1 = ('0x' + loan.secretAutoB1)
+
+        const data = await blitsLoans.methods.acceptRepayment(loan.bCoinLoanId, secretAutoB1).encodeABI()
+
+        const rawTx = {
+            from: settings.bCoinPubKey,
+            nonce: '0x' + count.toString(16),
+            gasPrice: '0x003B9ACA00',
+            gasLimit: '0x250CA',
+            to: settings.bCoinContractAddress,
+            value: '0x0',
+            chainId: '0x0' + chainId,
+            data: data
+        }
+
+        // Create TX
+        const tx = new Tx(rawTx)
+
+        // Sign TX
+        const privateKey = new Buffer(settings.bCoinPrivKey, 'hex')
+        tx.sign(privateKey)
+        const serializedTx = tx.serialize()
+
+        // Broadcast TX
+        return web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'), async (err, txHash) => {
+            if (err) {
+                console.log(err)
+                sendJSONresponse(res, 422, { status: 'ERROR', message: err })
+                return
+            }
+
+            // Update Loan
+            loan.bCoinState = 'CLOSED'
+            await loan.save({ transaction: t })
+
+            sendJSONresponse(res, 200, { status: 'OK', message: 'Loan Repaid', payload: { secretAutoB1 } })
             return
 
         })
@@ -420,16 +511,16 @@ module.exports.fetchLoanInBCoin = (req, res) => {
         // Get Contract ABI
         const bCoinAbi = JSON.parse(fs.readFileSync(path.resolve(APP_ROOT + '/app_api/config/BlitsLoans.json')))
 
-        const settings = await Settings.findOne({ where: { id: 1}, transaction: t })
-       
+        const settings = await Settings.findOne({ where: { id: 1 }, transaction: t })
+
         const web3 = new Web3(process.env.ETH_HTTP_PROVIDER)
         const blitsLoans = await new web3.eth.Contract(bCoinAbi.abi, settings.bCoinContractAddress)
-        
-        const loan = await blitsLoans.methods.fetchLoan(1).call()
 
-        sendJSONresponse(res, 200, { status: 'OK', payload: loan})
+        const loan = await blitsLoans.methods.fetchLoan(bCoinLoanId).call()
+
+        sendJSONresponse(res, 200, { status: 'OK', payload: loan })
         return
-        
+
     })
         .catch((err) => {
             console.log(err)

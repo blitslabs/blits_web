@@ -201,7 +201,7 @@ class ConfirmLoanBorrower extends Component {
 
         // dispatch save secretHashB1
         dispatch(saveSecretHashA1(secretHashA1))
-        dispatch(saveLoanRequestTerms({ bCoinBorrower: from }))
+        dispatch(saveLoanRequestTerms({ bCoinBorrower: from, secretA1 }))
         this.setState({ signed: true })
     }
 
@@ -365,7 +365,7 @@ class ConfirmLoanBorrower extends Component {
 
     handleBackBtn = (e) => {
         e.preventDefault()
-        this.props.history.push('/app/lend/new')
+        this.props.history.push('/app/borrow/dashboard')
     }
 
     render() {
