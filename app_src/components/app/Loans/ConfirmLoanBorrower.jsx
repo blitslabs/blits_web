@@ -12,7 +12,7 @@ import '../styles.css'
 import { saveLoanRequestTerms, saveSecretHashA1 } from '../../../actions/loanRequest'
 
 // API
-import { getAssets, saveBorrowerRequest, getLoanDetails, saveExtLoanId, updateLoanState, getContractsData } from '../../../utils/api'
+import { getAssets, saveBorrowerRequest, getLoanDetails, saveExtLoanId, updateLoanState, getContractsData, assignBorrower } from '../../../utils/api'
 
 // Libraries
 import Web3 from 'web3'
@@ -96,18 +96,17 @@ class ConfirmLoanBorrower extends Component {
 
     handleTestBtn = async (e) => {
         const { contracts, loan } = this.state
-        const { loanRequest } = this.props
+        const { loanRequest, history } = this.props
         const address = '0xE90075b75772A4d0f865A8ccfc061e4E0E001327';
         const harmonyExt = await new HarmonyExtension(window.onewallet, { chainId: 2, chainType: ChainType.Harmony, shardID: 0, chainUrl: 'https://api.s0.b.hmny.io' });
         const account = await harmonyExt.login()
         const from = hmy.crypto.getAddress(account.address).checksum
         const harmonyLock = await harmonyExt.contracts.createContract(contracts.aCoin.abi.abi, address)
-        const tx = await harmonyLock.methods.fetchLoan(1).call({
+        const loanTx = await harmonyLock.methods.fetchLoan(1).call({
             gasLimit: '4000000',
             gasPrice: new hmy.utils.Unit('1').asGwei().toWei(),
         })
-
-
+        
         const params = {
             loanId: loan.id,
             secretHashA1: loanRequest.secretHashA1,
@@ -115,6 +114,12 @@ class ConfirmLoanBorrower extends Component {
             bCoinBorrower: loanRequest.bCoinBorrower, // Ethereum
         }
 
+        let loanCount = await harmonyLock.methods.loanCounter().call({
+            gasLimit: '4000000',
+            gasPrice: new hmy.utils.Unit('1').asGwei().toWei(),
+        })
+
+        loanCount = loanCount.toString()
 
         saveBorrowerRequest(params)
             .then(data => data.json())
@@ -124,6 +129,8 @@ class ConfirmLoanBorrower extends Component {
                 if (res.status === 'OK') {
                     const lender = hmy.crypto.getAddress(res.payload.aCoinLender).checksum
                     const totalCollateral = parseFloat(res.payload.aCoinRefundableCollateral) + parseFloat(res.payload.aCoinSeizableCollateral)
+
+
 
                     const tx = await harmonyLock.methods.lockCollateral(
                         lender,
@@ -145,13 +152,29 @@ class ConfirmLoanBorrower extends Component {
                     }).on('confirmation', async (confirmation) => {
                         console.log('confirmation', confirmation)
                         if (confirmation === 'REJECTED') alert('TX was rejected')
+
+                        saveExtLoanId({ loanId: loan.id, extLoanId: (parseInt(loanCount) + 1), coin: 'ACOIN' })
+                            .then(data2 => data2.json())
+                            .then((res2) => {
+                                console.log(res2)
+                            })
+
+                        assignBorrower({ loanId: loan.id })
+                            .then(data2 => data2.json())
+                            .then((res2) => {
+                                console.log(res2)
+                                if (res2.status === 'OK') {
+                                    history.push(`/app/loan/${loan.id}`)
+                                }
+                            })
+
                     }).on('error', console.error)
 
                     console.log(tx)
 
                 }
             })
-                
+
     }
 
     handleGenerateSecretBtn = async (e) => {

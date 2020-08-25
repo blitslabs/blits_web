@@ -11,6 +11,7 @@ const Tx = require('ethereumjs-tx').Transaction
 const moment = require('moment')
 const fs = require('fs')
 const path = require('path')
+const { send } = require('process')
 
 module.exports.getLoansByStatus = (req, res) => {
     const state = req.params.state ? req.params.state : 'ALL'
@@ -229,10 +230,10 @@ module.exports.updateLoanState = (req, res) => {
 
         let loan
 
-        if(coin === 'BCOIN') {
+        if (coin === 'BCOIN') {
             loan = await Loan.findOne({ where: { bCoinLoanId: loanId }, transaction: t })
         }
-        
+
 
         if (!loan) {
             sendJSONresponse(res, 404, { status: 'ERROR', message: 'Contract not found' })
@@ -351,18 +352,18 @@ module.exports.assignBorrowerAndApprove = (req, res) => {
 
         // Instantiate Contract
         const blitsLoans = await new web3.eth.Contract(bCoinAbi.abi, settings.bCoinContractAddress)
-        
+
         // Get Nonce
         const count = await web3.eth.getTransactionCount(settings.bCoinPubKey)
-        
+
         // List of ChainIDs
         // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
         // Prepare Raw Transaction
 
         const chainId = await web3.eth.getChainId()
         const chainName = await web3.eth.net.getNetworkType()
-        
-        const data =  await blitsLoans.methods.setBorrowerAndApprove(loan.bCoinLoanId, loan.borrower, loan.secretHashA1).encodeABI()
+
+        const data = await blitsLoans.methods.setBorrowerAndApprove(loan.bCoinLoanId, loan.borrower, loan.secretHashA1).encodeABI()
 
         const rawTx = {
             from: settings.bCoinPubKey,
@@ -374,7 +375,7 @@ module.exports.assignBorrowerAndApprove = (req, res) => {
             chainId: '0x0' + chainId,
             data: data
         }
-        
+
         // Create TX
         const tx = new Tx(rawTx)
 
@@ -393,12 +394,42 @@ module.exports.assignBorrowerAndApprove = (req, res) => {
 
             // Update Loan
             loan.bCoinState = 'APPROVED'
-            await loan({ transaction: t })
+            await loan.save({ transaction: t })
 
             sendJSONresponse(res, 200, { status: 'OK', message: 'Loan Approved', payload: txHash })
             return
 
         })
+    })
+        .catch((err) => {
+            console.log(err)
+            sendJSONresponse(res, 422, { status: 'ERROR', message: 'An error occurred. Please try again.' })
+            return
+        })
+}
+
+module.exports.fetchLoanInBCoin = (req, res) => {
+    const bCoinLoanId = req.params.bCoinLoanId
+
+    if (!bCoinLoanId) {
+        sendJSONresponse(res, 422, { status: 'ERROR', message: 'Missing required params' })
+        return
+    }
+
+    sequelize.transaction(async (t) => {
+        // Get Contract ABI
+        const bCoinAbi = JSON.parse(fs.readFileSync(path.resolve(APP_ROOT + '/app_api/config/BlitsLoans.json')))
+
+        const settings = await Settings.findOne({ where: { id: 1}, transaction: t })
+       
+        const web3 = new Web3(process.env.ETH_HTTP_PROVIDER)
+        const blitsLoans = await new web3.eth.Contract(bCoinAbi.abi, settings.bCoinContractAddress)
+        
+        const loan = await blitsLoans.methods.fetchLoan(1).call()
+
+        sendJSONresponse(res, 200, { status: 'OK', payload: loan})
+        return
+        
     })
         .catch((err) => {
             console.log(err)

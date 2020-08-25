@@ -104,3 +104,12 @@ export function saveBorrowerRequest(params) {
         body: JSON.stringify(params)
     })
 }
+
+export function assignBorrower(params) {
+    return fetch(API + 'loan/approve/' + params.loanId, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
