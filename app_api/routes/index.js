@@ -24,6 +24,7 @@ router.put('/loan/saveExtLoanId', loanController.saveLoanId)
 router.get('/loans/:account/:userType/:loanState?', loanController.getLoans)
 router.put('/loan/updateLoanState', loanController.updateLoanState)
 router.post('/loan/saveBorrower', loanController.saveBorrowerRequest)
+router.get('/loan/approve/:loanId', loanController.assignBorrowerAndApprove)
 
 
 // contract

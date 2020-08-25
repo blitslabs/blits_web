@@ -14,6 +14,7 @@ import ConfirmLoanLender from './Loans/ConfirmLoanLender'
 import LenderDashboard from './Loans/LenderDashboard'
 import BorrowerDashboard from './Loans/BorrowerDashboard'
 import ConfirmLoanBorrower from './Loans/ConfirmLoanBorrower'
+import LoanDetails from './Loans/LoanDetails'
 
 class AppRouter extends Component {
     render() {
@@ -31,6 +32,7 @@ class AppRouter extends Component {
                 <Route path={`${match.path}app/lend/dashboard`} component={LenderDashboard} />
                 <Route path={`${match.path}app/borrow/dashboard`} component={BorrowerDashboard} />
                 <Route path={`${match.path}app/borrow/confirm/:loanId`}  component={ConfirmLoanBorrower} />
+                <Route path={`${match.path}app/loan/:loanId`} component={LoanDetails} />
             </Fragment>
         )
     }

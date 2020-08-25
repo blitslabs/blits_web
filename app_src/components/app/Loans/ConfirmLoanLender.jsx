@@ -160,7 +160,7 @@ class LoanTerms extends Component {
                         .then((res2) => {
                             if (res2.status === 'OK') {
                                 console.log('EXT_LOAN_ID_SAVED')
-                                updateLoanState({ loanId: loan.id, coin: 'BCOIN', loanState: 'OPEN' })
+                                updateLoanState({ loanId: extLoanId, coin: 'BCOIN', loanState: 'OPEN' })
                                     .then(data3 => data3.json())
                                     .then((res3) => {
                                         history.push('/app/lend/dashboard')

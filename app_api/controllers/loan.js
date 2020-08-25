@@ -6,8 +6,11 @@ const sendJSONresponse = require('../../utils/index').sendJSONresponse
 const EthCrypto = require('eth-crypto')
 const Web3Utils = require('web3-utils')
 const { sha256 } = require('@liquality-dev/crypto')
-const web3 = require('web3')
+const Web3 = require('web3')
+const Tx = require('ethereumjs-tx').Transaction
 const moment = require('moment')
+const fs = require('fs')
+const path = require('path')
 
 module.exports.getLoansByStatus = (req, res) => {
     const state = req.params.state ? req.params.state : 'ALL'
@@ -141,7 +144,7 @@ module.exports.saveBorrowerRequest = (req, res) => {
             return
         }
 
-        const collateralAsset = await Asset.findOne({ where: { assetSymbol: 'ONE'}, transaction: t })
+        const collateralAsset = await Asset.findOne({ where: { assetSymbol: 'ONE' }, transaction: t })
 
         // Generate SecretHashAutoB1
         const messageAutoA1 = Math.random().toString()
@@ -221,7 +224,13 @@ module.exports.updateLoanState = (req, res) => {
 
 
     sequelize.transaction(async (t) => {
-        const loan = await Loan.findOne({ where: { id: loanId }, transaction: t })
+
+        let loan
+
+        if(coin === 'BCOIN') {
+            loan = await Loan.findOne({ where: { bCoinLoanId: loanId }, transaction: t })
+        }
+        
 
         if (!loan) {
             sendJSONresponse(res, 404, { status: 'ERROR', message: 'Contract not found' })
@@ -309,3 +318,89 @@ module.exports.getLoanDetails = (req, res) => {
         })
 }
 
+module.exports.assignBorrowerAndApprove = (req, res) => {
+    const loanId = req.params.loanId
+
+    if (!loanId) {
+        sendJSONresponse(res, 422, { status: 'ERROR', message: 'Missing required arguments' })
+        return
+    }
+
+    sequelize.transaction(async (t) => {
+        const loan = await Loan.findOne({ where: { id: loanId }, transaction: t })
+
+        if (!loan) {
+            sendJSONresponse(res, 404, { status: 'ERROR', message: 'Loan not found' })
+            return
+        }
+
+        if (loan.bCoinState !== 'FUNDED') {
+            sendJSONresponse(res, 422, { status: 'ERROR', message: 'Invalid laon state' })
+            return
+        }
+
+        const settings = await Settings.findOne({ where: { id: 1 }, transaction: t })
+
+        // Get Contract ABI
+        const bCoinAbi = JSON.parse(fs.readFileSync(path.resolve(APP_ROOT + '/app_api/config/BlitsLoans.json')))
+
+        // Connect to HTTP Provider
+        const web3 = new Web3(new Web3.providers.HttpProvider(process.env.ETH_HTTP_PROVIDER))
+
+        // Instantiate Contract
+        const blitsLoans = await new web3.eth.Contract(bCoinAbi.abi, settings.bCoinContractAddress)
+        
+        // Get Nonce
+        const count = await web3.eth.getTransactionCount(settings.bCoinPubKey)
+        
+        // List of ChainIDs
+        // https://github.com/ethereum/EIPs/blob/master/EIPS/eip-155.md
+        // Prepare Raw Transaction
+
+        const chainId = await web3.eth.getChainId()
+        const chainName = await web3.eth.net.getNetworkType()
+        
+        const data =  await blitsLoans.methods.setBorrowerAndApprove(loan.bCoinLoanId, loan.borrower, loan.secretHashA1).encodeABI()
+
+        const rawTx = {
+            from: settings.bCoinPubKey,
+            nonce: '0x' + count.toString(16),
+            gasPrice: '0x003B9ACA00',
+            gasLimit: '0x250CA',
+            to: settings.bCoinContractAddress,
+            value: '0x0',
+            chainId: '0x0' + chainId,
+            data: data
+        }
+        
+        // Create TX
+        const tx = new Tx(rawTx)
+
+        // Sign TX
+        const privateKey = new Buffer(settings.bCoinPrivKey, 'hex')
+        tx.sign(privateKey)
+        const serializedTx = tx.serialize()
+
+        // Broadcast TX
+        return web3.eth.sendSignedTransaction('0x' + serializedTx.toString('hex'), async (err, txHash) => {
+            if (err) {
+                console.log(err)
+                sendJSONresponse(res, 422, { status: 'ERROR', message: err })
+                return
+            }
+
+            // Update Loan
+            loan.bCoinState = 'APPROVED'
+            await loan({ transaction: t })
+
+            sendJSONresponse(res, 200, { status: 'OK', message: 'Loan Approved', payload: txHash })
+            return
+
+        })
+    })
+        .catch((err) => {
+            console.log(err)
+            sendJSONresponse(res, 422, { status: 'ERROR', message: 'An error occurred. Please try again.' })
+            return
+        })
+}

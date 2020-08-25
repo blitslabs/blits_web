@@ -22,7 +22,10 @@ class LoanTerms extends Component {
         aprErrorMsg: 'This field is required',
         duration: '',
         durationIsInvalid: false,
-        durationErrorMsg: 'This field is required'
+        durationErrorMsg: 'This field is required',
+        aCoinLender: '',
+        aCoinLenderIsInvalid: false,
+        aCoinLenderErrorMsg: 'This field is required',
     }
 
     componentDidMount() {
@@ -76,20 +79,34 @@ class LoanTerms extends Component {
         this.setState({ duration })
     }
 
+    handleACoinLenderChange = (e) => {
+        const aCoinLender = e.target.value
+        // TO DO
+        // Check if address is valid
+        if(!aCoinLender) {
+            this.setState({ aCoinLenderIsInvalid: true, aCoinLenderErrorMsg: 'Enter a valid address'})
+        } else {
+            this.setState({ aCoinLenderIsInvalid: false, aCoinLenderErrorMsg: 'This field is required'})
+        }
+
+        this.setState({ aCoinLender })
+    }
+
     handleContinueBtn = (e) => {
         e.preventDefault()
-        const { amount, collateralizationRatio, apr, duration } = this.state
+        const { amount, collateralizationRatio, apr, duration, aCoinLender } = this.state
         const { dispatch, history } = this.props
 
-        if (!amount || !collateralizationRatio || !apr || !duration) {
+        if (!amount || !collateralizationRatio || !apr || !duration || !aCoinLender) {
             if (!amount) this.setState({ amountIsInvalid: true })
             if (!apr) this.setState({ aprIsInvalid: true })
             if (!duration) this.setState({ durationIsInvalid: true })
+            if(!aCoinLender) this.setState({ aCoinLender: true })
             return
         }
 
         const params = {
-            amount, collateralizationRatio, apr, duration,
+            amount, collateralizationRatio, apr, duration, aCoinLender
         }
 
         dispatch(saveLoanRequestTerms(params))
@@ -110,7 +127,7 @@ class LoanTerms extends Component {
             <Fragment>
                 <div className="main">
                     <Navbar />
-                    <section className="section app-section">
+                    <section className="section app-section" style={{marginTop: '8rem'}}>
                         <div className="container">
                             <div className="row">
                                 <div className="col-sm-12 col-md-8 offset-md-2">
@@ -168,7 +185,16 @@ class LoanTerms extends Component {
                                         </div>
                                         <div className="text-right text-black">Min: 1 | Max: 30 </div>
 
-                                        <div className="row">
+                                        <div className="app-form-label text-black mt-4">5. Harmony Address</div>
+                                        <div className="input-group mb-3">
+                                            <input value={this.state.aCoinLender} onChange={this.handleDurationChange} type="text" className={this.state.aCoinLenderIsInvalid ? "form-control is-invalid" : "form-control"} placeholder="Harmony Address" />
+                                            <div className="invalid-feedback">
+                                                {this.state.aCoinLenderErrorMsg}
+                                            </div>
+                                        </div>
+                                        <div className="text-right text-black">You will receive the borrower's seizable collateral if he fails to repay the loan. </div>
+
+                                        <div className="row mt-2">
                                             <div className="col-sm-12 col-md-5 offset-md-1">
                                                 <button onClick={this.handleBackBtn} className="btn btn-blits-white mt-4" style={{ width: '100%' }}>Back</button>
                                             </div>

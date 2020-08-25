@@ -28,7 +28,7 @@ const hmy = new Harmony('https://api.s0.b.hmny.io', {
 
 // const web3 = new Web3(process.env.WEB3_HTTP_PROVIDER)
 
-class ConfirmLoanBorrower extends Component {
+class LoanDetails extends Component {
     state = {
         interestAmount: 0,
         repaymentAmount: 0,
@@ -47,7 +47,7 @@ class ConfirmLoanBorrower extends Component {
 
         console.log(loanId)
 
-        document.title = 'Confirm Loan | Borrower'
+        document.title = 'Loan Details | Borrower'
         if (!loanId) {
             history.push('/app/loans')
         }
@@ -424,4 +424,4 @@ function mapStateToProps({ loanRequest }) {
     }
 }
 
-export default connect(mapStateToProps)(ConfirmLoanBorrower)
+export default connect(mapStateToProps)(LoanDetails)
