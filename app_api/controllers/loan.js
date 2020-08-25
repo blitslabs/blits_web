@@ -42,6 +42,7 @@ module.exports.getLoansByStatus = (req, res) => {
 
 module.exports.saveLoan = (req, res) => {
     const lender = req.body.lender
+    const aCoinLender = req.body.aCoinLender
     const secretHashB1 = req.body.secretHashB1
     const principal = req.body.principal
     const interest = req.body.interest
@@ -49,7 +50,7 @@ module.exports.saveLoan = (req, res) => {
     const period = parseInt(req.body.period)
     const collateralizationRatio = req.body.collateralizationRatio
 
-    if (!lender || !secretHashB1 || !principal || !interest || !assetSymbol || !period || !collateralizationRatio) {
+    if (!lender || !aCoinLender || !secretHashB1 || !principal || !interest || !assetSymbol || !period || !collateralizationRatio) {
         sendJSONresponse(res, 422, { status: 'ERROR', message: 'Missing required arguments' })
         return
     }
@@ -93,6 +94,7 @@ module.exports.saveLoan = (req, res) => {
 
         const loan = await Loan.create({
             lender,
+            aCoinLender,
             secretHashB1,
             lenderAuto: settings.bCoinPubKey,
             secretAutoB1,

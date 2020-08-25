@@ -105,7 +105,7 @@ class LoanTerms extends Component {
         e.preventDefault()
         const { loanRequest, payload, history, dispatch } = this.props
         const {
-            secretHashB1, amount, duration, asset, collateralizationRatio
+            secretHashB1, amount, duration, asset, collateralizationRatio, aCoinLender,
         } = loanRequest
 
         const { interestAmount, tokenAddress, assets, contracts } = this.state
@@ -130,6 +130,7 @@ class LoanTerms extends Component {
             period: duration,
             collateralizationRatio,
             tokenAddress,
+            aCoinLender,
         }
 
         saveLoan(params)

@@ -187,7 +187,7 @@ class LoanTerms extends Component {
 
                                         <div className="app-form-label text-black mt-4">5. Harmony Address</div>
                                         <div className="input-group mb-3">
-                                            <input value={this.state.aCoinLender} onChange={this.handleDurationChange} type="text" className={this.state.aCoinLenderIsInvalid ? "form-control is-invalid" : "form-control"} placeholder="Harmony Address" />
+                                            <input value={this.state.aCoinLender} onChange={this.handleACoinLenderChange} type="text" className={this.state.aCoinLenderIsInvalid ? "form-control is-invalid" : "form-control"} placeholder="Harmony Address" />
                                             <div className="invalid-feedback">
                                                 {this.state.aCoinLenderErrorMsg}
                                             </div>
