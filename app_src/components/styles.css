@@ -204,3 +204,7 @@ footer {
 .active-loan-details {
     font-size: 18px !important;
 }
+
+.loading-icon {
+    display:inline-block;
+}

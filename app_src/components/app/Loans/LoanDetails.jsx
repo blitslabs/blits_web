@@ -20,6 +20,7 @@ import { sha256 } from '@liquality-dev/crypto'
 import moment from 'moment'
 import { Harmony, HarmonyExtension } from '@harmony-js/core'
 import { ChainID, ChainType } from '@harmony-js/utils'
+import ReactLoading from 'react-loading'
 const hmy = new Harmony('https://api.s0.b.hmny.io', {
     chainType: ChainType.Harmony,
     chainId: ChainID.HmyTestnet,
@@ -38,7 +39,8 @@ class LoanDetails extends Component {
         abi: '',
         signed: false,
         contracts: '',
-        loan: ''
+        loan: '',
+        loading: false
     }
 
     componentDidMount() {
@@ -102,6 +104,8 @@ class LoanDetails extends Component {
 
         console.log('WITHDRAW_LOAN_BTN')
 
+        this.setState({ loading: true })
+
         if (!window.ethereum) {
             console.log('error: no ethereum')
             return
@@ -120,7 +124,7 @@ class LoanDetails extends Component {
             updateLoanState({ loanId: loan.bCoinLoanId, coin: 'BCOIN', loanState: 'WITHDRAWN' })
                 .then(data => data.json())
                 .then((res) => {
-                    this.setState({ loan: { ...this.state.loan, bCoinState: 'WITHDRAWN' } })
+                    this.setState({ loan: { ...this.state.loan, bCoinState: 'WITHDRAWN' }, loading: false })
                 })
         }
     }
@@ -130,6 +134,8 @@ class LoanDetails extends Component {
         e.preventDefault()
         const { loanRequest, dispatch } = this.props
         const { contracts, loan } = this.state
+
+        this.setState({ loading: true })
 
         if (!window.ethereum) {
             console.log('error: no ethereum')
@@ -148,9 +154,10 @@ class LoanDetails extends Component {
         console.log('Allowance:', allowance)
 
         const repaymentAmount = Math.ceil(parseFloat(loan.principal) + parseFloat(loan.interest))
-        
+
         if (!allowance || parseFloat(allowance) < repaymentAmount) {
             await stablecoin.methods.approve(contracts.bCoin.contractAddress, web3.utils.toWei(repaymentAmount.toString())).send({ from })
+            this.setState({ loading: false })
             return
         }
 
@@ -175,7 +182,7 @@ class LoanDetails extends Component {
                             .then(data2 => data2.json())
                             .then((res2) => {
                                 if (res2.status === 'OK') {
-                                    this.setState({ loan: { ...this.state.loan, bCoinState: 'CLOSED' } })
+                                    this.setState({ loan: { ...this.state.loan, bCoinState: 'CLOSED' }, loading: false })
                                     dispatch(saveLoanRequestTerms({ secretAutoB1: res2.payload.secretAutoB1 }))
                                 }
                             })
@@ -189,6 +196,9 @@ class LoanDetails extends Component {
         e.preventDefault()
         const { loanRequest, dispatch } = this.props
         const { contracts, loan } = this.state
+
+        this.setState({ loading: true })
+
         const harmonyExt = await new HarmonyExtension(window.onewallet, { chainId: 2, chainType: ChainType.Harmony, shardID: 0, chainUrl: 'https://api.s0.b.hmny.io' });
         const account = await harmonyExt.login()
         const from = hmy.crypto.getAddress(account.address).checksum
@@ -215,7 +225,7 @@ class LoanDetails extends Component {
                 .then((res) => {
                     console.log(res)
                     if (res.status === 'OK') {
-                        this.setState({ loan: { ...this.state.loan, aCoinState: 'CLOSED' } })
+                        this.setState({ loan: { ...this.state.loan, aCoinState: 'CLOSED' }, loading: false })
                     }
                 })
 
@@ -273,23 +283,30 @@ class LoanDetails extends Component {
 
                                             <div className="c0l-sm-12 col-md-12 text-center">
                                                 {
-                                                    this.state.loan.bCoinState === 'APPROVED'
+                                                    this.state.loading
                                                         ?
-                                                        <button onClick={this.handleWithdrawBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
-                                                            <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
-                                                    Withdraw Principal</button>
+                                                        <div style={{ marginTop: '15px', textAlign: 'center' }}>
+                                                            <div style={{ color: '#32CCDD', fontWeight: 'bold', textAlign: 'justify' }}>Waiting for TX to confirm. Please be patient, Ethereum can be slow sometimes :)</div>
+                                                            <ReactLoading className="loading-icon" type={'cubes'} color="#32CCDD" height={40} width={60} />
+                                                        </div>
                                                         :
-                                                        this.state.loan.bCoinState === 'WITHDRAWN'
+                                                        this.state.loan.bCoinState === 'APPROVED'
                                                             ?
-                                                            <button onClick={this.handleRepayBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                            <button onClick={this.handleWithdrawBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
                                                                 <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
-                                                    Repay Loan</button>
+                                                    Withdraw Principal</button>
                                                             :
-                                                            this.state.loan.bCoinState === 'CLOSED' && this.state.loan.aCoinState === 'LOCKED'
-                                                                ? <button onClick={this.handleUnlockCollateralBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
-                                                                    <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/one_logo.png'} alt="" />Unlock Collateral</button>
+                                                            this.state.loan.bCoinState === 'WITHDRAWN'
+                                                                ?
+                                                                <button onClick={this.handleRepayBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                                    <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
+                                                    Repay Loan</button>
+                                                                :
+                                                                this.state.loan.bCoinState === 'CLOSED' && this.state.loan.aCoinState === 'LOCKED'
+                                                                    ? <button onClick={this.handleUnlockCollateralBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                                        <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/one_logo.png'} alt="" />Unlock Collateral</button>
 
-                                                                : null
+                                                                    : null
 
                                                 }
 

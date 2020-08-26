@@ -378,7 +378,7 @@ module.exports.assignBorrowerAndApprove = (req, res) => {
         }
 
         // Create TX
-        const tx = new Tx(rawTx)
+        const tx = new Tx(rawTx, { chain: 'ropsten' })
 
         // Sign TX
         const privateKey = new Buffer(settings.bCoinPrivKey, 'hex')
@@ -468,7 +468,7 @@ module.exports.acceptRepayment = (req, res) => {
         }
 
         // Create TX
-        const tx = new Tx(rawTx)
+        const tx = new Tx(rawTx, { chain: 'ropsten' })
 
         // Sign TX
         const privateKey = new Buffer(settings.bCoinPrivKey, 'hex')

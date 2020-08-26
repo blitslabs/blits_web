@@ -17,6 +17,7 @@ import { getAssets, saveLoan, getContractABI, saveExtLoanId, updateLoanState, ge
 // Libraries
 import Web3 from 'web3'
 import { sha256 } from '@liquality-dev/crypto'
+import ReactLoading from 'react-loading'
 // const web3 = new Web3(process.env.WEB3_HTTP_PROVIDER)
 
 class LoanTerms extends Component {
@@ -28,7 +29,8 @@ class LoanTerms extends Component {
         assets: [],
         abi: '',
         signed: false,
-        contracts: ''
+        contracts: '',
+        loading: false,
     }
 
     componentDidMount() {
@@ -42,8 +44,8 @@ class LoanTerms extends Component {
         getContractsData()
             .then(data => data.json())
             .then((res) => {
-                if (res.status === 'OK') {          
-                    console.log(res.payload)          
+                if (res.status === 'OK') {
+                    console.log(res.payload)
                     this.setState({ contracts: res.payload })
                 }
             })
@@ -83,6 +85,8 @@ class LoanTerms extends Component {
         if (!window.ethereum) {
             console.log('error no ethereum')
         }
+        
+        this.setState({loading: true })
 
         const web3 = new Web3(window.ethereum)
         await window.ethereum.enable()
@@ -98,7 +102,7 @@ class LoanTerms extends Component {
 
         // dispatch save secretHashB1
         dispatch(saveSecretHashB1(secretHashB1))
-        this.setState({ signed: true })
+        this.setState({ signed: true, loading: false })
     }
 
     handleCreateLoanBtn = async (e) => {
@@ -109,7 +113,9 @@ class LoanTerms extends Component {
         } = loanRequest
 
         const { interestAmount, tokenAddress, assets, contracts } = this.state
-
+        
+        this.setState({loading: true })
+        
         const web3 = new Web3(window.ethereum)
         await window.ethereum.enable()
         const accounts = await web3.eth.getAccounts()
@@ -227,15 +233,22 @@ class LoanTerms extends Component {
                                             </div>
                                             <div className="c0l-sm-12 col-md-5">
                                                 {
-                                                    !this.state.signed
+                                                    !this.state.loading
                                                         ?
-                                                        <button onClick={this.handleGenerateSecretBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
-                                                            <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
+                                                        !this.state.signed
+                                                            ?
+                                                            <button onClick={this.handleGenerateSecretBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                                <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
                                                     Generate Secret</button>
-                                                        :
-                                                        <button onClick={this.handleCreateLoanBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
-                                                            <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
+                                                            :
+                                                            <button onClick={this.handleCreateLoanBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                                <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
                                                     Create Loan</button>
+                                                        :
+                                                        <div style={{marginTop:'15px', }}>
+                                                            <div style={{color:'#32CCDD', fontWeight: 'bold', textAlign:'justify'}}>Waiting for TX to confirm. Please be patient, Ethereum can be slow sometimes :)</div>
+                                                            <ReactLoading type={'cubes'} color="#32CCDD" height={40} width={60} />
+                                                        </div>
                                                 }
 
                                             </div>

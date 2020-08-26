@@ -17,11 +17,13 @@ import { getContractABI, getAccountLoans, getContractsData, updateLoanState } fr
 // Libraries
 import Web3 from 'web3'
 import moment from 'moment'
+import ReactLoading from 'react-loading'
 
 class LenderDashboard extends Component {
     state = {
         loans: '',
-        contracts: ''
+        contracts: '',
+        loading: false
     }
 
     async componentDidMount() {
@@ -61,6 +63,9 @@ class LenderDashboard extends Component {
         console.log('DEPOSIT_PRINCIPAL_BTN')
         console.log(loanId)
         const { contracts } = this.state
+
+        this.setState({ loading: true })
+
         const web3 = new Web3(window.ethereum)
         await window.ethereum.enable()
         const accounts = await web3.eth.getAccounts()
@@ -75,6 +80,7 @@ class LenderDashboard extends Component {
 
         if (!allowance || allowance < principal) {
             await stablecoin.methods.approve(contracts.bCoin.contractAddress, web3.utils.toWei(principal)).send({ from })
+            this.setState({ loading: false })
             return
         }
 
@@ -88,15 +94,9 @@ class LenderDashboard extends Component {
             updateLoanState({ loanId: loanId, coin: 'BCOIN', loanState: 'FUNDED' })
                 .then(data => data.json())
                 .then((res) => {
-                    getAccountLoans({ from, userType: 'LENDER', loanState: 'ALL' })
-                        .then(data2 => data2.json())
-                        .then((res2) => {
-                            console.log(res2)
-                            if (res2.status === 'OK') {
-                                console.log(res2.payload)
-                                this.setState({ loans: res2.payload })
-                            }
-                        })
+                    this.setState({ loading: false })
+                    // quick fix
+                    window.location.reload()
                 })
         }
     }
@@ -141,9 +141,19 @@ class LenderDashboard extends Component {
                                                             <div className="label-value active-loan-details">{l.bCoinState === 'OPEN' ? 'NOT FUNDED' : l.bCoinState === 'FUNDED' ? 'WAITING FOR BORROWER' : l.bCoinState}</div>
 
                                                             {
+
                                                                 l.bCoinState === 'OPEN'
-                                                                    ? <button onClick={() => this.handleDepositPrincipal(l.bCoinLoanId, l.assetSymbol, l.principal)} className="btn btn-blits mt-4">Deposit Principal</button>
+                                                                    ?
+                                                                    this.state.loading
+                                                                        ?
+                                                                        <div style={{ marginTop: '15px', }}>
+                                                                            <div style={{ color: '#32CCDD', fontWeight: 'bold', textAlign: 'justify' }}>Waiting for TX to confirm. Please be patient, Ethereum can be slow sometimes :)</div>
+                                                                            <ReactLoading type={'cubes'} color="#32CCDD" height={40} width={60} />
+                                                                        </div>
+                                                                        : <button onClick={() => this.handleDepositPrincipal(l.bCoinLoanId, l.assetSymbol, l.principal)} className="btn btn-blits mt-4">Deposit Principal</button>
+
                                                                     : ''
+
                                                             }
 
 

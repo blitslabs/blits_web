@@ -20,6 +20,8 @@ import { sha256 } from '@liquality-dev/crypto'
 import moment from 'moment'
 import { Harmony, HarmonyExtension } from '@harmony-js/core'
 import { ChainID, ChainType } from '@harmony-js/utils'
+import ReactLoading from 'react-loading'
+
 const hmy = new Harmony('https://api.s0.b.hmny.io', {
     chainType: ChainType.Harmony,
     chainId: ChainID.HmyTestnet,
@@ -38,7 +40,8 @@ class ConfirmLoanBorrower extends Component {
         abi: '',
         signed: false,
         contracts: '',
-        loan: ''
+        loan: '',
+        loading: false,
     }
 
     componentDidMount() {
@@ -97,6 +100,9 @@ class ConfirmLoanBorrower extends Component {
     handleTestBtn = async (e) => {
         const { contracts, loan } = this.state
         const { loanRequest, history } = this.props
+
+        this.setState({ loading: true })
+
         const address = '0xE90075b75772A4d0f865A8ccfc061e4E0E001327';
         const harmonyExt = await new HarmonyExtension(window.onewallet, { chainId: 2, chainType: ChainType.Harmony, shardID: 0, chainUrl: 'https://api.s0.b.hmny.io' });
         const account = await harmonyExt.login()
@@ -106,7 +112,7 @@ class ConfirmLoanBorrower extends Component {
             gasLimit: '4000000',
             gasPrice: new hmy.utils.Unit('1').asGwei().toWei(),
         })
-        
+
         const params = {
             loanId: loan.id,
             secretHashA1: loanRequest.secretHashA1,
@@ -164,6 +170,7 @@ class ConfirmLoanBorrower extends Component {
                             .then((res2) => {
                                 console.log(res2)
                                 if (res2.status === 'OK') {
+                                    this.setState({ loading: false })
                                     history.push(`/app/loan/${loan.id}`)
                                 }
                             })
@@ -187,6 +194,8 @@ class ConfirmLoanBorrower extends Component {
             console.log('error no ethereum')
         }
 
+        this.setState({ loading: true })
+
         const web3 = new Web3(window.ethereum)
         await window.ethereum.enable()
 
@@ -202,7 +211,7 @@ class ConfirmLoanBorrower extends Component {
         // dispatch save secretHashB1
         dispatch(saveSecretHashA1(secretHashA1))
         dispatch(saveLoanRequestTerms({ bCoinBorrower: from, secretA1 }))
-        this.setState({ signed: true })
+        this.setState({ signed: true, loading: false })
     }
 
     // https://johnwhitton.dev/docs/docs/contribute/develop/deploy-your-first-dapp/
@@ -415,14 +424,20 @@ class ConfirmLoanBorrower extends Component {
                                             </div>
                                             <div className="c0l-sm-12 col-md-5">
                                                 {
-                                                    !this.state.signed
+                                                    this.state.loading
                                                         ?
-                                                        <button onClick={this.handleGenerateSecretBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
-                                                            <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
-                                                    Generate Secret</button>
+                                                        <div style={{ marginTop: '15px', }}>
+                                                            <ReactLoading type={'cubes'} color="#32CCDD" height={40} width={60} />
+                                                        </div>
                                                         :
-                                                        <button onClick={this.handleTestBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
-                                                            <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/one_logo.png'} alt="" />
+                                                        !this.state.signed
+                                                            ?
+                                                            <button onClick={this.handleGenerateSecretBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                                <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
+                                                    Generate Secret</button>
+                                                            :
+                                                            <button onClick={this.handleTestBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                                <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/one_logo.png'} alt="" />
                                                     Lock Collateral</button>
                                                 }
 
