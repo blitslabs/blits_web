@@ -14,7 +14,7 @@ const routesAdmin = require('./app_server/routes/index')
 const routesApi = require('./app_api/routes/index')
 const app = express()
 
-app.use(cors({ origin: '*', credentials: true, origin: process.env.SERVER_HOST }))
+app.use(cors({ origin: '*', credentials: false, origin: process.env.API_WALLET }))
 app.use(fileUpload({ limits: { fileSize: 10 * 1024 * 1024 } }))
 
 // view engine setup

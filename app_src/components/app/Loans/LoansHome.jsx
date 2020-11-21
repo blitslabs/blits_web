@@ -35,13 +35,13 @@ class LoansHome extends Component {
                             <div className="row">
                                 <div className="col-sm-12 col-md-10 offset-md-1 text-center">
                                     <div className="mb-4">
-                                        <h1>Blits Loans</h1>
+                                        <h1>Cross-chain Loans</h1>
                                         <h3 >Select an option</h3>
                                     </div>
                                     <div className="row mt-5 ">
                                         <div className="col-sm-12 col-md-6 mb-2 text-center">
                                             <div onClick={() => this.handleOptionClick('borrow')} className="app-option-btn main-color-bg">
-                                                <div className="option-title">Borrow</div>
+                                                <div className="option-title">Borrows</div>
                                                 <div className="option-desc mt-3">Deposit ONE  as collateral and borrow stablecoins on Ethereum's blockchain.</div>
                                             </div>
                                         </div>

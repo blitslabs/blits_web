@@ -1,5 +1,5 @@
 const API = process.env.API_HOST + '/'
-
+const API_WALLET = process.env.API_WALLET
 
 export function subscribeEmail(params) {
     return fetch(API + 'newsletter/subscribe', {
@@ -116,6 +116,16 @@ export function assignBorrower(params) {
 
 export function acceptRepayment(params) {
     return fetch(API + 'loan/acceptRepayment/' + params.loanId, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+// CROSS-CHAIN LOANS
+export function getAvailableLoans() {
+    return fetch(API_WALLET + 'loans/available', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'

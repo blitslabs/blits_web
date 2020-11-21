@@ -40,7 +40,8 @@ class LoanDetails extends Component {
         signed: false,
         contracts: '',
         loan: '',
-        loading: false
+        loading: false,
+        loadingHarmony: false,
     }
 
     componentDidMount() {
@@ -197,7 +198,7 @@ class LoanDetails extends Component {
         const { loanRequest, dispatch } = this.props
         const { contracts, loan } = this.state
 
-        this.setState({ loading: true })
+        this.setState({ loadingHarmony: true })
 
         const harmonyExt = await new HarmonyExtension(window.onewallet, { chainId: 2, chainType: ChainType.Harmony, shardID: 0, chainUrl: 'https://api.s0.b.hmny.io' });
         const account = await harmonyExt.login()
@@ -225,7 +226,7 @@ class LoanDetails extends Component {
                 .then((res) => {
                     console.log(res)
                     if (res.status === 'OK') {
-                        this.setState({ loan: { ...this.state.loan, aCoinState: 'CLOSED' }, loading: false })
+                        this.setState({ loan: { ...this.state.loan, aCoinState: 'CLOSED' }, loadingHarmony: false })
                     }
                 })
 
@@ -290,23 +291,29 @@ class LoanDetails extends Component {
                                                             <ReactLoading className="loading-icon" type={'cubes'} color="#32CCDD" height={40} width={60} />
                                                         </div>
                                                         :
-                                                        this.state.loan.bCoinState === 'APPROVED'
+                                                        this.state.loadingHarmony
                                                             ?
-                                                            <button onClick={this.handleWithdrawBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
-                                                                <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
-                                                    Withdraw Principal</button>
+                                                            <div style={{ marginTop: '15px', textAlign: 'center' }}>
+                                                                <ReactLoading className="loading-icon" type={'cubes'} color="#32CCDD" height={40} width={60} />
+                                                            </div>
                                                             :
-                                                            this.state.loan.bCoinState === 'WITHDRAWN'
+                                                            this.state.loan.bCoinState === 'APPROVED'
                                                                 ?
-                                                                <button onClick={this.handleRepayBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                                <button onClick={this.handleWithdrawBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
                                                                     <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
-                                                    Repay Loan</button>
+                                                    Withdraw Principal</button>
                                                                 :
-                                                                this.state.loan.bCoinState === 'CLOSED' && this.state.loan.aCoinState === 'LOCKED'
-                                                                    ? <button onClick={this.handleUnlockCollateralBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
-                                                                        <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/one_logo.png'} alt="" />Unlock Collateral</button>
+                                                                this.state.loan.bCoinState === 'WITHDRAWN'
+                                                                    ?
+                                                                    <button onClick={this.handleRepayBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                                        <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
+                                                    Repay Loan</button>
+                                                                    :
+                                                                    this.state.loan.bCoinState === 'CLOSED' && this.state.loan.aCoinState === 'LOCKED'
+                                                                        ? <button onClick={this.handleUnlockCollateralBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                                            <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/one_logo.png'} alt="" />Unlock Collateral</button>
 
-                                                                    : null
+                                                                        : null
 
                                                 }
 

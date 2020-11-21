@@ -12,7 +12,7 @@ import SelectBorrower from './Loans/SelectBorrower'
 import LoanTerms from './Loans/LoanTerms'
 import ConfirmLoanLender from './Loans/ConfirmLoanLender'
 import LenderDashboard from './Loans/LenderDashboard'
-import BorrowerDashboard from './Loans/BorrowerDashboard'
+import BorrowDashboard from './Loans/BorrowDashboard'
 import ConfirmLoanBorrower from './Loans/ConfirmLoanBorrower'
 import LoanDetails from './Loans/LoanDetails'
 
@@ -30,7 +30,7 @@ class AppRouter extends Component {
                 <Route path={`${match.path}app/lend/new`}  component={LoanTerms} />
                 <Route path={`${match.path}app/lend/confirm`}  component={ConfirmLoanLender} />
                 <Route path={`${match.path}app/lend/dashboard`} component={LenderDashboard} />
-                <Route path={`${match.path}app/borrow/dashboard`} component={BorrowerDashboard} />
+                <Route path={`${match.path}app/borrow`} component={BorrowDashboard} />
                 <Route path={`${match.path}app/borrow/confirm/:loanId`}  component={ConfirmLoanBorrower} />
                 <Route path={`${match.path}app/loan/:loanId`} component={LoanDetails} />
             </Fragment>

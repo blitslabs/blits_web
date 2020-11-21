@@ -6,7 +6,7 @@ class Navbar extends Component {
     render() {
         return (
 
-            < header className="navbar navbar-sticky navbar-expand-lg navbar-dark" >
+            <header className="navbar navbar-sticky navbar-expand-lg navbar-dark" >
                 <div className="container position-relative">
                     <a className="navbar-brand" href="index.html">
                         <img
@@ -41,13 +41,13 @@ class Navbar extends Component {
                         <nav>
                             <ul className="navbar-nav" id="navbar-nav">
                                 <li className="nav-item">
-                                    <a className="nav-link scroll" href="#">Wallet</a>
+                                    <a className="nav-link scroll" href="#">Borrow</a>
                                 </li>
                                 <li className="nav-item">
-                                    <a className="nav-link scroll" href="#">Atomic Loans</a>
+                                    <a className="nav-link scroll" href="#">Lend</a>
                                 </li>
                                 <li className="nav-item">
-                                    <a className="nav-link scroll" href="#">Docs</a>
+                                    <a className="nav-link scroll" href="#">History</a>
                                 </li>
                                 <li className="nav-item">
                                     <a className="nav-link scroll" href="#">Blog</a>
