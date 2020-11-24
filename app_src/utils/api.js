@@ -132,3 +132,21 @@ export function getAvailableLoans() {
         }
     })
 }
+
+export function getLoanAssets(params) {
+    return fetch(API_WALLET + `loans/assets/${params.operation}/${params.network}`, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+export function getLoansSettings(params) {
+    return fetch(API_WALLET + 'loans/settings/' + params.network, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}

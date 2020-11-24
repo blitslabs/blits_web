@@ -208,3 +208,25 @@ footer {
 .loading-icon {
     display:inline-block;
 }
+
+table > tbody > tr > td {
+    color: black;
+}
+
+.details-title {
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.details-label {
+    font-size: 16px;
+    padding-left: 5px;
+}
+
+/* Toast styles */
+.Toastify__toast--success {
+    background-color: #32CCDD !important;
+}
+.Toastify__toast--error {
+    background-color: rgb(233, 30, 99) !important;    
+}

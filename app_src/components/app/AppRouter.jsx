@@ -9,7 +9,7 @@ import NewBorrow from './Loans/NewBorrow'
 import NewLend from './Loans/NewLend'
 import SelectAsset from './Loans/SelectAsset'
 import SelectBorrower from './Loans/SelectBorrower'
-import LoanTerms from './Loans/LoanTerms'
+import NewLoan from './Loans/NewLoan'
 import ConfirmLoanLender from './Loans/ConfirmLoanLender'
 import LenderDashboard from './Loans/LenderDashboard'
 import BorrowDashboard from './Loans/BorrowDashboard'
@@ -19,19 +19,19 @@ import LoanDetails from './Loans/LoanDetails'
 class AppRouter extends Component {
     render() {
         const { match, auth } = this.props
-        
+
         return (
             <Fragment>
                 <Route path={match.path} exact component={Home} />
                 <Route path={`${match.path}app/loans`} exact component={LoansHome} />
                 <Route path={`${match.path}app/loans/select-asset`} component={SelectAsset} />
-                <Route path={`${match.path}app/lend/select-loan`}  component={SelectBorrower} /> 
-                <Route path={`${match.path}app/lend/select-borrower`}  component={SelectBorrower} /> 
-                <Route path={`${match.path}app/lend/new`}  component={LoanTerms} />
-                <Route path={`${match.path}app/lend/confirm`}  component={ConfirmLoanLender} />
+                <Route path={`${match.path}app/lend/select-loan`} component={SelectBorrower} />
+                <Route path={`${match.path}app/lend/select-borrower`} component={SelectBorrower} />
+                <Route path={`${match.path}app/lend`} exact={true} component={NewLoan} />
+                <Route path={`${match.path}app/lend/confirm`} component={ConfirmLoanLender} />
                 <Route path={`${match.path}app/lend/dashboard`} component={LenderDashboard} />
                 <Route path={`${match.path}app/borrow`} component={BorrowDashboard} />
-                <Route path={`${match.path}app/borrow/confirm/:loanId`}  component={ConfirmLoanBorrower} />
+                <Route path={`${match.path}app/borrow/confirm/:loanId`} component={ConfirmLoanBorrower} />
                 <Route path={`${match.path}app/loan/:loanId`} component={LoanDetails} />
             </Fragment>
         )

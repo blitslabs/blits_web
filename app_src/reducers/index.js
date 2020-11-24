@@ -4,12 +4,18 @@ import loading from './loading'
 import loanRequest from './loanRequest'
 import auth from './auth'
 import availableLoans from './availableLoans'
+import loanSettings from './loanSettings'
+import loanAssets from './loanAssets'
+import lendRequest from './lendRequest'
 
 const appReducer = combineReducers({
     loanRequest,
     loading,
     auth,
-    availableLoans
+    availableLoans,
+    loanSettings,
+    loanAssets,
+    lendRequest,
 })
 
 const rootReducer = (state, action) => {
