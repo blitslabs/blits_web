@@ -10,11 +10,14 @@ import NewLend from './Loans/NewLend'
 import SelectAsset from './Loans/SelectAsset'
 import SelectBorrower from './Loans/SelectBorrower'
 import NewLoan from './Loans/NewLoan'
-import ConfirmLoanLender from './Loans/ConfirmLoanLender'
+import ConfirmLoan from './Loans/ConfirmLoan'
 import LenderDashboard from './Loans/LenderDashboard'
 import BorrowDashboard from './Loans/BorrowDashboard'
 import ConfirmLoanBorrower from './Loans/ConfirmLoanBorrower'
 import LoanDetails from './Loans/LoanDetails'
+
+// Styles
+import './Loans/loans_styles.css'
 
 class AppRouter extends Component {
     render() {
@@ -27,12 +30,15 @@ class AppRouter extends Component {
                 <Route path={`${match.path}app/loans/select-asset`} component={SelectAsset} />
                 <Route path={`${match.path}app/lend/select-loan`} component={SelectBorrower} />
                 <Route path={`${match.path}app/lend/select-borrower`} component={SelectBorrower} />
+                
                 <Route path={`${match.path}app/lend`} exact={true} component={NewLoan} />
-                <Route path={`${match.path}app/lend/confirm`} component={ConfirmLoanLender} />
+                <Route path={`${match.path}app/lend/confirm`} component={ConfirmLoan} />
+                <Route path={`${match.path}app/loan/:loanId`} component={LoanDetails} />
+                
                 <Route path={`${match.path}app/lend/dashboard`} component={LenderDashboard} />
                 <Route path={`${match.path}app/borrow`} component={BorrowDashboard} />
                 <Route path={`${match.path}app/borrow/confirm/:loanId`} component={ConfirmLoanBorrower} />
-                <Route path={`${match.path}app/loan/:loanId`} component={LoanDetails} />
+                
             </Fragment>
         )
     }

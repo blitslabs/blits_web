@@ -126,7 +126,7 @@ footer {
 .app-card {
     padding: 60px;
     color: white;
-    border-radius: 10px;
+    border-radius: 25px;
     min-height: 250px;
     display: flex;
     justify-content: center;
@@ -165,7 +165,7 @@ footer {
 
 .label-value {
     font-weight: 600;
-    font-size: 24px;
+    font-size: 20px;
     color: black;
 }
 
@@ -229,4 +229,8 @@ table > tbody > tr > td {
 }
 .Toastify__toast--error {
     background-color: rgb(233, 30, 99) !important;    
+}
+
+body {
+    font-family: monospace !important;
 }

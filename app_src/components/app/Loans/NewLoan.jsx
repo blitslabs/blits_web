@@ -69,7 +69,7 @@ class NewLoan extends Component {
                 return Promise.all(responses.map(res => res.json()))
             })
             .then((data) => {
-
+                console.log(data)
                 const loanSettings = data[0].payload
                 const loanAssets = data[1].payload
 
@@ -77,11 +77,11 @@ class NewLoan extends Component {
                 dispatch(saveLoanAssets(loanAssets))
 
                 const dai = Object.values(loanAssets).filter((a) => a.symbol === 'DAI')[0]
-
+                
                 BlitsLoans.ETH.getAssetTypeData(dai.contractAddress, loanSettings.eth_loans_contract)
                     .then((data) => {
                         dispatch(saveLendRequest(data))
-                        this.setState({ loading: false, asset: dai.contractAddress })
+                        this.setState({ loading: false, asset: dai.contractAddress, network })
                     })
             })
     }
@@ -169,7 +169,7 @@ class NewLoan extends Component {
 
     handleContinueBtn = async (e) => {
         e.preventDefault()
-        const { asset, amount, aCoinLender } = this.state
+        const { asset, amount, aCoinLender, duration, network } = this.state
         const { dispatch, history } = this.props
 
         if (!asset || !amount || !aCoinLender) {
@@ -192,7 +192,7 @@ class NewLoan extends Component {
         const { secret, secretHash } = response.payload
 
         const params = {
-           asset, amount, aCoinLender, secret, secretHash
+           tokenContractAddress: asset, amount, aCoinLender, secret, secretHash, duration, network
         }
 
         dispatch(saveLendRequest(params))

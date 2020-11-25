@@ -41,7 +41,8 @@ class LenderDashboard extends Component {
     }
 
     handleViewDetailsBtn = async (loanId) => {
-
+        const { history } = this.props
+        history.push('/app/loan/' + loanId)
     }
 
     render() {

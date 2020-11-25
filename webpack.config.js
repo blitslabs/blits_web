@@ -26,18 +26,20 @@ module.exports = {
                     'style-loader',
                     'css-loader'
                 ]
-            }
+            },
+            
+            
         ]
     },
     resolve: {
-        extensions: ['*','.js','.jsx']
+        extensions: ['*', '.js', '.jsx']
     },
     output: {
-        path: path.join(__dirname, 'public','js'),
+        path: path.join(__dirname, 'public', 'js'),
         publicPath: '/js',
         filename: '[name].js'
     },
-    plugins: [         
+    plugins: [
         new webpack.HotModuleReplacementPlugin(),
         new Dotenv(),
     ],
@@ -51,11 +53,11 @@ module.exports = {
         watchContentBase: true,
         proxy: [
             {
-                context: ['^/api/*','^/app/*'],
+                context: ['^/api/*', '^/app/*'],
                 target: 'http://genesisblock.ddns.net:3000/',
                 secure: false
             }
-        ],        
+        ],
         overlay: {
             warnings: false,
             errors: true

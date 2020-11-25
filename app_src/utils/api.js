@@ -85,16 +85,6 @@ export function getLoansByStatus(params) {
         }
     })
 }
-
-export function getLoanDetails(params) {
-    return fetch(API + `loan/${params.loanId}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-}
-
 export function saveBorrowerRequest(params) {
     return fetch(API + 'loan/saveBorrower', {
         method: 'POST',
@@ -144,6 +134,24 @@ export function getLoanAssets(params) {
 
 export function getLoansSettings(params) {
     return fetch(API_WALLET + 'loans/settings/' + params.network, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+export function getPrices() {
+    return fetch(API_WALLET + 'prices', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+export function getLoanDetails(params) {
+    return fetch(API_WALLET + 'loan/' + params.loanId, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'

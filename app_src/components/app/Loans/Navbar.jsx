@@ -4,7 +4,26 @@ import { connect } from 'react-redux'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// API
+import { getPrices } from '../../../utils/api'
+
+// Actions
+import { savePrices } from '../../../actions/prices'
+
 class Navbar extends Component {
+
+    componentDidMount() {
+        const { dispatch } = this.props
+
+        getPrices()
+            .then(data => data.json())
+            .then((res) => {
+                console.log(res)
+                if (res.status === 'OK') {
+                    dispatch(savePrices(res.payload))
+                }
+            })
+    }
 
     render() {
         return (
@@ -46,10 +65,10 @@ class Navbar extends Component {
                             <nav>
                                 <ul className="navbar-nav" id="navbar-nav">
                                     <li className="nav-item">
-                                        <a className="nav-link scroll" href="#">Borrow</a>
+                                        <a className="nav-link scroll" href="/app/borrow">Borrow</a>
                                     </li>
                                     <li className="nav-item">
-                                        <a className="nav-link scroll" href="#">Lend</a>
+                                        <a className="nav-link scroll" href="/app/lend">Lend</a>
                                     </li>
                                     <li className="nav-item">
                                         <a className="nav-link scroll" href="#">History</a>
