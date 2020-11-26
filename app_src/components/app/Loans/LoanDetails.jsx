@@ -129,7 +129,7 @@ class LoanDetails extends Component {
 
     checkLoanStatus = async (loanId) => {
 
-        const { loanDetails } = this.props
+        const { loanDetails, dispatch } = this.props
         const { status } = loanDetails
         console.log(loanId)
         if (!loanId || !status) return
