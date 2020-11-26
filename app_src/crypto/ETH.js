@@ -95,6 +95,23 @@ const ETH = {
         } catch (e) {
             return { status: 'ERROR', message: 'Error approving allowance' }
         }
+    },
+
+    getAccount: async () => {
+        if (!window.ethereum) {
+            return { status: 'ERROR', message: 'No web3 provider detected' }
+        }
+
+        try {
+            // Connect to HTTP Provider
+            const web3 = new Web3(window.ethereum)
+            const accounts = await web3.eth.getAccounts()
+            const account = accounts[0]
+            return { status: 'OK', payload: account }
+            
+        } catch (e) {
+            return { status: 'ERROR', payload: 'Error loading ETH account' }
+        }
     }
 }
 

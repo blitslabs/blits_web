@@ -136,8 +136,6 @@ class ConfirmLoanBorrower extends Component {
                     const lender = hmy.crypto.getAddress(res.payload.aCoinLender).checksum
                     const totalCollateral = parseFloat(res.payload.aCoinRefundableCollateral) + parseFloat(res.payload.aCoinSeizableCollateral)
 
-
-
                     const tx = await harmonyLock.methods.lockCollateral(
                         lender,
                         res.payload.secretHashA1,

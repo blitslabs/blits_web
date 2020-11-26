@@ -20,6 +20,8 @@ import ReactLoading from 'react-loading'
 import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
 import Stepper from 'react-stepper-horizontal'
+import BlitsLoans from '../../../crypto/BlitsLoans'
+import ETH from '../../../crypto/ETH'
 
 // API
 import { getLoanDetails } from '../../../utils/api'
@@ -31,6 +33,7 @@ import { saveLoanDetails } from '../../../actions/loanDetails'
 class LoanDetails extends Component {
     state = {
         loading: true,
+        loadingBtn: false,
         loanId: '',
     }
 
@@ -40,7 +43,7 @@ class LoanDetails extends Component {
 
         console.log(loanId)
 
-        document.title = 'Loan Details | Borrower'
+        document.title = `Loan Details #${loanId}`
 
         if (!loanId) {
             history.push('/app/borrow')
@@ -49,14 +52,102 @@ class LoanDetails extends Component {
         getLoanDetails({ loanId })
             .then(data => data.json())
             .then((res) => {
-                console.log(res)
+                
                 if (res.status === 'OK') {
                     dispatch(saveLoanDetails(res.payload))
                     this.setState({ loanId, loading: false, })
+                    this.checkLoanStatus(loanId)
                 }
             })
+
+
     }
 
+
+    /**
+     * @dev Lock Collateral
+     */
+    handleLockCollateralBtn = async (e) => {
+        e.preventDefault()
+        const { loanDetails, prices, loanSettings } = this.props
+        const {
+            aCoinLenderAddress, secretHashB1, principal
+        } = loanDetails
+        const { one_lock_contract } = loanSettings
+
+        const collateralPrice = BigNumber(prices.ONE.priceBTC).times(prices.BTC.priceUSD)
+        const requiredCollateral = parseFloat(BigNumber(principal).div(collateralPrice).times(1.5)).toFixed(2)
+
+        this.setState({ loadingBtn: true })
+
+        // Generate secretHash
+        const message = 'You are signing this message to generate secrets for the Hash Time Locked Contracts required to lock the collateral.'
+        const signResponse = await ETH.generateSecret(message)
+
+        if (signResponse.status !== 'OK') {
+            console.log(signResponse)
+            toast.error(signResponse.message, { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
+            return
+        }
+
+        const { secret, secretHash } = signResponse.payload
+        const secretA1 = secret
+        const secretHashA1 = secretHash
+
+        // Get ETH account
+        const ethAccountResponse = await ETH.getAccount()
+
+        if (ethAccountResponse.status !== 'OK') {
+            console.log(ethAccountResponse)
+            toast.error(ethAccountResponse.message, { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
+            this.setState({ loadingBtn: false })
+            return
+        }
+
+        const bCoinBorrowerAddress = ethAccountResponse.payload
+
+        const response = await BlitsLoans.ONE.lockCollateral(
+            //requiredCollateral,
+            '100', // testnet - change in production
+            aCoinLenderAddress,
+            secretHashA1,
+            secretHashB1,
+            one_lock_contract,
+            bCoinBorrowerAddress,
+            '0', // shard
+            'testnet' // change in production
+        )
+
+        if (response.status !== 'OK') {
+            toast.error(response.message, { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
+            this.setState({ loadingBtn: false })
+            return
+        }
+
+        this.setState({ loadingBtn: false })
+    }
+
+    checkLoanStatus = async (loanId) => {
+
+        const { loanDetails } = this.props
+        const { status } = loanDetails
+        console.log(loanId)
+        if (!loanId || !status) return
+
+        setInterval(() => {
+            getLoanDetails({ loanId })
+                .then(data => data.json())
+                .then((res) => {                    
+                    if (res.status === 'OK') {
+                        if (status != res.payload.status) {
+                            console.log(res)
+                            this.setState({ loadingBtn: false })
+                            dispatch(saveLoanDetails(res.payload))
+                        }
+                    }
+                })
+        }, 2000)
+    }
 
     handleWithdrawBtn = async (e) => {
         e.preventDefault()
@@ -202,7 +293,7 @@ class LoanDetails extends Component {
     render() {
 
         const { loanDetails, prices } = this.props
-        const { loanId, loading } = this.state
+        const { loanId, loading, loadingBtn } = this.state
 
         if (loading) {
             return <Loading />
@@ -268,28 +359,21 @@ class LoanDetails extends Component {
                                             </div>
                                         </div>
 
-                                        <div className="row mt-4">
-                                            <div className="col-sm-12">
-                                                <Stepper
-                                                    steps={[
-                                                        { title: 'Funded' }, 
-                                                        { title: 'Lock Collateral' },
-                                                        { title: 'Withdraw Principal' }, 
-                                                        { title: 'Repay Loan' },
-                                                        { title: 'Repayment Accepted' },
-                                                    ]}
-                                                    activeStep={parseInt(status)} 
-                                                    completeBarColor="#32CCDD"
-                                                    completeColor="#32CCDD"
-                                                    activeColor="black"
-                                                />
-                                            </div>
-                                        </div>
+
 
                                         <div className="row mt-4">
                                             <div className="col-sm-12 col-md-8 offset-md-2 text-center">
                                                 {
-                                                    status == 1 && (
+                                                    loadingBtn && (
+                                                        <div style={{ marginTop: '15px', textAlign: 'center' }}>
+                                                            <div style={{ color: '#32CCDD', fontWeight: 'bold', textAlign: 'justify' }}>Waiting for TX to confirm. Please be patient, Ethereum can be slow sometimes :)</div>
+                                                            <ReactLoading className="loading-icon" type={'cubes'} color="#32CCDD" height={40} width={60} />
+                                                        </div>
+                                                    )
+                                                }
+
+                                                {
+                                                    (status == 1 && !loadingBtn) && (
                                                         <button onClick={this.handleLockCollateralBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
                                                             <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/one_logo.png'} alt="" />
                                                             Lock Collateral
@@ -343,7 +427,23 @@ class LoanDetails extends Component {
                             </div>
                         </div>
                     </section>
-
+                    <div className="row" style={{ marginTop: '60px' }}>
+                        <div className="col-sm-6 offset-sm-3 text-center">
+                            <Stepper
+                                steps={[
+                                    { title: 'Funded' },
+                                    { title: 'Lock Collateral' },
+                                    { title: 'Withdraw Principal' },
+                                    { title: 'Repay Loan' },
+                                    { title: 'Repayment Accepted' },
+                                ]}
+                                activeStep={parseInt(status)}
+                                completeBarColor="#32CCDD"
+                                completeColor="#32CCDD"
+                                activeColor="black"
+                            />
+                        </div>
+                    </div>
                 </div>
             </Fragment>
         )
@@ -351,9 +451,9 @@ class LoanDetails extends Component {
 }
 
 
-function mapStateToProps({ loanDetails, prices }) {
+function mapStateToProps({ loanDetails, prices, loanSettings }) {
     return {
-        loanDetails, prices
+        loanDetails, prices, loanSettings
     }
 }
 
