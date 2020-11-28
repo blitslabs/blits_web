@@ -242,3 +242,7 @@ body {
 /* .styles_particles__5dxGv, .styles_wrapper__3KXDn {
     width: 100%;
 } */
+
+.invalid-feedback {
+    color: red !important;
+}

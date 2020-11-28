@@ -28,6 +28,7 @@ import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
 import MyParticles from './MyParticles'
 import ParticleEffectButton from 'react-particle-effect-button'
+import Emoji from "react-emoji-render"
 
 class NewLoan extends Component {
     state = {
@@ -58,6 +59,7 @@ class NewLoan extends Component {
         const { dispatch } = this.props
 
         if (!window.ethereum) {
+            this.setState({ loading: false })
             return
         }
 
@@ -80,10 +82,11 @@ class NewLoan extends Component {
 
                 const dai = Object.values(loanAssets).filter((a) => a.symbol === 'DAI')[0]
 
+                this.setState({ loading: false })
                 BlitsLoans.ETH.getAssetTypeData(dai.contractAddress, loanSettings.eth_loans_contract)
                     .then((data) => {
                         dispatch(saveLendRequest(data))
-                        this.setState({ loading: false, asset: dai.contractAddress, network })
+                        this.setState({ asset: dai.contractAddress, network })
                     })
             })
     }
@@ -168,13 +171,25 @@ class NewLoan extends Component {
             })
     }
 
+    handleCollateralAddressBtn = async (e) => {
+        e.preventDefault()
+        const response = await ONE.getAccount()
+
+        if (response.status === 'OK') {
+            this.setState({ aCoinLender: response.payload.address, aCoinLenderIsInvalid: false })
+            return
+        }
+
+
+    }
+
 
     handleContinueBtn = async (e) => {
         e.preventDefault()
         const { asset, amount, aCoinLender, duration, network } = this.state
         const { dispatch, history } = this.props
         this.setState({ btnLoading: true })
-        
+
         if (!asset || !amount || !aCoinLender) {
             if (!asset) this.setState({ assetSymbolIsInvalid: true })
             if (!amount) this.setState({ amountIsInvalid: true })
@@ -220,7 +235,7 @@ class NewLoan extends Component {
 
         return (
             <Fragment>
-                 <MyParticles/>   
+                <MyParticles />
                 <div className="main">
                     <Navbar />
 
@@ -230,7 +245,7 @@ class NewLoan extends Component {
                                 <div className="col-sm-12 col-md-8 offset-md-2">
 
                                     <div className="mb-4 text-center">
-                                        <h2>New Loan</h2>
+                                        <h2>New Loan<Emoji text=":rocket:" onlyEmojiClassName="make-emojis-large" /></h2>
                                         <div className="app-page-subtitle mt-2">Enter the loan details to create the offer</div>
                                     </div>
                                     <div className="app-card shadow-lg">
@@ -300,13 +315,24 @@ class NewLoan extends Component {
                                         <div className="text-right text-black">Min: 1 | Max: 30 </div> */}
 
                                         <div className="app-form-label text-black mt-2">3. Your Harmony (ONE) Address</div>
-                                        <div className="input-group mb-3">
-                                            <input value={this.state.aCoinLender} onChange={this.handleACoinLenderChange} type="text" className={this.state.aCoinLenderIsInvalid ? "form-control is-invalid" : "form-control"} placeholder="Harmony Address" autoCorrect="false" autoComplete="false" />
-                                            <div className="invalid-feedback">
-                                                {this.state.aCoinLenderErrorMsg}
-                                            </div>
-                                        </div>
-                                        <div className="text-right text-black mb-4">You will receive the borrower's seizable collateral to this address if he fails to repay the loan. </div>
+                                        {
+                                            this.state.aCoinLender ?
+                                                <div className="input-group mt-3">
+                                                    <input value={this.state.aCoinLender} readOnly={true} onChange={this.handleACoinLenderChange} type="text" className={this.state.aCoinLenderIsInvalid ? "form-control is-invalid" : "form-control"} placeholder="Harmony Address" autoCorrect="false" autoComplete="false" />
+                                                    <div className="invalid-feedback">
+                                                        {this.state.aCoinLenderErrorMsg}
+                                                    </div>
+                                                </div>
+                                                :
+                                                <div className="mt-3">
+                                                    <button onClick={this.handleCollateralAddressBtn} className="btn btn-blits" style={{ fontSize: '14px', background: 'linear-gradient(-47deg, #8731E8 0%, #4528DC 100%)' }}>
+                                                        <Emoji text="🔓" onlyEmojiClassName="sm-emoji" />
+                                                        Unlock ONE Wallet
+                                                    </button>
+                                                </div>
+
+                                        }
+                                        <div style={{ color: this.state.aCoinLenderIsInvalid ? 'red' : 'black' }} className="text-left mt-2 mb-4">You will receive the borrower's seizable collateral to this address if he fails to repay the loan. </div>
 
                                         {/* <hr className="" /> */}
 
@@ -317,19 +343,19 @@ class NewLoan extends Component {
                                                 <tbody>
                                                     <tr>
                                                         <td className="details-title">Interest:</td>
-                                                        <td className="details-label">{(lendRequest.interestRate && this.state.amount ? parseFloat(BigNumber(this.state.amount).multipliedBy(lendRequest.interestRate)) : 0).toFixed(2)} {this.state.assetSymbol}</td>
+                                                        <td className="details-label">{(lendRequest.interestRate && this.state.amount ? parseFloat(BigNumber(this.state.amount).multipliedBy(lendRequest.interestRate)) : 0).toFixed(2)} {this.state.assetSymbol} <Emoji text=":moneybag:" /></td>
                                                     </tr>
                                                     <tr>
                                                         <td className="details-title">Duration:</td>
-                                                        <td className="details-label">{this.state.duration} days</td>
+                                                        <td className="details-label">{this.state.duration} days <Emoji text=":hourglass:" /></td>
                                                     </tr>
                                                     <tr>
                                                         <td className="details-title">APR:</td>
-                                                        <td className="details-label">{(parseFloat(BigNumber(lendRequest.interestRate).multipliedBy(12).multipliedBy(100))).toFixed(2)}%</td>
+                                                        <td className="details-label">{(parseFloat(BigNumber(lendRequest.interestRate).multipliedBy(12).multipliedBy(100))).toFixed(2)}% <Emoji text="💸" /></td>
                                                     </tr>
                                                     <tr>
                                                         <td className="details-title">Allowed collateral:</td>
-                                                        <td className="details-label">ONE</td>
+                                                        <td className="details-label">ONE <Emoji text=":locked:" /></td>
                                                     </tr>
                                                 </tbody>
                                             </table>
@@ -343,9 +369,13 @@ class NewLoan extends Component {
                                                 <ParticleEffectButton
                                                     color='#32CCDD'
                                                     hidden={this.state.btnLoading}
-                                                    type="triangle"                                                    
+                                                    type="triangle"
                                                 >
-                                                    <button onClick={this.handleContinueBtn} className="btn btn-blits" style={{ }}>Sign & Continue</button>
+                                                    <button onClick={this.handleContinueBtn} className="btn btn-blits" style={{fontSize:'16px'}}>
+                                                        <img style={{ height: 15 }} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAAMFBMVEVHcEz/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDNIzNElAAAAD3RSTlMA7xBgnzDPgCDfj0C/r3DHfpOdAAABLklEQVR42q2XSxLDIAzFbCCBJml9/9v2s3kbdwGKDsBoRvXL1OY5IrpxyjM+GKbs8aUYZPP40gxyevwYxqgRTEi57hAqLSSEc3GhTe80nv2HD5RLkPPoIbzYMi1uESpX3CI09sBCysWFqgcTUnYupFziBUY1QjzYlYoKcmGh0wMLKRcXOiKhglEFQsqFhbb8nYtlF+d0rln6n1GdJ7/SBdJRXeDIRnWBmuWax2s2qvP4RrKLfSRXusCVLHgs0MzAQ/QXzcfg/JtrkivPtZHtFnuxWR5prmJMSFcKhG7/uvlpTEjZsZBycaHn2juv5EpXKI5yiZ6MKhFSLiakUWVCGlUmpFxUiP9DQ9nFcJRLNOVC7wx2paIlo4qEDmM05UIMjSqjKTuiKBdEowrpS7neXD5UXwGvjogAAAAASUVORK5CYII=" />
+
+                                                        Sign & Continue
+                                                    </button>
                                                 </ParticleEffectButton>
                                             </div>
                                         </div>
