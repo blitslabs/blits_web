@@ -327,10 +327,78 @@ const BlitsLoans = {
                 ).send({
                     value: BigNumber(amount).multipliedBy('1000000000000000000').toString(),
                     gasLimit: '1000001',
-                    gasPrice: new Unit(amount).asGwei().toWei(),
+                    gasPrice: (BigNumber('1').multipliedBy('1000000000')).toString(),
                 })
                 console.log(tx)
                 return { status: 'OK', payload: tx }
+
+            } catch (e) {
+                console.log(e)
+                return { status: 'ERROR', message: e ? e : 'Error sending transaction' }
+            }
+        },
+
+        unlockCollateral: async (loanId, secretB1, lockContractAddress, shard, network) => {
+            if (!window.onewallet) {
+                return { status: 'ERROR', message: 'Harmony Provider not found' }
+            }
+
+            if (!loanId) return { status: 'ERROR', message: 'Missing Loan ID' }
+            if (!secretB1) return { status: 'ERROR', message: 'Missing secretB1' }
+            if (!lockContractAddress) return { status: 'ERROR', message: 'Missing lockContractAddress' }
+            if (!shard) return { status: 'ERROR', message: 'Missing shard' }
+            if (!network) return { status: 'ERROR', message: 'Missing network' }
+
+            const endpoint = network === 'mainnet' ? ONE.mainnet_endpoints['shard_' + shard + '_endpoint'] : ONE.testnet_endpoints['shard_' + shard + '_endpoint']
+            const chainId = network === 'mainnet' ? ChainID.HmyMainnet : ChainID.HmyTestnet
+
+            // Connect HTTP Provider
+            let harmony, hmy
+            try {
+                harmony = await new HarmonyExtension(window.onewallet, { chainId, chainType: ChainType.Harmony, shardID: shard, chainUrl: endpoint });
+                // hmy = new Harmony(window.onewallet.network.chain_url, {
+                //     chainType: ChainType.Harmony,
+                //     chainId: window.onewallet.network.chain_id,
+                //     shardID: shard
+                // })
+            } catch (e) {
+                console.log(e)
+                return { status: 'ERROR', message: 'Error connecting Harmony provider' }
+            }
+
+            // Connect Account / Unlock Wallet
+            const account = await harmony.login()
+            console.log(account)
+
+            // Instantiate Contract
+            let contract
+            try {
+                contract = await harmony.contracts.createContract(ABI.COLLATERAL_LOCK.abi, lockContractAddress)
+            } catch (e) {
+                return { status: 'ERROR', message: 'Error instantiating contract' }
+            }
+
+            try {
+                const tx = await contract.methods.unlockCollateralAndCloseLoan(
+                    loanId, secretB1
+                ).send({
+                    value: '0x0',
+                    gasLimit: '6721900',
+                    gasPrice: (BigNumber('1').multipliedBy('1000000000')).toString(),
+                })
+                    .on('transactionHash', (hash) => console.log('hash', hash))
+                    .on('receipt', (receipt) => console.log('receipt', receipt))
+                    .on('confirmation', async (confirmation) => {
+                        console.log(confirmation)
+                        if (confirmation === 'REJECTED') return { status: 'ERROR', message: 'Transaction Rejected' }
+                        return { status: 'OK', payload: confirmation }
+                    })
+                    .on('error', (error) => {
+                        console.log(error)
+                        return { status: 'ERROR', message: error ? error : 'Error unlocking collateral' }
+                    })
+
+                return tx
 
             } catch (e) {
                 console.log(e)

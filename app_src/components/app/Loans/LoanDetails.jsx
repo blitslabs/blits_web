@@ -192,7 +192,7 @@ class LoanDetails extends Component {
         // Generate secretHash        
         const message = 'You are signing this message to generate secrets for the Hash Time Locked Contracts required to create the loan.'
         const signResponse = await ETH.generateSecret(message)
-        
+
         if (signResponse.status !== 'OK') {
             toast.error(signResponse.message, { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
             this.setState({ loadingBtn: false })
@@ -205,7 +205,7 @@ class LoanDetails extends Component {
 
         const response = await BlitsLoans.ETH.acceptRepayment(blockchainLoanId, secretB1, eth_loans_contract)
 
-        if(response.status !== 'OK') {
+        if (response.status !== 'OK') {
             toast.error(response.message, { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
             this.setState({ loadingBtn: false })
             return
@@ -214,19 +214,49 @@ class LoanDetails extends Component {
         toast.success('Loan Payback Accepted', { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
     }
 
+    handleUnlockCollateralBtn = async (e) => {
+        e.preventDefault()
+        const { loanDetails, loanSettings } = this.props
+        const { collateralLock, secretB1 } = loanDetails
+        const { one_lock_contract } = loanSettings
+        const { blockchainLoanId } = collateralLock
+
+        this.setState({ loadingBtn: true })
+
+        const response = await BlitsLoans.ONE.unlockCollateral(
+            blockchainLoanId,
+            secretB1,
+            one_lock_contract,
+            '0',
+            'testnet'
+        )
+
+        if (response.status !== 'OK') {
+            toast.error(response.message, { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
+            this.setState({ loadingBtn: false })
+            return
+        }
+
+        toast.success('Collateral Unlocked', { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
+    }
+
     checkLoanStatus = async (loanId) => {
 
         const { loanDetails, dispatch } = this.props
-        const { status } = loanDetails
-        console.log(loanId)
+        const { status, collateralLock } = loanDetails
+
         if (!loanId || !status) return
 
         setInterval(() => {
             getLoanDetails({ loanId })
                 .then(data => data.json())
                 .then((res) => {
+                    console.log('Loan Status: ', res.payload.status)
                     if (res.status === 'OK') {
-                        if (status != res.payload.status) {
+                        if (
+                            (status != res.payload.status) ||
+                            (collateralLock && 'status' in collateralLock && collateralLock.status != res.payload.collateralLock.status)
+                        ) {
                             console.log(res)
                             this.setState({ loadingBtn: false })
                             dispatch(saveLoanDetails(res.payload))
@@ -235,48 +265,6 @@ class LoanDetails extends Component {
                 })
         }, 2000)
     }
-
-    handleUnlockCollateralBtn = async (e) => {
-        console.log('UNLOCK_COLLATERAL_BTN')
-        e.preventDefault()
-        const { loanRequest, dispatch } = this.props
-        const { contracts, loan } = this.state
-
-        this.setState({ loadingHarmony: true })
-
-        const harmonyExt = await new HarmonyExtension(window.onewallet, { chainId: 2, chainType: ChainType.Harmony, shardID: 0, chainUrl: 'https://api.s0.b.hmny.io' });
-        const account = await harmonyExt.login()
-        const from = hmy.crypto.getAddress(account.address).checksum
-        const harmonyLock = await harmonyExt.contracts.createContract(contracts.aCoin.abi.abi, contracts.aCoin.contractAddress)
-
-        // Unlock collateral
-        const tx = await harmonyLock.methods.unlockCollateralAndCloseLoan(
-            loan.aCoinLoanId,
-            loanRequest.secretAutoB1
-        ).send({
-            value: new hmy.utils.Unit(0).asOne().toWei(),
-            gasLimit: '1000001',
-            gasPrice: new hmy.utils.Unit(1000000000).asGwei().toWei(),
-        }).on('transactionHash', function (hash) {
-            console.log('hash', hash)
-        }).on('receipt', function (receipt) {
-            console.log('receipt', receipt)
-        }).on('confirmation', async (confirmation) => {
-            console.log('confirmation', confirmation)
-            if (confirmation === 'REJECTED') alert('TX was rejected')
-
-            updateLoanState({ loanId: loan.aCoinLoanId, coin: 'ACOIN', loanState: 'CLOSED' })
-                .then(data => data.json())
-                .then((res) => {
-                    console.log(res)
-                    if (res.status === 'OK') {
-                        this.setState({ loan: { ...this.state.loan, aCoinState: 'CLOSED' }, loadingHarmony: false })
-                    }
-                })
-
-        }).on('error', console.error)
-    }
-
 
     handleBackBtn = (e) => {
         e.preventDefault()
@@ -303,6 +291,7 @@ class LoanDetails extends Component {
         const repaymentAmount = parseFloat(BigNumber(principal).plus(interest)).toFixed(8)
         const apr = parseFloat(BigNumber(interest).times(100).div(principal).times(12)).toFixed(2)
         const loanStatus = status == 1 ? 'Funded' : status == 2 ? 'Approved' : status == 3 ? 'Withdrawn' : status == 4 ? 'Repaid' : status == 5 ? 'Payback Refunded' : status == 6 ? 'Closed' : status == 7 ? 'Canceled' : ''
+        const collateralStatus = collateralLock && 'status' in collateralLock && collateralLock.status == 0 ? 'Locked' : 'Unlocked'
 
         return (
             <Fragment>
@@ -341,6 +330,8 @@ class LoanDetails extends Component {
                                             <div className="col-sm-12 col-md-4">
                                                 <div className="label-title">Loan Status</div>
                                                 <div className="label-value" style={{ color: '#32ccdd' }}>{loanStatus}</div>
+                                                <div className="label-title mt-4">Collateral Status</div>
+                                                <div className="label-value" style={{ color: '#32ccdd' }}>{collateralStatus}</div>
                                                 <div className="label-title mt-4">Lender</div>
                                                 <div className="label-value">
                                                     <a target='_blank' href={'https://etherscan.com/address/' + lender}>{lender.substring(0, 4)}...{lender.substr(lender.length - 4)}</a>
@@ -400,6 +391,16 @@ class LoanDetails extends Component {
                                                         </button>
                                                     )
                                                 }
+
+                                                {
+                                                    (status == 6 && !loadingBtn && collateralStatus === 'LOCKED') && (
+                                                        <button onClick={this.handleUnlockCollateralBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                            <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/one_logo.png'} alt="" />
+                                                            Unlock Collateral
+                                                        </button>
+                                                    )
+                                                }
+
                                             </div>
                                         </div>
 
