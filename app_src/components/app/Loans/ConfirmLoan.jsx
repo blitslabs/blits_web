@@ -22,6 +22,8 @@ import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
 import BlitsLoans from '../../../crypto/BlitsLoans'
 import ETH from '../../../crypto/ETH'
+import MyParticles from './MyParticles'
+
 
 class LoanTerms extends Component {
     state = {
@@ -63,7 +65,7 @@ class LoanTerms extends Component {
         const { eth_loans_contract } = loanSettings
         const { amount, tokenContractAddress } = lendRequest
 
-        this.setState({ loading: true })
+        this.setState({ loading: true, btnLoading: true })
         const response = await ETH.approveAllowance(eth_loans_contract, '1000000000', tokenContractAddress)
         console.log(response)
 
@@ -76,7 +78,7 @@ class LoanTerms extends Component {
                 let allowance = BigNumber(allowanceRes.payload)
                 if (allowance.gte(amount)) {
                     clearInterval(allowanceInterval)
-                    this.setState({ showAllowanceBtn: false, loading: false })
+                    this.setState({ showAllowanceBtn: false, loading: false, btnLoading: false })
                     return
                 }
             }
@@ -86,14 +88,14 @@ class LoanTerms extends Component {
 
     handleCreateLoanBtn = async (e) => {
         e.preventDefault()
-        
+
         const { lendRequest, loanSettings, dispatch } = this.props
         const {
             secretHash, amount, tokenContractAddress, aCoinLender
         } = lendRequest
         const { eth_public_key, eth_loans_contract, autolender_secret_hash } = loanSettings
 
-        this.setState({ loading: true })
+        this.setState({ loading: true, btnLoading: true })
 
         const response = await BlitsLoans.ETH.createLoan(
             eth_public_key,
@@ -109,11 +111,11 @@ class LoanTerms extends Component {
 
         if (response.status !== 'OK') {
             toast.error('Missing required fields', { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
-            this.setState({ loading: false })
+            this.setState({ loading: false, btnLoading: false })
             return
         }
 
-        this.setState({ loading: false })
+        this.setState({ loading: false, btnLoading: true })
     }
 
 
@@ -135,6 +137,7 @@ class LoanTerms extends Component {
 
         return (
             <Fragment>
+                <MyParticles />
                 <div className="main">
                     <Navbar />
                     <section className="section app-section">
@@ -173,21 +176,25 @@ class LoanTerms extends Component {
                                             <div className="col-sm-12 col-md-5 offset-md-1">
                                                 <button onClick={this.handleBackBtn} className="btn btn-blits-white mt-4" style={{ width: '100%' }}>Back</button>
                                             </div>
-                                            <div className="c0l-sm-12 col-md-5">
+                                            <div className="col-sm-12 col-md-5">
                                                 {
                                                     !this.state.loading
                                                         ?
                                                         this.state.showAllowanceBtn
                                                             ?
+
                                                             <button onClick={this.handleAllowanceBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
                                                                 <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
                                                                 Approve Allowance
                                                             </button>
+
                                                             :
+
                                                             <button onClick={this.handleCreateLoanBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
                                                                 <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
                                                                 Lend
                                                             </button>
+
                                                         :
                                                         <div style={{ marginTop: '15px', }}>
                                                             <div style={{ color: '#32CCDD', fontWeight: 'bold', textAlign: 'justify' }}>Waiting for TX to confirm. Please be patient, Ethereum can be slow sometimes :)</div>

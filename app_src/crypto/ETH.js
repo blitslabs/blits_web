@@ -11,6 +11,8 @@ const ETH = {
         // Connect to HTTP Provider
         const web3 = new Web3(window.ethereum)
 
+        await window.ethereum.enable()
+
         const accounts = await web3.eth.getAccounts()
         const from = accounts[0]
 

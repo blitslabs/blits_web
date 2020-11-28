@@ -22,6 +22,8 @@ import { toast } from 'react-toastify'
 import Stepper from 'react-stepper-horizontal'
 import BlitsLoans from '../../../crypto/BlitsLoans'
 import ETH from '../../../crypto/ETH'
+import ParticleEffectButton from 'react-particle-effect-button'
+import MyParticles from './MyParticles'
 
 // API
 import { getLoanDetails } from '../../../utils/api'
@@ -85,6 +87,7 @@ class LoanDetails extends Component {
         if (signResponse.status !== 'OK') {
             console.log(signResponse)
             toast.error(signResponse.message, { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
+            this.setState({ loadingBtn: false })
             return
         }
 
@@ -295,6 +298,7 @@ class LoanDetails extends Component {
 
         return (
             <Fragment>
+                <MyParticles/>
                 <div className="main">
                     <Navbar />
                     <section className="section app-section">

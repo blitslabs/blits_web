@@ -30,7 +30,7 @@
 }
 
 .btn-blits-white {
-    background: white !important;
+    background: #f8f9fa !important;
     color: black;
 }
 
@@ -131,7 +131,11 @@ footer {
     display: flex;
     justify-content: center;
     flex-direction: column;
-    
+    background-color: #f8f9fa;
+}
+::selection {
+    background: rgba(164, 47, 255, 0.2);
+    color: #a42fff;
 }
 
 .main-color-bg {
@@ -234,3 +238,7 @@ table > tbody > tr > td {
 body {
     font-family: monospace !important;
 }
+
+/* .styles_particles__5dxGv, .styles_wrapper__3KXDn {
+    width: 100%;
+} */

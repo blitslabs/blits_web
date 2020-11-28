@@ -26,6 +26,8 @@ import ETH from '../../../crypto/ETH'
 import BlitsLoans from '../../../crypto/BlitsLoans'
 import BigNumber from 'bignumber.js'
 import { toast } from 'react-toastify'
+import MyParticles from './MyParticles'
+import ParticleEffectButton from 'react-particle-effect-button'
 
 class NewLoan extends Component {
     state = {
@@ -77,7 +79,7 @@ class NewLoan extends Component {
                 dispatch(saveLoanAssets(loanAssets))
 
                 const dai = Object.values(loanAssets).filter((a) => a.symbol === 'DAI')[0]
-                
+
                 BlitsLoans.ETH.getAssetTypeData(dai.contractAddress, loanSettings.eth_loans_contract)
                     .then((data) => {
                         dispatch(saveLendRequest(data))
@@ -171,11 +173,13 @@ class NewLoan extends Component {
         e.preventDefault()
         const { asset, amount, aCoinLender, duration, network } = this.state
         const { dispatch, history } = this.props
-
+        this.setState({ btnLoading: true })
+        
         if (!asset || !amount || !aCoinLender) {
-            if(!asset) this.setState({ assetSymbolIsInvalid: true })
-            if (!amount) this.setState({ amountIsInvalid: true })            
+            if (!asset) this.setState({ assetSymbolIsInvalid: true })
+            if (!amount) this.setState({ amountIsInvalid: true })
             if (!aCoinLender) this.setState({ aCoinLenderIsInvalid: true })
+            this.setState({ btnLoading: false })
             toast.error('Missing required fields', { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
             return
         }
@@ -183,16 +187,17 @@ class NewLoan extends Component {
         const message = 'You are signing this message to generate secrets for the Hash Time Locked Contracts required to create the loan.'
         const response = await ETH.generateSecret(message)
 
-        if(response.status !== 'OK') {
+        if (response.status !== 'OK') {
             console.log(response)
             toast.error(response.message, { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
+            this.setState({ btnLoading: false })
             return
         }
 
         const { secret, secretHash } = response.payload
 
         const params = {
-           tokenContractAddress: asset, amount, aCoinLender, secret, secretHash, duration, network
+            tokenContractAddress: asset, amount, aCoinLender, secret, secretHash, duration, network
         }
 
         dispatch(saveLendRequest(params))
@@ -215,12 +220,15 @@ class NewLoan extends Component {
 
         return (
             <Fragment>
+                 <MyParticles/>   
                 <div className="main">
                     <Navbar />
-                    <section className="section app-section" style={{ marginTop: '8rem' }}>
+
+                    <section className="section app-section" style={{ marginTop: '8rem', zIndex: 200 }}>
                         <div className="container">
                             <div className="row">
                                 <div className="col-sm-12 col-md-8 offset-md-2">
+
                                     <div className="mb-4 text-center">
                                         <h2>New Loan</h2>
                                         <div className="app-page-subtitle mt-2">Enter the loan details to create the offer</div>
@@ -291,14 +299,14 @@ class NewLoan extends Component {
                                         </div>
                                         <div className="text-right text-black">Min: 1 | Max: 30 </div> */}
 
-                                        <div className="app-form-label text-black mt-2">3. Harmony Address</div>
+                                        <div className="app-form-label text-black mt-2">3. Your Harmony (ONE) Address</div>
                                         <div className="input-group mb-3">
                                             <input value={this.state.aCoinLender} onChange={this.handleACoinLenderChange} type="text" className={this.state.aCoinLenderIsInvalid ? "form-control is-invalid" : "form-control"} placeholder="Harmony Address" autoCorrect="false" autoComplete="false" />
                                             <div className="invalid-feedback">
                                                 {this.state.aCoinLenderErrorMsg}
                                             </div>
                                         </div>
-                                        <div className="text-right text-black mb-4">You will receive the borrower's seizable collateral if he fails to repay the loan. </div>
+                                        <div className="text-right text-black mb-4">You will receive the borrower's seizable collateral to this address if he fails to repay the loan. </div>
 
                                         {/* <hr className="" /> */}
 
@@ -331,8 +339,14 @@ class NewLoan extends Component {
                                             {/* <div className="col-sm-12 col-md-5 offset-md-1">
                                                 <button onClick={this.handleBackBtn} className="btn btn-blits-white mt-4" style={{ width: '100%' }}>Back</button>
                                             </div> */}
-                                            <div className="col-sm-12 col-md-12">
-                                                <button onClick={this.handleContinueBtn} className="btn btn-blits" style={{ width: '100%' }}>Sign & Continue</button>
+                                            <div className="col-sm-12 col-md-12 text-center">
+                                                <ParticleEffectButton
+                                                    color='#32CCDD'
+                                                    hidden={this.state.btnLoading}
+                                                    type="triangle"                                                    
+                                                >
+                                                    <button onClick={this.handleContinueBtn} className="btn btn-blits" style={{ }}>Sign & Continue</button>
+                                                </ParticleEffectButton>
                                             </div>
                                         </div>
                                     </div>
