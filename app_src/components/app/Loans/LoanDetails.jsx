@@ -38,7 +38,7 @@ class LoanDetails extends Component {
     }
 
     componentDidMount() {
-        const { history, match, dispatch } = this.props
+        const { history, match, dispatch, loanDetails } = this.props
         const { loanId } = match.params
 
         console.log(loanId)
@@ -52,15 +52,13 @@ class LoanDetails extends Component {
         getLoanDetails({ loanId })
             .then(data => data.json())
             .then((res) => {
-                
+
                 if (res.status === 'OK') {
                     dispatch(saveLoanDetails(res.payload))
                     this.setState({ loanId, loading: false, })
                     this.checkLoanStatus(loanId)
                 }
             })
-
-
     }
 
 
@@ -127,6 +125,95 @@ class LoanDetails extends Component {
         this.setState({ loadingBtn: false })
     }
 
+    handleWithdrawBtn = async (e) => {
+        e.preventDefault()
+        const { loanDetails, loanSettings } = this.props
+        const { blockchainLoanId } = loanDetails
+        const { eth_loans_contract } = loanSettings
+
+        this.setState({ loadingBtn: true })
+
+        // Generate secretHash
+        const message = 'You are signing this message to generate secrets for the Hash Time Locked Contracts required to lock the collateral.'
+        const signResponse = await ETH.generateSecret(message)
+
+        if (signResponse.status !== 'OK') {
+            console.log(signResponse)
+            toast.error(signResponse.message, { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
+            return
+        }
+
+        const { secret, secretHash } = signResponse.payload
+        const secretA1 = `0x${secret}`
+        const secretHashA1 = secretHash
+
+        const response = await BlitsLoans.ETH.withdrawPrincipal(
+            blockchainLoanId,
+            secretA1,
+            eth_loans_contract
+        )
+
+        if (response.status !== 'OK') {
+            toast.error(response.message, { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
+            this.setState({ loadingBtn: false })
+            return
+        }
+
+        toast.success('Principal Withdrawn', { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
+    }
+
+    handleRepayBtn = async (e) => {
+        e.preventDefault()
+        const { loanDetails, loanSettings } = this.props
+        const { blockchainLoanId } = loanDetails
+        const { eth_loans_contract } = loanSettings
+
+        this.setState({ loadingBtn: true })
+
+        const response = await BlitsLoans.ETH.repayLoan(blockchainLoanId, eth_loans_contract)
+
+        if (response.status !== 'OK') {
+            toast.error(response.message, { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
+            this.setState({ loadingBtn: false })
+            return
+        }
+
+        toast.success('Loan Repaid', { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
+    }
+
+    handleAcceptRepaymentBtn = async (e) => {
+        e.preventDefault()
+        const { loanDetails, loanSettings } = this.props
+        const { blockchainLoanId } = loanDetails
+        const { eth_loans_contract } = loanSettings
+
+        this.setState({ loadingBtn: true })
+
+        // Generate secretHash        
+        const message = 'You are signing this message to generate secrets for the Hash Time Locked Contracts required to create the loan.'
+        const signResponse = await ETH.generateSecret(message)
+        
+        if (signResponse.status !== 'OK') {
+            toast.error(signResponse.message, { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
+            this.setState({ loadingBtn: false })
+            return
+        }
+
+        const { secret, secretHash } = signResponse.payload
+        const secretB1 = `0x${secret}`
+        const secretHashB1 = secretHash
+
+        const response = await BlitsLoans.ETH.acceptRepayment(blockchainLoanId, secretB1, eth_loans_contract)
+
+        if(response.status !== 'OK') {
+            toast.error(response.message, { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
+            this.setState({ loadingBtn: false })
+            return
+        }
+
+        toast.success('Loan Payback Accepted', { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
+    }
+
     checkLoanStatus = async (loanId) => {
 
         const { loanDetails, dispatch } = this.props
@@ -137,7 +224,7 @@ class LoanDetails extends Component {
         setInterval(() => {
             getLoanDetails({ loanId })
                 .then(data => data.json())
-                .then((res) => {                    
+                .then((res) => {
                     if (res.status === 'OK') {
                         if (status != res.payload.status) {
                             console.log(res)
@@ -147,100 +234,6 @@ class LoanDetails extends Component {
                     }
                 })
         }, 2000)
-    }
-
-    handleWithdrawBtn = async (e) => {
-        e.preventDefault()
-        const { loanRequest } = this.props
-        const { contracts, loan } = this.state
-
-        console.log('WITHDRAW_LOAN_BTN')
-
-        this.setState({ loading: true })
-
-        if (!window.ethereum) {
-            console.log('error: no ethereum')
-            return
-        }
-
-        const web3 = new Web3(window.ethereum)
-        await window.ethereum.enable()
-        const accounts = await web3.eth.getAccounts()
-        const from = accounts[0]
-
-        const blitsLoans = await new web3.eth.Contract(contracts.bCoin.abi.abi, contracts.bCoin.contractAddress)
-        const tx = await blitsLoans.methods.withdraw(loan.bCoinLoanId, ('0x' + loanRequest.secretA1)).send({ from })
-        console.log(tx)
-
-        if ('blockHash' in tx) {
-            updateLoanState({ loanId: loan.bCoinLoanId, coin: 'BCOIN', loanState: 'WITHDRAWN' })
-                .then(data => data.json())
-                .then((res) => {
-                    this.setState({ loan: { ...this.state.loan, bCoinState: 'WITHDRAWN' }, loading: false })
-                })
-        }
-    }
-
-    handleRepayBtn = async (e) => {
-        console.log('REPAY_LOAN_BTN')
-        e.preventDefault()
-        const { loanRequest, dispatch } = this.props
-        const { contracts, loan } = this.state
-
-        this.setState({ loading: true })
-
-        if (!window.ethereum) {
-            console.log('error: no ethereum')
-            return
-        }
-
-        const web3 = new Web3(window.ethereum)
-        await window.ethereum.enable()
-        const accounts = await web3.eth.getAccounts()
-        const from = accounts[0]
-
-        // Check allowance
-        const stablecoin = await new web3.eth.Contract(contracts[loanRequest.assetSymbol].abi.abi, contracts[loanRequest.assetSymbol].contractAddress)
-        let allowance = await stablecoin.methods.allowance(from, contracts.bCoin.contractAddress).call()
-        allowance = web3.utils.fromWei(allowance)
-        console.log('Allowance:', allowance)
-
-        const repaymentAmount = Math.ceil(parseFloat(loan.principal) + parseFloat(loan.interest))
-
-        if (!allowance || parseFloat(allowance) < repaymentAmount) {
-            await stablecoin.methods.approve(contracts.bCoin.contractAddress, web3.utils.toWei(repaymentAmount.toString())).send({ from })
-            this.setState({ loading: false })
-            return
-        }
-
-        // Repay loan
-        const blitsLoans = await new web3.eth.Contract(contracts.bCoin.abi.abi, contracts.bCoin.contractAddress)
-        let tx
-
-        try {
-            tx = await blitsLoans.methods.payback(loan.bCoinLoanId.toString()).send({ from })
-        } catch (e) {
-            console.log(e)
-            return
-        }
-
-        if ('blockHash' in tx) {
-            updateLoanState({ loanId: loan.bCoinLoanId, coin: 'BCOIN', loanState: 'REPAID' })
-                .then(data => data.json())
-                .then((res) => {
-                    if (res.status === 'OK') {
-                        this.setState({ loan: { ...this.state.loan, bCoinState: 'REPAID' } })
-                        acceptRepayment({ loanId: loan.id })
-                            .then(data2 => data2.json())
-                            .then((res2) => {
-                                if (res2.status === 'OK') {
-                                    this.setState({ loan: { ...this.state.loan, bCoinState: 'CLOSED' }, loading: false })
-                                    dispatch(saveLoanRequestTerms({ secretAutoB1: res2.payload.secretAutoB1 }))
-                                }
-                            })
-                    }
-                })
-        }
     }
 
     handleUnlockCollateralBtn = async (e) => {
@@ -377,6 +370,33 @@ class LoanDetails extends Component {
                                                         <button onClick={this.handleLockCollateralBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
                                                             <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/one_logo.png'} alt="" />
                                                             Lock Collateral
+                                                        </button>
+                                                    )
+                                                }
+
+                                                {
+                                                    (status == 2 && !loadingBtn) && (
+                                                        <button onClick={this.handleWithdrawBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                            <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
+                                                            Withdraw Principal
+                                                        </button>
+                                                    )
+                                                }
+
+                                                {
+                                                    (status == 3 && !loadingBtn) && (
+                                                        <button onClick={this.handleRepayBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                            <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
+                                                            Repay Loan
+                                                        </button>
+                                                    )
+                                                }
+
+                                                {
+                                                    (status == 4 && !loadingBtn) && (
+                                                        <button onClick={this.handleAcceptRepaymentBtn} className="btn btn-blits mt-4" style={{ width: '100%' }}>
+                                                            <img className="metamask-btn-img" src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} alt="" />
+                                                            Accept Repayment
                                                         </button>
                                                     )
                                                 }

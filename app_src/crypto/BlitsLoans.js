@@ -5,6 +5,8 @@ import ABI from './ABI'
 // Harmony
 import { Harmony, HarmonyExtension } from '@harmony-js/core'
 import { ChainID, ChainType, Unit, Units } from '@harmony-js/utils'
+import { fromBech32, toBech32 } from '@harmony-js/crypto'
+
 const ONE = {
     mainnet_endpoints: {
         shard_0_endpoint: 'https://api.s0.t.hmny.io',
@@ -143,8 +145,122 @@ const BlitsLoans = {
                 return { status: 'ERROR', message: 'Error creating loan' }
             }
 
-        }
+        },
+
+        withdrawPrincipal: async (loanId, secretA1, loansContractAddress) => {
+
+            if (!window.ethereum) {
+                return { status: 'ERROR', message: 'No web3 provider detected' }
+            }
+
+            if (!loanId) return { status: 'ERROR', message: 'Missing Loan ID' }
+            if (!secretA1) return { status: 'ERROR', message: 'Missing secretA1' }
+            if (!loansContractAddress) return { status: 'ERROR', message: 'Missing Loans Contract Address' }
+
+            await window.ethereum.enable()
+
+            // Connect to HTTP Provider
+            const web3 = new Web3(window.ethereum)
+
+            // Get Lender account
+            const accounts = await web3.eth.getAccounts()
+            const borrower = accounts[0]
+
+            // Instantiate Contract
+            let contract
+            try {
+                contract = new web3.eth.Contract(ABI.LOANS.abi, loansContractAddress)
+            } catch (e) {
+                return { status: 'ERROR', message: 'Error instantiating contract' }
+            }
+
+            try {
+                const tx = await contract.methods.withdraw(
+                    loanId, secretA1
+                ).send({ from: borrower })
+
+                return { status: 'OK', payload: tx }
+            } catch (e) {
+                console.log(e)
+                return { status: 'ERROR', message: e ? e : 'Error withdrawing principal' }
+            }
+        },
+
+
+        repayLoan: async (loanId, loansContractAddress) => {
+
+            if (!window.ethereum) {
+                return { status: 'ERROR', message: 'No web3 provider detected' }
+            }
+
+            if (!loanId) return { status: 'ERROR', message: 'Missing Loan ID' }
+            if (!loansContractAddress) return { status: 'ERROR', message: 'Missing Loans Contract Address' }
+
+            await window.ethereum.enable()
+
+            // Connect to HTTP Provider
+            const web3 = new Web3(window.ethereum)
+
+            // Get Lender account
+            const accounts = await web3.eth.getAccounts()
+            const borrower = accounts[0]
+
+            // Instantiate Contract
+            let contract
+            try {
+                contract = new web3.eth.Contract(ABI.LOANS.abi, loansContractAddress)
+            } catch (e) {
+                return { status: 'ERROR', message: 'Error instantiating contract' }
+            }
+
+            try {
+                const tx = await contract.methods.payback(loanId).send({ from: borrower })
+                return { status: 'OK', payload: tx }
+            } catch (e) {
+                console.log(e)
+                return { status: 'ERROR', message: e ? e : 'Error repaying loan' }
+            }
+        },
+
+        acceptRepayment: async (loanId, secretB1, loansContractAddress) => {
+
+            if (!window.ethereum) {
+                return { status: 'ERROR', message: 'No web3 provider detected' }
+            }
+
+            if (!loanId) return { status: 'ERROR', message: 'Missing Loan ID' }
+            if (!secretB1) return { status: 'ERROR', message: 'Missing secretB1' }
+            if (!loansContractAddress) return { status: 'ERROR', message: 'Missing Loans Contract Address' }
+
+            await window.ethereum.enable()
+
+            // Connect to HTTP Provider
+            const web3 = new Web3(window.ethereum)
+
+            // Get Lender account
+            const accounts = await web3.eth.getAccounts()
+            const lender = accounts[0]
+
+            // Instantiate Contract
+            let contract
+            try {
+                contract = new web3.eth.Contract(ABI.LOANS.abi, loansContractAddress)
+            } catch (e) {
+                return { status: 'ERROR', message: 'Error instantiating contract' }
+            }
+
+            try {
+                const tx = await contract.methods.acceptRepayment(
+                    loanId, secretB1
+                ).send({ from: lender })
+                return { status: 'OK', payload: tx }
+            } catch (e) {
+                console.log(e)
+                return { status: 'ERROR', message: e ? e : 'Error accepting loan payback' }
+            }
+        },
     },
+
 
     ONE: {
         lockCollateral: async (amount, lender, secretHashA1, secretHashB1, lockContractAddress, bCoinBorrowerAddress, shard, network) => {
@@ -159,9 +275,9 @@ const BlitsLoans = {
             if (!lockContractAddress) return { status: 'ERROR', message: 'Missing lockContractAddress' }
             if (!bCoinBorrowerAddress) return { status: 'ERROR', message: 'Missing bCoinBorrowerAddress' }
             if (!shard) return { status: 'ERROR', message: 'Missing shard' }
-            if(!network) return { status: 'ERROR', message: 'Missing network'}
+            if (!network) return { status: 'ERROR', message: 'Missing network' }
 
-            const endpoint = network === 'mainnet' ? ONE.mainnet_endpoints['shard_' + shard + '_endpoint'] :ONE.testnet_endpoints['shard_' + shard + '_endpoint']
+            const endpoint = network === 'mainnet' ? ONE.mainnet_endpoints['shard_' + shard + '_endpoint'] : ONE.testnet_endpoints['shard_' + shard + '_endpoint']
             const chainId = network === 'mainnet' ? ChainID.HmyMainnet : ChainID.HmyTestnet
 
             // Connect HTTP Provider
@@ -173,9 +289,9 @@ const BlitsLoans = {
                 //     chainId: window.onewallet.network.chain_id,
                 //     shardID: shard
                 // })
-            } catch(e) {
+            } catch (e) {
                 console.log(e)
-                return { status: 'ERROR', message: 'Error connecting Harmony provider'}
+                return { status: 'ERROR', message: 'Error connecting Harmony provider' }
             }
 
             // Connect Account / Unlock Wallet
@@ -203,6 +319,9 @@ const BlitsLoans = {
             }
 
             try {
+                // Get checksum address
+                lender = fromBech32(lender)
+
                 const tx = await contract.methods.lockCollateral(
                     lender, secretHashA1, secretHashB1, bCoinBorrowerAddress
                 ).send({
