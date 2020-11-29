@@ -20,6 +20,9 @@ import moment from 'moment'
 import currencyFormatter from 'currency-formatter'
 import BigNumber from 'bignumber.js'
 import Particles from 'react-particles-js'
+import Emoji from "react-emoji-render"
+import ParticleEffectButton from 'react-particle-effect-button'
+import MyParticles from './MyParticles'
 
 class LenderDashboard extends Component {
     state = {
@@ -53,60 +56,7 @@ class LenderDashboard extends Component {
 
         return (
             <Fragment>
-                <Particles
-                    params={{
-                        "particles": {
-                            "number": {
-                                "value": 200,
-                                density: {
-                                    enable: false,
-                                    value_area: 400
-                                }
-                            },
-                            "color": {
-                                "value": "#32CCDD"
-                            },
-                            opacity: {
-                                value: 0.5,
-                                random: false,
-                                
-                              },
-                            "size": {
-                                "value": 4,
-                                "random": true
-                            },
-                            "move": {
-                                "direction": "bottom",
-                                "out_mode": "out"
-                            },
-                            "line_linked": {
-                                "enable": false
-                            },
-
-                            "interactivity": {
-                                "events": {
-                                    "onclick": {
-                                        "enable": true,
-                                        "mode": "repulse"
-                                    }
-                                },
-                                "modes": {
-                                    "remove": {
-                                        "particles_nb": 10
-                                    }
-                                }
-                            }
-                        }
-                    }}
-                    style={{
-                        position: 'fixed',
-                        left: 0,
-                        top: 0,
-                        width: '100%',
-                        height: '100%'
-
-                    }}
-                />
+                <MyParticles />
                 <div className="main">
                     <Navbar />
                     <section className="section " style={{ paddingTop: '10rem' }}>
@@ -115,7 +65,7 @@ class LenderDashboard extends Component {
                                 <div className="col-sm-12 col-md-12">
 
                                     <div className="mb-4 text-left">
-                                        <div style={{ fontWeight: 'bold', fontSize: '24px', color: 'black' }}>Borrow | Available Loans</div>
+                                        <div style={{ fontWeight: 'bold', fontSize: '24px', color: 'black' }}>🎯 Borrow | Available Loans</div>
                                         <div style={{ fontSize: '18px', marginTop: '10px' }}>Borrow assets across different blockchains</div>
                                     </div>
 
@@ -125,18 +75,17 @@ class LenderDashboard extends Component {
 
                                         availableLoans && Object.values(availableLoans).length > 0
                                             ?
-                                            <table className="table table-hover">
+                                            <table className="table table-hover" style={{ background: '#f8f9fa', borderRadius: '25px' }}>
                                                 <thead>
                                                     <tr>
                                                         {/* <th>ID</th> */}
-                                                        <th>Amount</th>
-
-                                                        <th>Blockchain</th>
-                                                        <th>Repayment</th>
-                                                        <th>Interest</th>
-                                                        <th>APR</th>
-                                                        <th>Duration</th>
-                                                        <th>Lender</th>
+                                                        <th><Emoji text="💵" /> Amount</th>
+                                                        <th><Emoji text="🧿" /> Blockchain</th>
+                                                        <th><Emoji text="💸" /> Repayment</th>
+                                                        <th><Emoji text="🧃" /> Interest</th>
+                                                        <th><Emoji text="🌈" /> APR</th>
+                                                        <th><Emoji text="⌛" /> Duration</th>
+                                                        <th><Emoji text="🎱" /> Lender</th>
                                                         <th></th>
                                                     </tr>
                                                 </thead>
@@ -145,15 +94,15 @@ class LenderDashboard extends Component {
                                                         Object.values(availableLoans).map((l, i) => (
                                                             <tr key={i}>
                                                                 {/* <td>#{l.blockchainLoanId}</td> */}
-                                                                <td style={{ fontWeight: 'bold' }}>{currencyFormatter.format(l.principal, { code: 'USD', symbol: '' })} {l.tokenSymbol}</td>
+                                                                <td style={{ fontWeight: 'bold', color:'black' }}>{currencyFormatter.format(l.principal, { code: 'USD', symbol: '' })} {l.tokenSymbol}</td>
                                                                 <td>{l.blockchain}</td>
-                                                                <td>{currencyFormatter.format((parseFloat(l.principal) + parseFloat(l.interest)), { code: 'USD', symbol: '' })} {l.tokenSymbol}</td>
-                                                                <td>{currencyFormatter.format(l.interest, { code: 'USD', symbol: '' })} {l.tokenSymbol}</td>
-                                                                <td>{parseFloat(BigNumber(l.interest).times(100).div(l.principal).times(12)).toFixed(2)}%</td>
+                                                                <td><Emoji text="💸" /> {currencyFormatter.format((parseFloat(l.principal) + parseFloat(l.interest)), { code: 'USD', symbol: '' })} {l.tokenSymbol}</td>
+                                                                <td><Emoji text="🧃" /> {currencyFormatter.format(l.interest, { code: 'USD', symbol: '' })} {l.tokenSymbol}</td>
+                                                                <td><Emoji text="🌈" /> {parseFloat(BigNumber(l.interest).times(100).div(l.principal).times(12)).toFixed(2)}%</td>
                                                                 <td>30 days</td>
                                                                 <td><a href={"#"}>{l.lender.substring(0, 4)}...{l.lender.substr(l.lender.length - 4)}</a></td>
                                                                 <td>
-                                                                    <button onClick={e => { e.preventDefault(); this.handleViewDetailsBtn(l.id) }} className="btn btn-blits" style={{ }}>Borrow</button>
+                                                                    <button onClick={e => { e.preventDefault(); this.handleViewDetailsBtn(l.id) }} className="btn btn-blits" style={{}}>Borrow</button>
                                                                 </td>
                                                             </tr>
                                                         ))

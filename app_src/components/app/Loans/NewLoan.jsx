@@ -85,8 +85,9 @@ class NewLoan extends Component {
                 this.setState({ loading: false })
                 BlitsLoans.ETH.getAssetTypeData(dai.contractAddress, loanSettings.eth_loans_contract)
                     .then((data) => {
+                        console.log(data)
                         dispatch(saveLendRequest(data))
-                        this.setState({ asset: dai.contractAddress, network })
+                        this.setState({ asset: dai.contractAddress, network, amount: data.minLoanAmount })
                     })
             })
     }
@@ -266,7 +267,7 @@ class NewLoan extends Component {
                                             </div>
                                         </div>
 
-                                        <div className="form-group mt-4">
+                                        {/* <div className="form-group mt-4">
                                             <div className="app-form-label text-black">2. Amount</div>
                                             <div className="input-group mb-3">
                                                 <input value={this.state.amount} onChange={this.handleAmountChange} type="number" className={this.state.amountIsInvalid ? "form-control is-invalid" : "form-control"} placeholder="Amount" />
@@ -278,8 +279,19 @@ class NewLoan extends Component {
                                                 </div>
                                             </div>
                                             <div className="text-right text-black">Min: {lendRequest.minLoanAmount} | Max: {lendRequest.maxLoanAmount} </div>
-                                        </div>
+                                        </div> */}
 
+                                        <div className="form-group mt-4">
+                                            <div className="app-form-label text-black">2. Amount: {this.state.amount ? this.state.amount : '0'} {this.state.assetSymbol.toUpperCase()}</div>
+                                            <div className="mt-3">
+                                                <Slider min={100} max={1000} step={10} value={this.state.amount} onChange={value => this.setState({amount: value})} />
+                                            </div>
+                                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                                <div className="text-black mt-3"></div>
+                                                <div className="text-black mt-3">Min: {lendRequest.minLoanAmount} | Max: {lendRequest.maxLoanAmount}</div>
+                                            </div>
+                                        </div>
+                                        
                                         {/* <div className="app-form-label text-black mt-4">2. Select required collateral amount</div>
                                         <div className="mt-3">
                                             <Slider min={100} max={200} step={10} value={this.state.collateralizationRatio} onChange={this.handleCRateChange} />
@@ -371,7 +383,7 @@ class NewLoan extends Component {
                                                     hidden={this.state.btnLoading}
                                                     type="triangle"
                                                 >
-                                                    <button onClick={this.handleContinueBtn} className="btn btn-blits" style={{fontSize:'16px'}}>
+                                                    <button onClick={this.handleContinueBtn} className="btn btn-blits" style={{ fontSize: '16px' }}>
                                                         <img style={{ height: 15 }} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAAMFBMVEVHcEz/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDNIzNElAAAAD3RSTlMA7xBgnzDPgCDfj0C/r3DHfpOdAAABLklEQVR42q2XSxLDIAzFbCCBJml9/9v2s3kbdwGKDsBoRvXL1OY5IrpxyjM+GKbs8aUYZPP40gxyevwYxqgRTEi57hAqLSSEc3GhTe80nv2HD5RLkPPoIbzYMi1uESpX3CI09sBCysWFqgcTUnYupFziBUY1QjzYlYoKcmGh0wMLKRcXOiKhglEFQsqFhbb8nYtlF+d0rln6n1GdJ7/SBdJRXeDIRnWBmuWax2s2qvP4RrKLfSRXusCVLHgs0MzAQ/QXzcfg/JtrkivPtZHtFnuxWR5prmJMSFcKhG7/uvlpTEjZsZBycaHn2juv5EpXKI5yiZ6MKhFSLiakUWVCGlUmpFxUiP9DQ9nFcJRLNOVC7wx2paIlo4qEDmM05UIMjSqjKTuiKBdEowrpS7neXD5UXwGvjogAAAAASUVORK5CYII=" />
 
                                                         Sign & Continue

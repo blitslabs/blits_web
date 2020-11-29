@@ -184,7 +184,7 @@ footer {
 
 .rc-slider-rail {
     height: 14px;
-    background: linear-gradient(to right, #d60199 0%, #0790cc 100%) !important;
+    background: linear-gradient(to right, #0790cc 0%, #d60199 100%) !important;
 }
 
 .rc-slider-handle {
@@ -245,4 +245,24 @@ body {
 
 .invalid-feedback {
     color: red !important;
+}
+
+.table td {
+    border-top: 1px solid #343a401a !important;
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table thead th {
+    border-bottom: 1px solid #343a401a !important;
+    padding: 20px;
+}
+
+.table-hover tbody tr:hover {
+    background: rgba(164, 47, 255, 0.2);
+    color: #a42fff;
+}
+
+.table th {
+    border-top: none;
 }
