@@ -11,10 +11,12 @@ import { getPrices } from '../../../utils/api'
 // Actions
 import { savePrices } from '../../../actions/prices'
 import { setProviderStatus } from '../../../actions/shared'
+import { saveAccount } from '../../../actions/accounts'
 
 // Libraries
 import Emoji from "react-emoji-render"
 import Web3 from 'web3'
+import ONE from '../../../crypto/ONE'
 
 // Components
 import ConnectModal from './ConnectModal'
@@ -44,17 +46,36 @@ class Navbar extends Component {
 
     loandInitialData = async () => {
         const { dispatch } = this.props
-        const web3 = new Web3(window.ethereum)
-        const accounts = await web3.eth.getAccounts()
+
+        let web3, accounts
+        try {
+            web3 = new Web3(window.ethereum)
+            accounts = await web3.eth.getAccounts()
+        } catch (e) {
+            console.log(e)
+        }
 
         if (window.ethereum && accounts.length > 0) {
             dispatch(setProviderStatus({ name: 'ethereum', status: true }))
+            dispatch(saveAccount({ blockchain: 'ETH', account: accounts[0] }))
         } else {
             dispatch(setProviderStatus({ name: 'ethereum', status: false }))
+            dispatch(saveAccount({ blockchain: 'ETH', account: '' }))
         }
 
-        if (window.onewallet) {
+        let harmonyAccount
+        try {
+            const res = await ONE.getAccount()            
+            if (res.status === 'OK') {
+                harmonyAccount = res.payload
+            }
+        } catch (e) {
+            console.log(e)
+        }
+
+        if (harmonyAccount) {
             dispatch(setProviderStatus({ name: 'harmony', status: true }))
+            dispatch(saveAccount({ blockchain: 'ONE', account: harmonyAccount.address }))
         } else {
             dispatch(setProviderStatus({ name: 'harmony', status: false }))
         }
@@ -65,7 +86,7 @@ class Navbar extends Component {
     render() {
 
         const { showConnectModal } = this.state
-        const { shared } = this.props
+        const { shared, accounts } = this.props
         const { ethereum } = shared
 
         return (
@@ -125,7 +146,7 @@ class Navbar extends Component {
                                             </li>
                                         ) : (
                                                 <li className="nav-item">
-                                                    <Link className="nav-link scroll" to="/app/myloans">My Loans</Link>
+                                                    <Link className="nav-link scroll" to={"/app/myloans/"}>My Loans</Link>
                                                 </li>
                                             )
                                     }
@@ -142,9 +163,10 @@ class Navbar extends Component {
     }
 }
 
-function mapStateToProps({ shared }) {
+function mapStateToProps({ shared, accounts }) {
     return {
-        shared
+        shared,
+        accounts
     }
 }
 

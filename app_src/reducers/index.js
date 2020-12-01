@@ -10,18 +10,21 @@ import lendRequest from './lendRequest'
 import prices from './prices'
 import loanDetails from './loanDetails'
 import shared from './shared'
+import accounts from './accounts'
+import accountLoans from './accountLoans'
 
 const appReducer = combineReducers({
     loanRequest,
-    loading,
-    auth,
+    loading,    
     availableLoans,
     loanSettings,
     loanAssets,
     lendRequest,
     prices,
     loanDetails,
-    shared
+    shared,
+    accounts,
+    accountLoans,
 })
 
 const rootReducer = (state, action) => {

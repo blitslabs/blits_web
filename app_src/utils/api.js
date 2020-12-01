@@ -151,7 +151,7 @@ export function getLoanDetails(params) {
 }
 
 export function getAccountLoans(params) {
-    return fetch(API_WALLET + '/loans/account' + params.account, {
+    return fetch(API_WALLET + 'loans/account/' + params.account, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -160,7 +160,7 @@ export function getAccountLoans(params) {
 }
 
 export function getLockedCollateral(params) {
-    return fetch(API_WALLET + '/lockedCollateral/' + params.account, {
+    return fetch(API_WALLET + 'lockedCollateral/' + params.account, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'

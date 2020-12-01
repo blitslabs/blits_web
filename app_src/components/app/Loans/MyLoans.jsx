@@ -15,15 +15,16 @@ import Particles from 'react-particles-js'
 import Emoji from "react-emoji-render"
 import ParticleEffectButton from 'react-particle-effect-button'
 import MyParticles from './MyParticles'
+import { fromBech32 } from '@harmony-js/crypto'
 
 // Styles
 import '../styles.css'
 
 // Actions
-import { saveAvailableLoans } from '../../../actions/availableLoans'
+import { saveAccountLoans, saveAccountCollateralTxs } from '../../../actions/accountLoans'
 
 // API
-import { getAccountLoans } from '../../../utils/api'
+import { getAccountLoans, getLockedCollateral } from '../../../utils/api'
 
 
 class MyLoans extends Component {
@@ -34,16 +35,40 @@ class MyLoans extends Component {
     }
 
     componentDidMount() {
-        const { dispatch } = this.props
+        document.title = '📁 My Loans'
+        this.loadInitialData()
+    }
 
-        getAccountLoans()
+    loadInitialData = async () => {
+        const { accounts, dispatch } = this.props
+
+        if (!('ETH' in accounts) || !accounts.ETH) {
+            window.location.replace(process.env.SERVER_HOST + '/app/borrow')
+            return
+        }
+
+        console.log(accounts)
+
+        getAccountLoans({ account: accounts.ETH })
             .then(data => data.json())
             .then((res) => {
                 console.log(res)
                 if (res.status === 'OK') {
-                    dispatch(saveAvailableLoans(res.payload))
+                    dispatch(saveAccountLoans(res.payload))
                 }
             })
+
+        if ('ONE' in accounts && accounts.ONE) {
+            getLockedCollateral({ account: fromBech32(accounts.ONE) })
+                .then(data => data.json())
+                .then((res) => {
+                    console.log(res)
+                    if (res.status === 'OK') {
+                        dispatch(saveAccountCollateralTxs(res.payload))
+                    }
+                })
+        }
+
     }
 
     handleViewDetailsBtn = async (loanId) => {
@@ -134,9 +159,9 @@ class MyLoans extends Component {
 }
 
 
-function mapStateToProps({ availableLoans }) {
+function mapStateToProps({ accounts }) {
     return {
-        availableLoans,
+        accounts,
     }
 }
 

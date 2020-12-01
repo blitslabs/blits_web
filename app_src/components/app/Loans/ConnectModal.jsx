@@ -5,6 +5,7 @@ import Web3 from 'web3'
 
 // Actions
 import { setProviderStatus } from '../../../actions/shared'
+import { saveAccount } from '../../../actions/accounts'
 
 Modal.setAppElement('#root')
 
@@ -26,7 +27,17 @@ class ConnectModal extends Component {
             return
         }
 
+        let web3, accounts
+        try {
+            web3 = new Web3(window.ethereum)
+            accounts = await web3.eth.getAccounts()
+        } catch(e) {
+            console.log(e)
+            return
+        }
+
         dispatch(setProviderStatus({ name: 'ethereum', status: true }))
+        dispatch(saveAccount({ blockchain: 'ETH', account: accounts[0] }))
         toggleModal(false)
     }
 
