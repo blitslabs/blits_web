@@ -1,4 +1,7 @@
-import { SAVE_ACCOUNT_LOANS, SAVE_ACCOUNT_COLLATERAL_TXS } from '../actions/accountLoans'
+import { 
+    SAVE_ACCOUNT_LOANS, SAVE_ACCOUNT_COLLATERAL_TXS,
+    REMOVE_ACCOUNT_LOANS
+} from '../actions/accountLoans'
 
 const initialState = {
     loans: {},
@@ -21,6 +24,12 @@ export default function accountLoans(state = initialState, action) {
                 collateralTxs: {
                     ...action.collateralTxs
                 }
+            }
+
+        case REMOVE_ACCOUNT_LOANS:
+            return {
+                ...state,
+                loans: {}
             }
 
         default:

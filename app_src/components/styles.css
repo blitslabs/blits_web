@@ -288,3 +288,20 @@ body {
 .btn {
     z-index: 0;
 }
+
+.react-tabs {
+    background: #f8f9fa;
+    border-radius: 25px; 
+}
+
+.react-tabs__tab-list {
+    border-bottom: 1px solid #e4e6e7;
+}
+
+.loading-table {
+    font-size: 18px;
+    /* font-weight: bold; */
+    min-height: 80px;
+    vertical-align: middle;
+    margin-top:50px;
+}
