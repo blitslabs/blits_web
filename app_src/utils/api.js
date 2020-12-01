@@ -59,15 +59,6 @@ export function updateLoanState(params) {
     })
 }
 
-export function getAccountLoans(params) {
-    return fetch(API + `loans/${params.account}/${params.userType}/${params.loanState}`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-}
-
 export function getContractsData() {
     return fetch(API + `contracts`, {
         method: 'GET',
@@ -152,6 +143,24 @@ export function getPrices() {
 
 export function getLoanDetails(params) {
     return fetch(API_WALLET + 'loan/' + params.loanId, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+export function getAccountLoans(params) {
+    return fetch(API_WALLET + '/loans/account' + params.account, {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
+
+export function getLockedCollateral(params) {
+    return fetch(API_WALLET + '/lockedCollateral/' + params.account, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'

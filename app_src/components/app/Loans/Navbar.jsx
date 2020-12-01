@@ -113,7 +113,7 @@ class Navbar extends Component {
                                         <Link className="nav-link scroll" to="/app/lend">Lend</Link>
                                     </li>
                                     <li className="nav-item">
-                                        <Link className="nav-link scroll" href="#">History</Link>
+                                        <Link className="nav-link scroll" to="/app/history">History</Link>
                                     </li>
                                     {
                                         !ethereum || ethereum.status === false ? (
@@ -125,11 +125,10 @@ class Navbar extends Component {
                                             </li>
                                         ) : (
                                                 <li className="nav-item">
-                                                    <a className="nav-link scroll" href="#">My Loans</a>
+                                                    <Link className="nav-link scroll" to="/app/myloans">My Loans</Link>
                                                 </li>
                                             )
                                     }
-
                                 </ul>
                             </nav>
                         </div>
