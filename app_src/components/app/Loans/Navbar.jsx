@@ -10,7 +10,20 @@ import { getPrices } from '../../../utils/api'
 // Actions
 import { savePrices } from '../../../actions/prices'
 
+// Libraries
+import Emoji from "react-emoji-render"
+import Web3 from 'web3'
+
+// Components
+import ConnectModal from './ConnectModal'
+
 class Navbar extends Component {
+
+    state = {
+        ethereum: false,
+        onewallet: false,
+        showConnectModal: false
+    }
 
     componentDidMount() {
         const { dispatch } = this.props
@@ -23,16 +36,36 @@ class Navbar extends Component {
                     dispatch(savePrices(res.payload))
                 }
             })
+
+        this.loandInitialData()
     }
 
+    loandInitialData = async () => {
+        const web3 = new Web3(window.ethereum)
+        const accounts = await web3.eth.getAccounts()
+
+        if (!window.ethereum || accounts.length === 0) {
+            this.setState({ ethereum: false })
+        }
+
+        if (!window.onewallet) {
+            this.setState({ onewallet: false })
+        }
+    }
+
+    handleToggleConnectModal = async (value) => this.setState({ showConnectModal: value })
+
     render() {
+
+        const { ethereum, showConnectModal } = this.state
+
         return (
             <Fragment>
                 <ToastContainer />
 
                 <header className="navbar navbar-sticky navbar-expand-lg navbar-dark" >
                     <div className="container position-relative">
-                        <a className="navbar-brand" href="index.html">
+                        <a className="navbar-brand" href="/app/loans">
                             <img
                                 className="navbar-brand-regular"
                                 src={process.env.SERVER_HOST + "/assets/images/logo.png"}
@@ -73,14 +106,23 @@ class Navbar extends Component {
                                     <li className="nav-item">
                                         <a className="nav-link scroll" href="#">History</a>
                                     </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link scroll" href="#">Blog</a>
-                                    </li>
+                                    {
+                                        !ethereum && (
+                                            <li className="nav-item">
+                                                <button onClick={(e) => { e.preventDefault(); this.handleToggleConnectModal(true) }} className="btn btn-blits connect-btn" style={{ fontSize: '14px', background: 'linear-gradient(-47deg, #8731E8 0%, #4528DC 100%)' }}>
+                                                    <Emoji text="🔓" onlyEmojiClassName="sm-emoji" />
+                                                    Connect
+                                                </button>
+                                            </li>
+                                        )
+                                    }
                                 </ul>
                             </nav>
                         </div>
                     </div>
-                </header >
+                </header>
+
+                <ConnectModal isOpen={showConnectModal} toggleModal={this.handleToggleConnectModal} />
             </Fragment>
 
         )

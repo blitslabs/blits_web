@@ -75,7 +75,7 @@ class LenderDashboard extends Component {
 
                                         availableLoans && Object.values(availableLoans).length > 0
                                             ?
-                                            <table className="table table-hover" style={{ background: '#f8f9fa', borderRadius: '25px' }}>
+                                            <table className="table table-hover loans-table" style={{ background: '#f8f9fa', borderRadius: '25px' }}>
                                                 <thead>
                                                     <tr>
                                                         {/* <th>ID</th> */}
@@ -94,11 +94,20 @@ class LenderDashboard extends Component {
                                                         Object.values(availableLoans).map((l, i) => (
                                                             <tr key={i}>
                                                                 {/* <td>#{l.blockchainLoanId}</td> */}
-                                                                <td style={{ fontWeight: 'bold', color:'black' }}>{currencyFormatter.format(l.principal, { code: 'USD', symbol: '' })} {l.tokenSymbol}</td>
+                                                                <td style={{ fontWeight: 'bold', color: 'black' }}>{currencyFormatter.format(l.principal, { code: 'USD', symbol: '' })} {l.tokenSymbol}</td>
                                                                 <td>{l.blockchain}</td>
-                                                                <td><Emoji text="💸" /> {currencyFormatter.format((parseFloat(l.principal) + parseFloat(l.interest)), { code: 'USD', symbol: '' })} {l.tokenSymbol}</td>
-                                                                <td><Emoji text="🧃" /> {currencyFormatter.format(l.interest, { code: 'USD', symbol: '' })} {l.tokenSymbol}</td>
-                                                                <td><Emoji text="🌈" /> {parseFloat(BigNumber(l.interest).times(100).div(l.principal).times(12)).toFixed(2)}%</td>
+                                                                <td>
+                                                                    {/* <Emoji text="💸" /> */}
+                                                                    {currencyFormatter.format((parseFloat(l.principal) + parseFloat(l.interest)), { code: 'USD', symbol: '' })} {l.tokenSymbol}
+                                                                </td>
+                                                                <td>
+                                                                    {/* <Emoji text="🧃" /> */}
+                                                                    {currencyFormatter.format(l.interest, { code: 'USD', symbol: '' })} {l.tokenSymbol}
+                                                                </td>
+                                                                <td>
+                                                                    {/* <Emoji text="🌈" /> */}
+                                                                    {parseFloat(BigNumber(l.interest).times(100).div(l.principal).times(12)).toFixed(2)}%
+                                                                </td>
                                                                 <td>30 days</td>
                                                                 <td><a href={"#"}>{l.lender.substring(0, 4)}...{l.lender.substr(l.lender.length - 4)}</a></td>
                                                                 <td>

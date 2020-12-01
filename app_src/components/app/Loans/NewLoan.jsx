@@ -240,7 +240,7 @@ class NewLoan extends Component {
                 <div className="main">
                     <Navbar />
 
-                    <section className="section app-section" style={{ marginTop: '8rem', zIndex: 200 }}>
+                    <section className="section app-section" style={{ marginTop: '8rem' }}>
                         <div className="container">
                             <div className="row">
                                 <div className="col-sm-12 col-md-8 offset-md-2">

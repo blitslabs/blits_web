@@ -22,7 +22,7 @@
 }
 
 .btn-blits {
-    background: #32CCDD;
+    background: #222;
 }
 
 .btn-blits-black {
@@ -32,6 +32,7 @@
 .btn-blits-white {
     background: #f8f9fa !important;
     color: black;
+    border-radius: 25px;
 }
 
 .btn-blits-white:hover {
@@ -247,7 +248,7 @@ body {
     color: red !important;
 }
 
-.table td {
+.loans-table td {
     border-top: 1px solid #343a401a !important;
     vertical-align: middle;
     text-align: center;
@@ -259,10 +260,31 @@ body {
 }
 
 .table-hover tbody tr:hover {
-    background: rgba(164, 47, 255, 0.2);
+    /* background: rgba(164, 47, 255, 0.2); */
+    background: rgb(34 34 34 / 11%);
     color: #a42fff;
 }
 
 .table th {
     border-top: none;
+}
+
+.connect-btn {
+    font-size: 14px;
+    background: linear-gradient(-47deg, #8731E8 0%, #4528DC 100%);
+    margin-top: 20px;
+    padding: 15px 20px;
+}
+
+.modal-wallet-title {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.modal-wallet-name {
+    font-weight: bold;
+}
+
+.btn {
+    z-index: 0;
 }
