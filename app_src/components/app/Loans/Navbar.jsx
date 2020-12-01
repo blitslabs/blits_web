@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
+import { Link } from 'react-router-dom'
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -9,6 +10,7 @@ import { getPrices } from '../../../utils/api'
 
 // Actions
 import { savePrices } from '../../../actions/prices'
+import { setProviderStatus } from '../../../actions/shared'
 
 // Libraries
 import Emoji from "react-emoji-render"
@@ -41,15 +43,20 @@ class Navbar extends Component {
     }
 
     loandInitialData = async () => {
+        const { dispatch } = this.props
         const web3 = new Web3(window.ethereum)
         const accounts = await web3.eth.getAccounts()
 
-        if (!window.ethereum || accounts.length === 0) {
-            this.setState({ ethereum: false })
+        if (window.ethereum && accounts.length > 0) {
+            dispatch(setProviderStatus({ name: 'ethereum', status: true }))
+        } else {
+            dispatch(setProviderStatus({ name: 'ethereum', status: false }))
         }
 
-        if (!window.onewallet) {
-            this.setState({ onewallet: false })
+        if (window.onewallet) {
+            dispatch(setProviderStatus({ name: 'harmony', status: true }))
+        } else {
+            dispatch(setProviderStatus({ name: 'harmony', status: false }))
         }
     }
 
@@ -57,7 +64,9 @@ class Navbar extends Component {
 
     render() {
 
-        const { ethereum, showConnectModal } = this.state
+        const { showConnectModal } = this.state
+        const { shared } = this.props
+        const { ethereum } = shared
 
         return (
             <Fragment>
@@ -98,24 +107,29 @@ class Navbar extends Component {
                             <nav>
                                 <ul className="navbar-nav" id="navbar-nav">
                                     <li className="nav-item">
-                                        <a className="nav-link scroll" href="/app/borrow">Borrow</a>
+                                        <Link className="nav-link scroll" to="/app/borrow">Borrow</Link>
                                     </li>
                                     <li className="nav-item">
-                                        <a className="nav-link scroll" href="/app/lend">Lend</a>
+                                        <Link className="nav-link scroll" to="/app/lend">Lend</Link>
                                     </li>
                                     <li className="nav-item">
-                                        <a className="nav-link scroll" href="#">History</a>
+                                        <Link className="nav-link scroll" href="#">History</Link>
                                     </li>
                                     {
-                                        !ethereum && (
+                                        !ethereum || ethereum.status === false ? (
                                             <li className="nav-item">
                                                 <button onClick={(e) => { e.preventDefault(); this.handleToggleConnectModal(true) }} className="btn btn-blits connect-btn" style={{ fontSize: '14px', background: 'linear-gradient(-47deg, #8731E8 0%, #4528DC 100%)' }}>
                                                     <Emoji text="🔓" onlyEmojiClassName="sm-emoji" />
                                                     Connect
                                                 </button>
                                             </li>
-                                        )
+                                        ) : (
+                                                <li className="nav-item">
+                                                    <a className="nav-link scroll" href="#">My Loans</a>
+                                                </li>
+                                            )
                                     }
+
                                 </ul>
                             </nav>
                         </div>
@@ -129,9 +143,9 @@ class Navbar extends Component {
     }
 }
 
-function mapStateToProps({ preCreditRequest, preFormController }) {
+function mapStateToProps({ shared }) {
     return {
-
+        shared
     }
 }
 

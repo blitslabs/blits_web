@@ -1,12 +1,37 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
 import Modal from 'react-modal'
+import Web3 from 'web3'
+
+// Actions
+import { setProviderStatus } from '../../../actions/shared'
 
 Modal.setAppElement('#root')
 
 class ConnectModal extends Component {
 
-    componentDidMount() {
-        console.log('CONNECT_MODAL_MOUNTED')
+    handleMetamaskBtn = async (e) => {
+        e.preventDefault()
+        const { dispatch, toggleModal } = this.props
+
+        if (!window.ethereum) {
+            // show download metamask modal
+            return
+        }
+
+        try {
+            await window.ethereum.enable()
+        } catch (e) {
+            console.log(e)
+            return
+        }
+
+        dispatch(setProviderStatus({ name: 'ethereum', status: true }))
+        toggleModal(false)
+    }
+
+    handleWalletConnectBtn = async (e) => {
+        e.preventDefault()
     }
 
     render() {
@@ -23,14 +48,14 @@ class ConnectModal extends Component {
                         <div className="modal-wallet-title mb-4">Select a wallet provider</div>
                         <div className="row ">
                             <div className="col-sm-12 col-md-6 text-center mt-4">
-                                <img style={{ height: '48px' }} src="https://yam.finance/static/media/metamask-fox.c06f3a3e.svg" />
+                                <img style={{ height: '48px' }} src={process.env.SERVER_HOST + '/assets/images/metamask.svg'} />
                                 <div className="modal-wallet-name mt-2">Metamask</div>
-                                <button className="btn btn-blits mt-3">Select</button>
+                                <button onClick={this.handleMetamaskBtn} className="btn btn-blits mt-3">Select</button>
                             </div>
                             <div className="col-sm-12 col-md-6 text-center mt-4">
-                                <img style={{ height: '48px' }} src="https://yam.finance/static/media/wallet-connect.37f2bc6e.svg" alt="" />
+                                <img style={{ height: '48px' }} src={process.env.SERVER_HOST + '/assets/images/wallet-connect.svg'} alt="" />
                                 <div className="modal-wallet-name mt-2">WalletConnect</div>
-                                <button class="btn btn-blits mt-3">Select</button>
+                                <button onClick={this.handleWalletConnectBtn} className="btn btn-blits mt-3">Select</button>
                             </div>
                         </div>
 
@@ -70,4 +95,10 @@ const customStyles = {
     },
 }
 
-export default ConnectModal
+function mapStateToProps({ shared }) {
+    return {
+        shared
+    }
+}
+
+export default connect(mapStateToProps)(ConnectModal)

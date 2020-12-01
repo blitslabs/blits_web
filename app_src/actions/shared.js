@@ -3,6 +3,14 @@ export const HIDE_LOADING = 'HIDE_LOADING'
 export const SHOW_SIDEBAR = 'SHOW_SIDEBAR'
 export const HIDE_SIDEBAR = 'HIDE_SIDEBAR'
 export const RESET_SIDEBAR = 'RESET_SIDEBAR'
+export const SET_PROVIDER_STATUS = 'SET_PROVIDER_STATUS'
+
+export function setProviderStatus(providerStatus) {
+    return {
+        type: SET_PROVIDER_STATUS,
+        providerStatus,
+    }
+}
 
 export function showLoading() {
     return {
