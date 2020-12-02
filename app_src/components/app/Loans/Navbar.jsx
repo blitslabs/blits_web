@@ -2,8 +2,7 @@ import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+
 
 // API
 import { getPrices } from '../../../utils/api'
@@ -17,6 +16,8 @@ import { saveAccount } from '../../../actions/accounts'
 import Emoji from "react-emoji-render"
 import Web3 from 'web3'
 import ONE from '../../../crypto/ONE'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Components
 import ConnectModal from './ConnectModal'
@@ -53,6 +54,13 @@ class Navbar extends Component {
             accounts = await web3.eth.getAccounts()
         } catch (e) {
             console.log(e)
+        }
+
+        // Check network
+        const networkId = await web3.eth.net.getId()
+
+        if(networkId != 3) {
+            toast.error('Please connect to the Ropsten Network', { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
         }
 
         if (window.ethereum && accounts.length > 0) {
@@ -163,7 +171,7 @@ class Navbar extends Component {
                         </div>
                     </div>
                 </header>
-
+                                    
                 <ConnectModal isOpen={showConnectModal} toggleModal={this.handleToggleConnectModal} />
             </Fragment>
 

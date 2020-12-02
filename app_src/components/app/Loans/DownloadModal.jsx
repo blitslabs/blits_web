@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component, Fragment } from 'react'
 import { connect } from 'react-redux'
 import Modal from 'react-modal'
 import Web3 from 'web3'
@@ -12,55 +12,6 @@ Modal.setAppElement('#root')
 
 class DownloadModal extends Component {
 
-    handleMetamaskBtn = async (e) => {
-        e.preventDefault()
-        const { dispatch, toggleModal } = this.props
-
-        if (!window.ethereum) {
-            // show download metamask modal
-            return
-        }
-
-        try {
-            await window.ethereum.enable()
-        } catch (e) {
-            console.log(e)
-            return
-        }
-
-        let web3, accounts
-        try {
-            web3 = new Web3(window.ethereum)
-            accounts = await web3.eth.getAccounts()
-        } catch (e) {
-            console.log(e)
-            return
-        }
-
-        dispatch(setProviderStatus({ name: 'ethereum', status: true, provider: 'metamask' }))
-        dispatch(saveAccount({ blockchain: 'ETH', account: accounts[0] }))
-        toggleModal(false)
-    }
-
-    handleWalletConnectBtn = async (e) => {
-        e.preventDefault()
-        const { dispatch, toggleModal } = this.props
-
-        const provider = new WalletConnectProvider({
-            infuraId: process.env.INFURA_ID
-        })
-
-        await provider.enable()
-
-        const web3 = new Web3(provider)
-        window.ethereum = provider
-        const accounts = await web3.eth.getAccounts()
-
-        dispatch(setProviderStatus({ name: 'ethereum', status: true, provider: 'wallet-connect' }))
-        dispatch(saveAccount({ blockchain: 'ETH', account: accounts[0] }))
-        toggleModal(false)
-    }
-
     handleDownloadBtn = (e) => {
         e.preventDefault()
         window.open('https://chrome.google.com/webstore/detail/harmony/bjaeebonnimhcakeckbnemejhdpngdmd')
@@ -68,7 +19,7 @@ class DownloadModal extends Component {
 
     render() {
 
-        const { isOpen, toggleModal } = this.props
+        const { isOpen, missingWallet, toggleModal } = this.props
 
         return (
             <Modal
@@ -81,8 +32,23 @@ class DownloadModal extends Component {
                         <div className="modal-wallet-title mb-4">Download & Install Wallet</div>
                         <div className="row ">
                             <div className="col-sm-12 col-md-12 text-center mt-4">
-                                <img style={{ height: '48px' }} src={process.env.SERVER_HOST + '/assets/images/one_logo.png'} />
-                                <div className="modal-wallet-name mt-4">Harmony ONE Wallet</div>
+                                {
+                                    missingWallet === 'ONE'
+                                        ?
+                                        (
+                                            <Fragment>
+                                                <img style={{ height: '48px' }} src={process.env.SERVER_HOST + '/assets/images/one_logo.png'} />
+                                                <div className="modal-wallet-name mt-4">Harmony ONE Wallet</div>
+                                            </Fragment>
+                                        )
+                                        :
+                                        (
+                                            <Fragment>
+                                                <img style={{ height: '48px' }} src={process.env.SERVER_HOST + '/assets/images/metamask_logo.png'} />
+                                                <div className="modal-wallet-name mt-4">Metamask Wallet</div>
+                                            </Fragment>
+                                        )
+                                }
                                 <button onClick={this.handleDownloadBtn} className="btn btn-blits mt-4">Go to Download</button>
                             </div>
                         </div>

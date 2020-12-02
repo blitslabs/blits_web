@@ -50,7 +50,8 @@ class NewLoan extends Component {
         aCoinLenderErrorMsg: 'This field is required',
         loading: true,
         duration: '30',
-        showDownloadModal: true
+        showDownloadModal: false,
+        missingWallet: ''
     }
 
     componentDidMount() {
@@ -90,6 +91,9 @@ class NewLoan extends Component {
                         console.log(data)
                         dispatch(saveLendRequest(data))
                         this.setState({ asset: dai.contractAddress, network, amount: data.minLoanAmount })
+                    })
+                    .catch((err) => {
+                        console.log(err)
                     })
             })
     }
@@ -183,6 +187,7 @@ class NewLoan extends Component {
             return
         }
 
+        this.setState({ missingWallet: 'ONE' })
         this.handleToggleDownloadModal(true)
     }
 
@@ -210,7 +215,7 @@ class NewLoan extends Component {
         if (response.status !== 'OK') {
             console.log(response)
             toast.error(response.message, { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
-            this.setState({ btnLoading: false })
+            this.setState({ btnLoading: false, showDownloadModal: true, missingWallet: 'ETH' })
             return
         }
 
@@ -389,7 +394,6 @@ class NewLoan extends Component {
                                                 >
                                                     <button onClick={this.handleContinueBtn} className="btn btn-blits" style={{ fontSize: '16px' }}>
                                                         <img style={{ height: 15 }} src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAMAAABiM0N1AAAAMFBMVEVHcEz/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDP/rDNIzNElAAAAD3RSTlMA7xBgnzDPgCDfj0C/r3DHfpOdAAABLklEQVR42q2XSxLDIAzFbCCBJml9/9v2s3kbdwGKDsBoRvXL1OY5IrpxyjM+GKbs8aUYZPP40gxyevwYxqgRTEi57hAqLSSEc3GhTe80nv2HD5RLkPPoIbzYMi1uESpX3CI09sBCysWFqgcTUnYupFziBUY1QjzYlYoKcmGh0wMLKRcXOiKhglEFQsqFhbb8nYtlF+d0rln6n1GdJ7/SBdJRXeDIRnWBmuWax2s2qvP4RrKLfSRXusCVLHgs0MzAQ/QXzcfg/JtrkivPtZHtFnuxWR5prmJMSFcKhG7/uvlpTEjZsZBycaHn2juv5EpXKI5yiZ6MKhFSLiakUWVCGlUmpFxUiP9DQ9nFcJRLNOVC7wx2paIlo4qEDmM05UIMjSqjKTuiKBdEowrpS7neXD5UXwGvjogAAAAASUVORK5CYII=" />
-
                                                         Sign & Continue
                                                     </button>
                                                 </ParticleEffectButton>
@@ -400,9 +404,12 @@ class NewLoan extends Component {
                             </div>
                         </div>
                     </section>
-
                 </div>
-                <DownloadModal isOpen={this.state.showDownloadModal} toggleModal={this.handleToggleDownloadModal} />
+                <DownloadModal
+                    isOpen={this.state.showDownloadModal}
+                    missingWallet={this.state.missingWallet}
+                    toggleModal={this.handleToggleDownloadModal}
+                />
             </Fragment>
         )
     }
