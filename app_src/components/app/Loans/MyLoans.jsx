@@ -36,7 +36,7 @@ class MyLoans extends Component {
     }
 
     componentDidMount() {
-        document.title = '📁 My Loans'
+        document.title = '📁 My Loans | Cross-chain Loans'
         this.loadInitialData()
     }
 

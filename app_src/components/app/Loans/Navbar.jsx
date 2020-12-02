@@ -134,7 +134,7 @@ class Navbar extends Component {
                                         <Link className="nav-link scroll" to="/app/lend">Lend</Link>
                                     </li>
                                     <li className="nav-item">
-                                        <Link className="nav-link scroll" to="/app/history">History</Link>
+                                        <Link className="nav-link scroll" to="/app/activity">Activity</Link>
                                     </li>
                                     {
                                         !ethereum || ethereum.status === false ? (

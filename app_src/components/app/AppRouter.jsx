@@ -16,6 +16,8 @@ import BorrowDashboard from './Loans/BorrowDashboard'
 import ConfirmLoanBorrower from './Loans/ConfirmLoanBorrower'
 import LoanDetails from './Loans/LoanDetails'
 import MyLoans from './Loans/MyLoans'
+import Activity from './Loans/Activity'
+
 
 // Styles
 import './Loans/loans_styles.css'
@@ -33,6 +35,7 @@ class AppRouter extends Component {
                 <Route path={`${match.path}app/lend/confirm`} component={ConfirmLoan} />
                 <Route path={`${match.path}app/loan/:loanId`} component={LoanDetails} />
                 <Route path={`${match.path}app/myloans`} component={MyLoans} />
+                <Route path={`${match.path}app/activity`} component={Activity} />
                 
                 <Route path={`${match.path}app/loans/select-asset`} component={SelectAsset} />
                 <Route path={`${match.path}app/lend/select-loan`} component={SelectBorrower} />

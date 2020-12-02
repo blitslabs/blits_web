@@ -167,3 +167,12 @@ export function getLockedCollateral(params) {
         }
     })
 }
+
+export function getLoansHistory() {
+    return fetch(API_WALLET + 'loans/history', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+}
