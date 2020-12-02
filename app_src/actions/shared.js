@@ -4,6 +4,7 @@ export const SHOW_SIDEBAR = 'SHOW_SIDEBAR'
 export const HIDE_SIDEBAR = 'HIDE_SIDEBAR'
 export const RESET_SIDEBAR = 'RESET_SIDEBAR'
 export const SET_PROVIDER_STATUS = 'SET_PROVIDER_STATUS'
+export const TOGGLE_SIDEBAR = 'TOGGLE_SIDEBAR'
 
 export function setProviderStatus(providerStatus) {
     return {
@@ -47,18 +48,9 @@ export function resetSidebar() {
     }
 }
 
-// export function handleInitialData() {
-//     return (dispatch) => {
-//         dispatch(showLoading())
-
-//         return isAuthenticated()
-//             .then((res) => { 
-                
-//                 res.message === 'AUTHENTICATED' && (
-//                     dispatch(setAuthedUser(res.message))
-//                 )
-                
-//                 dispatch(hideLoading())
-//             })
-//     }
-// }
+export function toggleSidebar(value) {
+    return {
+        type: TOGGLE_SIDEBAR,
+        sidebar: value
+    }
+}

@@ -10,7 +10,7 @@ import { getPrices } from '../../../utils/api'
 
 // Actions
 import { savePrices } from '../../../actions/prices'
-import { setProviderStatus } from '../../../actions/shared'
+import { setProviderStatus, toggleSidebar } from '../../../actions/shared'
 import { saveAccount } from '../../../actions/accounts'
 
 // Libraries
@@ -83,6 +83,12 @@ class Navbar extends Component {
 
     handleToggleConnectModal = async (value) => this.setState({ showConnectModal: value })
 
+    handleMobileNavbarBtn = (e) => {
+        e.preventDefault()
+        const { shared, dispatch } = this.props
+        dispatch(toggleSidebar(!shared.sidebar))
+    }
+
     render() {
 
         const { showConnectModal } = this.state
@@ -93,7 +99,7 @@ class Navbar extends Component {
             <Fragment>
                 <ToastContainer />
 
-                <header className="navbar navbar-sticky navbar-expand-lg navbar-dark" >
+                <header className={!shared.sidebar ? "navbar navbar-sticky navbar-expand-lg navbar-dark" : "navbar navbar-sticky navbar-expand-lg navbar-dark active"} >
                     <div className="container position-relative">
                         <a className="navbar-brand" href="/app/loans">
                             <img
@@ -112,8 +118,9 @@ class Navbar extends Component {
                             type="button"
                             data-toggle="navbarToggler"
                             aria-label="Toggle navigation"
+                            onClick={this.handleMobileNavbarBtn}
                         >
-                            <span className="navbar-toggler-icon" />
+                            <span className={"navbar-toggler-icon"} />
                         </button>
                         <div className="navbar-inner">
                             {/*  Mobile Menu Toggler */}
@@ -122,8 +129,9 @@ class Navbar extends Component {
                                 type="button"
                                 data-toggle="navbarToggler"
                                 aria-label="Toggle navigation"
+                                onClick={this.handleMobileNavbarBtn}
                             >
-                                <span className="navbar-toggler-icon" />
+                                <span className={!shared.sidebar ? "navbar-toggler-icon" : "navbar-toggler-icon active"} />
                             </button>
                             <nav>
                                 <ul className="navbar-nav" id="navbar-nav">

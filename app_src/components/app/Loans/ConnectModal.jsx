@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import Modal from 'react-modal'
 import Web3 from 'web3'
+import WalletConnectProvider from '@walletconnect/web3-provider'
 
 // Actions
 import { setProviderStatus } from '../../../actions/shared'
@@ -31,18 +32,33 @@ class ConnectModal extends Component {
         try {
             web3 = new Web3(window.ethereum)
             accounts = await web3.eth.getAccounts()
-        } catch(e) {
+        } catch (e) {
             console.log(e)
             return
         }
 
-        dispatch(setProviderStatus({ name: 'ethereum', status: true }))
+        dispatch(setProviderStatus({ name: 'ethereum', status: true, provider: 'metamask' }))
         dispatch(saveAccount({ blockchain: 'ETH', account: accounts[0] }))
         toggleModal(false)
     }
 
     handleWalletConnectBtn = async (e) => {
         e.preventDefault()
+        const { dispatch, toggleModal } = this.props
+
+        const provider = new WalletConnectProvider({
+            infuraId: process.env.INFURA_ID
+        })
+
+        await provider.enable()
+
+        const web3 = new Web3(provider)
+        window.ethereum = provider
+        const accounts = await web3.eth.getAccounts()
+
+        dispatch(setProviderStatus({ name: 'ethereum', status: true, provider: 'wallet-connect' }))
+        dispatch(saveAccount({ blockchain: 'ETH', account: accounts[0] }))
+        toggleModal(false)
     }
 
     render() {
