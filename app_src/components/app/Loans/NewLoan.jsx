@@ -6,6 +6,7 @@ import Navbar from './Navbar'
 import Slider, { Range } from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import Loading from '../../Loading'
+import DownloadModal from './DownloadModal'
 
 // Styles
 import '../styles.css'
@@ -48,7 +49,8 @@ class NewLoan extends Component {
         aCoinLenderIsInvalid: false,
         aCoinLenderErrorMsg: 'This field is required',
         loading: true,
-        duration: '30'
+        duration: '30',
+        showDownloadModal: true
     }
 
     componentDidMount() {
@@ -181,8 +183,10 @@ class NewLoan extends Component {
             return
         }
 
-
+        this.handleToggleDownloadModal(true)
     }
+
+    handleToggleDownloadModal = async (value) => this.setState({ showDownloadModal: value })
 
 
     handleContinueBtn = async (e) => {
@@ -284,14 +288,14 @@ class NewLoan extends Component {
                                         <div className="form-group mt-4">
                                             <div className="app-form-label text-black">2. Amount: {this.state.amount ? this.state.amount : '0'} {this.state.assetSymbol.toUpperCase()}</div>
                                             <div className="mt-3">
-                                                <Slider min={100} max={1000} step={10} value={this.state.amount} onChange={value => this.setState({amount: value})} />
+                                                <Slider min={100} max={1000} step={10} value={this.state.amount} onChange={value => this.setState({ amount: value })} />
                                             </div>
                                             <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                                                 <div className="text-black mt-3"></div>
                                                 <div className="text-black mt-3">Min: {lendRequest.minLoanAmount} | Max: {lendRequest.maxLoanAmount}</div>
                                             </div>
                                         </div>
-                                        
+
                                         {/* <div className="app-form-label text-black mt-4">2. Select required collateral amount</div>
                                         <div className="mt-3">
                                             <Slider min={100} max={200} step={10} value={this.state.collateralizationRatio} onChange={this.handleCRateChange} />
@@ -398,6 +402,7 @@ class NewLoan extends Component {
                     </section>
 
                 </div>
+                <DownloadModal isOpen={this.state.showDownloadModal} toggleModal={this.handleToggleDownloadModal} />
             </Fragment>
         )
     }
