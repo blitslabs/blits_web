@@ -279,8 +279,7 @@ const BlitsLoans = {
 
             const endpoint = network === 'mainnet' ? ONE.mainnet_endpoints['shard_' + shard + '_endpoint'] : ONE.testnet_endpoints['shard_' + shard + '_endpoint']
             const chainId = network === 'mainnet' ? ChainID.HmyMainnet : ChainID.HmyTestnet
-            console.log(endpoint)
-            console.log(chainId)
+            
             // Connect HTTP Provider
             let harmony, hmy
             try {
@@ -320,7 +319,7 @@ const BlitsLoans = {
                 // Get checksum address
                 lender = fromBech32(lender)
 
-                const tx = await contract.methods.lockCollateral(
+                await contract.methods.lockCollateral(
                     lender, secretHashA1, secretHashB1, bCoinBorrowerAddress
                 ).send({
                     value: BigNumber(amount).multipliedBy('1000000000000000000').toString(),
@@ -338,8 +337,8 @@ const BlitsLoans = {
                         console.log(error)
                         return { status: 'ERROR', message: error ? error : 'Error unlocking collateral' }
                     })
-                console.log(tx)
-                return { status: 'OK', payload: tx }
+                
+                return { status: 'OK', payload: 'tx' }
 
             } catch (e) {
                 console.log(e)
