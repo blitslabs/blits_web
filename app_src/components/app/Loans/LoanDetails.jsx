@@ -316,7 +316,7 @@ class LoanDetails extends Component {
                 <MyParticles />
                 <div className="main">
                     <Navbar />
-                    <section className="section app-section">
+                    <section className="section app-section" style={{ marginTop: '12rem' }}>
                         <div className="container">
                             <div className="row">
                                 <div className="col-sm-12 col-md-8 offset-md-2">
