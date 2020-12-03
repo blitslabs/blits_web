@@ -279,16 +279,14 @@ const BlitsLoans = {
 
             const endpoint = network === 'mainnet' ? ONE.mainnet_endpoints['shard_' + shard + '_endpoint'] : ONE.testnet_endpoints['shard_' + shard + '_endpoint']
             const chainId = network === 'mainnet' ? ChainID.HmyMainnet : ChainID.HmyTestnet
-
+            console.log(endpoint)
+            console.log(chainId)
             // Connect HTTP Provider
             let harmony, hmy
             try {
-                harmony = await new HarmonyExtension(window.onewallet, { chainId, chainType: ChainType.Harmony, shardID: shard, chainUrl: endpoint });
-                // hmy = new Harmony(window.onewallet.network.chain_url, {
-                //     chainType: ChainType.Harmony,
-                //     chainId: window.onewallet.network.chain_id,
-                //     shardID: shard
-                // })
+                harmony = new HarmonyExtension(window.onewallet)
+                harmony.setProvider(endpoint)
+                harmony.setShardID(0)
             } catch (e) {
                 console.log(e)
                 return { status: 'ERROR', message: 'Error connecting Harmony provider' }
@@ -329,6 +327,17 @@ const BlitsLoans = {
                     gasLimit: '1000001',
                     gasPrice: (BigNumber('1').multipliedBy('1000000000')).toString(),
                 })
+                    .on('transactionHash', (hash) => console.log('hash', hash))
+                    .on('receipt', (receipt) => console.log('receipt', receipt))
+                    .on('confirmation', async (confirmation) => {
+                        console.log(confirmation)
+                        if (confirmation === 'REJECTED') return { status: 'ERROR', message: 'Transaction Rejected' }
+                        return { status: 'OK', payload: confirmation }
+                    })
+                    .on('error', (error) => {
+                        console.log(error)
+                        return { status: 'ERROR', message: error ? error : 'Error unlocking collateral' }
+                    })
                 console.log(tx)
                 return { status: 'OK', payload: tx }
 
@@ -355,12 +364,9 @@ const BlitsLoans = {
             // Connect HTTP Provider
             let harmony, hmy
             try {
-                harmony = await new HarmonyExtension(window.onewallet, { chainId, chainType: ChainType.Harmony, shardID: shard, chainUrl: endpoint });
-                // hmy = new Harmony(window.onewallet.network.chain_url, {
-                //     chainType: ChainType.Harmony,
-                //     chainId: window.onewallet.network.chain_id,
-                //     shardID: shard
-                // })
+                harmony = new HarmonyExtension(window.onewallet)
+                harmony.setProvider(endpoint)
+                harmony.setShardID(0)
             } catch (e) {
                 console.log(e)
                 return { status: 'ERROR', message: 'Error connecting Harmony provider' }
