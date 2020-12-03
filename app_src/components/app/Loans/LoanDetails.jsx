@@ -24,12 +24,14 @@ import BlitsLoans from '../../../crypto/BlitsLoans'
 import ETH from '../../../crypto/ETH'
 import ParticleEffectButton from 'react-particle-effect-button'
 import MyParticles from './MyParticles'
+import ABI from '../../../crypto/ABI'
 
 // API
-import { getLoanDetails } from '../../../utils/api'
+import { getLoanDetails, getLoansSettings } from '../../../utils/api'
 
 // Actions
 import { saveLoanDetails } from '../../../actions/loanDetails'
+import { saveLoanSettings } from '../../../actions/loanSettings'
 
 
 class LoanDetails extends Component {
@@ -45,21 +47,34 @@ class LoanDetails extends Component {
 
         console.log(loanId)
 
-        document.title = `Loan Details #${loanId}`
+        document.title = `🦄 Loan Details #${loanId} | Cross-chain Loans`
 
         if (!loanId) {
             history.push('/app/borrow')
         }
 
-        getLoanDetails({ loanId })
-            .then(data => data.json())
-            .then((res) => {
+        const network = window.ethereum.chainId === '0x1' ? mainnet : 'testnet'
 
-                if (res.status === 'OK') {
-                    dispatch(saveLoanDetails(res.payload))
-                    this.setState({ loanId, loading: false, })
-                    this.checkLoanStatus(loanId)
+        Promise.all([
+            getLoansSettings({ network }),
+            getLoanDetails({ loanId })
+        ])
+            .then((responses) => {
+                return Promise.all(responses.map(res => res.json()))
+            })
+            .then((data) => {
+                console.log(data)
+
+                if (data[0].status === 'OK') {
+                    dispatch(saveLoanSettings(data[0].payload))
                 }
+
+                if (data[1].status === 'OK') {
+                    dispatch(saveLoanDetails(data[1].payload))
+                }
+
+                this.setState({ loanId, loading: false })
+                this.checkLoanStatus(loanId)
             })
     }
 
@@ -298,7 +313,7 @@ class LoanDetails extends Component {
 
         return (
             <Fragment>
-                <MyParticles/>
+                <MyParticles />
                 <div className="main">
                     <Navbar />
                     <section className="section app-section">
@@ -306,7 +321,7 @@ class LoanDetails extends Component {
                             <div className="row">
                                 <div className="col-sm-12 col-md-8 offset-md-2">
                                     <div className="mb-4 text-center">
-                                        <h2>Loan Details </h2>
+                                        <h2>🦄 Loan Details </h2>
                                         <div className="app-page-subtitle mt-2">ID #{loanId}</div>
                                     </div>
                                     <div className="app-card shadow-lg">

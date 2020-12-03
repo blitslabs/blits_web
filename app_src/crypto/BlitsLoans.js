@@ -264,9 +264,7 @@ const BlitsLoans = {
 
     ONE: {
         lockCollateral: async (amount, lender, secretHashA1, secretHashB1, lockContractAddress, bCoinBorrowerAddress, shard, network) => {
-            if (!window.onewallet) {
-                return { status: 'ERROR', message: 'Harmony Provider not found' }
-            }
+
 
             if (!amount) return { status: 'ERROR', message: 'Missing amount' }
             if (!lender) return { status: 'ERROR', message: 'Missing lender' }
@@ -278,29 +276,21 @@ const BlitsLoans = {
             if (!network) return { status: 'ERROR', message: 'Missing network' }
 
             const endpoint = network === 'mainnet' ? ONE.mainnet_endpoints['shard_' + shard + '_endpoint'] : ONE.testnet_endpoints['shard_' + shard + '_endpoint']
-            const chainId = network === 'mainnet' ? ChainID.HmyMainnet : ChainID.HmyTestnet
+
+            if (!window.onewallet) {
+                return { status: 'ERROR', message: 'Harmony Provider not found' }
+            }
 
             // Connect HTTP Provider
-            let harmony, hmy
-            try {
-                harmony = await new HarmonyExtension(window.onewallet, { chainId, chainType: ChainType.Harmony, shardID: shard, chainUrl: endpoint });
-                // hmy = new Harmony(window.onewallet.network.chain_url, {
-                //     chainType: ChainType.Harmony,
-                //     chainId: window.onewallet.network.chain_id,
-                //     shardID: shard
-                // })
-            } catch (e) {
-                console.log(e)
-                return { status: 'ERROR', message: 'Error connecting Harmony provider' }
-            }
+            const harmony = new HarmonyExtension(window.onewallet)
+            harmony.setProvider(endpoint)
+            harmony.setShardID(0)
 
             // Connect Account / Unlock Wallet
             const account = await harmony.login()
             console.log(account)
 
             // Check account's balance
-
-
 
             // Instantiate Contract
             let contract
@@ -309,7 +299,7 @@ const BlitsLoans = {
             } catch (e) {
                 return { status: 'ERROR', message: 'Error instantiating contract' }
             }
-
+            
             // Encode bCoinBorrowerAddress
             try {
                 const web3 = new Web3(window.ethereum)
@@ -339,9 +329,7 @@ const BlitsLoans = {
         },
 
         unlockCollateral: async (loanId, secretB1, lockContractAddress, shard, network) => {
-            if (!window.onewallet) {
-                return { status: 'ERROR', message: 'Harmony Provider not found' }
-            }
+            
 
             if (!loanId) return { status: 'ERROR', message: 'Missing Loan ID' }
             if (!secretB1) return { status: 'ERROR', message: 'Missing secretB1' }
@@ -352,19 +340,14 @@ const BlitsLoans = {
             const endpoint = network === 'mainnet' ? ONE.mainnet_endpoints['shard_' + shard + '_endpoint'] : ONE.testnet_endpoints['shard_' + shard + '_endpoint']
             const chainId = network === 'mainnet' ? ChainID.HmyMainnet : ChainID.HmyTestnet
 
-            // Connect HTTP Provider
-            let harmony, hmy
-            try {
-                harmony = await new HarmonyExtension(window.onewallet, { chainId, chainType: ChainType.Harmony, shardID: shard, chainUrl: endpoint });
-                // hmy = new Harmony(window.onewallet.network.chain_url, {
-                //     chainType: ChainType.Harmony,
-                //     chainId: window.onewallet.network.chain_id,
-                //     shardID: shard
-                // })
-            } catch (e) {
-                console.log(e)
-                return { status: 'ERROR', message: 'Error connecting Harmony provider' }
+            if (!window.onewallet) {
+                return { status: 'ERROR', message: 'Harmony Provider not found' }
             }
+
+            // Connect HTTP Provider            
+            const harmony = new HarmonyExtension(window.onewallet)
+            harmony.setProvider(endpoint)
+            harmony.setShardID(0)
 
             // Connect Account / Unlock Wallet
             const account = await harmony.login()
