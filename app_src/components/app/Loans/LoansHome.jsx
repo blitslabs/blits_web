@@ -19,7 +19,7 @@ class LoansHome extends Component {
     handleOptionClick = (option) => {
         const { dispatch, history } = this.props
         dispatch(saveLoanRequestType(option))        
-        history.push('/app/loans/select-asset')
+        history.push('/app/' + option)
     }
 
     render() {
