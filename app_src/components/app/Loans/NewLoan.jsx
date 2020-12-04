@@ -55,6 +55,7 @@ class NewLoan extends Component {
     }
 
     componentDidMount() {
+        document.title = "🚀 New Loan | Cross-chain Loans"
         this.loadInitialData()
     }
 

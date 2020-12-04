@@ -32,6 +32,7 @@ class LenderDashboard extends Component {
     }
 
     componentDidMount() {
+        document.title = "🎯 Borrow | Cross-chain Loans"
         const { dispatch } = this.props
 
         getAvailableLoans()

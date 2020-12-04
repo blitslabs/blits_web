@@ -5,15 +5,13 @@ import { connect } from 'react-redux'
 // Components
 import Home from './Home/Home'
 import LoansHome from './Loans/LoansHome'
-import NewBorrow from './Loans/NewBorrow'
-import NewLend from './Loans/NewLend'
+
+
 import SelectAsset from './Loans/SelectAsset'
-import SelectBorrower from './Loans/SelectBorrower'
 import NewLoan from './Loans/NewLoan'
 import ConfirmLoan from './Loans/ConfirmLoan'
-import LenderDashboard from './Loans/LenderDashboard'
+
 import BorrowDashboard from './Loans/BorrowDashboard'
-import ConfirmLoanBorrower from './Loans/ConfirmLoanBorrower'
 import LoanDetails from './Loans/LoanDetails'
 import MyLoans from './Loans/MyLoans'
 import Activity from './Loans/Activity'
@@ -35,13 +33,7 @@ class AppRouter extends Component {
                 <Route path={`${match.path}app/lend/confirm`} component={ConfirmLoan} />
                 <Route path={`${match.path}app/loan/:loanId`} component={LoanDetails} />
                 <Route path={`${match.path}app/myloans`} component={MyLoans} />
-                <Route path={`${match.path}app/activity`} component={Activity} />
-                
-                <Route path={`${match.path}app/loans/select-asset`} component={SelectAsset} />
-                <Route path={`${match.path}app/lend/select-loan`} component={SelectBorrower} />
-                <Route path={`${match.path}app/lend/select-borrower`} component={SelectBorrower} />
-                <Route path={`${match.path}app/lend/dashboard`} component={LenderDashboard} />
-                <Route path={`${match.path}app/borrow/confirm/:loanId`} component={ConfirmLoanBorrower} />
+                <Route path={`${match.path}app/activity`} component={Activity} />                
             </Fragment>
         )
     }
