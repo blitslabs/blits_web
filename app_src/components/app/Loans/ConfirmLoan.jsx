@@ -40,7 +40,7 @@ class LoanTerms extends Component {
     }
 
     componentDidMount = async () => {
-        document.title = 'Confirm Loan'
+        document.title = '🚀 Confirm Loan | Cross-chain Loans'
         const { lendRequest, loanSettings, history } = this.props
         const { amount, tokenContractAddress } = lendRequest
         const { eth_loans_contract } = loanSettings
@@ -89,7 +89,7 @@ class LoanTerms extends Component {
     handleCreateLoanBtn = async (e) => {
         e.preventDefault()
 
-        const { lendRequest, loanSettings, dispatch } = this.props
+        const { lendRequest, loanSettings, dispatch, history } = this.props
         const {
             secretHash, amount, tokenContractAddress, aCoinLender
         } = lendRequest
@@ -115,7 +115,9 @@ class LoanTerms extends Component {
             return
         }
 
+        toast.success('New Loan Created!', { position: "top-right", autoClose: 5000, hideProgressBar: false, closeOnClick: true, pauseOnHover: true, draggable: true, progress: undefined, });
         this.setState({ loading: false, btnLoading: true })
+        history.push('/app/loan_created')
     }
 
 
@@ -140,7 +142,7 @@ class LoanTerms extends Component {
                 <MyParticles />
                 <div className="main">
                     <Navbar />
-                    <section className="section app-section">
+                    <section className="section app-section" style={{marginTop: '12rem'}}>
                         <div className="container">
                             <div className="row">
                                 <div className="col-sm-12 col-md-8 offset-md-2">

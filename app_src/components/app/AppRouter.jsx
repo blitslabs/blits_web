@@ -6,16 +6,14 @@ import { connect } from 'react-redux'
 import Home from './Home/Home'
 import LoansHome from './Loans/LoansHome'
 
-
 import SelectAsset from './Loans/SelectAsset'
 import NewLoan from './Loans/NewLoan'
 import ConfirmLoan from './Loans/ConfirmLoan'
-
 import BorrowDashboard from './Loans/BorrowDashboard'
 import LoanDetails from './Loans/LoanDetails'
 import MyLoans from './Loans/MyLoans'
 import Activity from './Loans/Activity'
-
+import LoanCreated from './Loans/LoanCreated'
 
 // Styles
 import './Loans/loans_styles.css'
@@ -34,6 +32,7 @@ class AppRouter extends Component {
                 <Route path={`${match.path}app/loan/:loanId`} component={LoanDetails} />
                 <Route path={`${match.path}app/myloans`} component={MyLoans} />
                 <Route path={`${match.path}app/activity`} component={Activity} />                
+                <Route path={`${match.path}app/loan_created`} component={LoanCreated} />
             </Fragment>
         )
     }
