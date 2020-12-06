@@ -24,6 +24,10 @@ module.exports.renderHome = (req, res) => {
     })
 }
 
+module.exports.redirectApp = (req, res) => {
+    res.redirect('https://crosschain.loans')
+}
+
 // module.exports.renderAdminApp = function (req, res) {    
 //     res.render('app_container', {
 //         host: process.env.SERVER_HOST,
