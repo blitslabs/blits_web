@@ -1,0 +1,17 @@
+===================================================================
+v 1.2 - 7 September 2018
+-------------------------------------------------------------------
+
+UPDATE      - Documentation Updated
+UPDATE      - Some Minor Bugs Fixing
+FIX         - Adding “sticky-nav” class on load even if you are in the middle of the page
+FIX         - Adding and removing “current-menu-item” Class when it’s necessary.
+
+Files affected:
+-------------------------------------------------------------------
+UPDATE    - /scss/themes/theme-dark.scss
+UPDATE    - /scss/modules/features/features-four.scss
+UPDATE    - /scss/modules/featured-one.scss
+REMOVE    - /js/vendor/one.nav.js
+UPDATE    - /js/modules/db-nav.js
+UPDATE    - /js/app.js

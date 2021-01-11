@@ -4,7 +4,7 @@ const jwt = require('express-jwt')
 
 const appController = require('../controllers/app')
 
-router.get('/', appController.renderApp)
+router.get('/', appController.renderHome)
 router.get('/app/*', appController.redirectApp)
 
 
