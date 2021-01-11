@@ -14,7 +14,7 @@ class Footer extends Component {
                                 <div className="footer-items" >
                                     {/* Logo */}
                                     <a className="navbar-brand" href="#">
-                                        <img className="logo" src="assets/images/logo_white.png" style={{ width: '60%' }} />
+                                        <img className="logo" src="../assets_old/images/logo_white.png" style={{ width: '60%' }} />
                                     </a>
 
                                     {/* Social Icons */}
@@ -89,10 +89,10 @@ class Footer extends Component {
                                     {/* Store Buttons */}
                                     <div className="button-group store-buttons store-black d-flex flex-wrap">
                                         <a href="#">
-                                            <img src="assets/img/icon/google-play.png" />
+                                            <img src="../assets_old/img/icon/google-play.png" />
                                         </a>
                                         <a href="#">
-                                            <img src="assets/img/icon/app-store.png" />
+                                            <img src="../assets_old/img/icon/app-store.png" />
                                         </a>
                                     </div>
                                 </div>

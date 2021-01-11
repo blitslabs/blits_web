@@ -189,7 +189,7 @@ class Home extends Component {
                                         <div className="featured-img mb-3">
                                             <img
                                                 className="avatar-sm"
-                                                src="assets/images/layers.png"
+                                                src="../assets_old/images/layers.png"
 
                                             />
                                         </div>
@@ -212,7 +212,7 @@ class Home extends Component {
                                         <div className="featured-img mb-3">
                                             <img
                                                 className="avatar-sm"
-                                                src="assets/images/atomic_loan_icon.png"
+                                                src="../assets_old/images/atomic_loan_icon.png"
 
                                             />
                                         </div>
@@ -235,7 +235,7 @@ class Home extends Component {
                                         <div className="featured-img mb-3">
                                             <img
                                                 className="avatar-sm"
-                                                src="assets/images/stablecoin.png"
+                                                src="../assets_old/images/stablecoin.png"
 
                                             />
                                         </div>
@@ -307,7 +307,7 @@ class Home extends Component {
 
                                     {/* Service Thumb */}
                                     <div className="service-thumb mx-auto  text-center">
-                                        <img style={{ borderRadius: '1.5rem', maxWidth: '80%' }} className="vcenter" src="assets/images/blits_compressed.gif" />
+                                        <img style={{ borderRadius: '1.5rem', maxWidth: '80%' }} className="vcenter" src="../assets_old/images/blits_compressed.gif" />
                                     </div>
                                 </div>
                             </div>
@@ -321,7 +321,7 @@ class Home extends Component {
                                 <div className="col-12 col-lg-6 order-2 order-lg-1">
                                     {/* Discover Thumb */}
                                     <div className="service-thumb discover-thumb mx-auto pt-5 pt-lg-0">
-                                        <img src="assets/images/atomic_loan-3.svg" />
+                                        <img src="../assets_old/images/atomic_loan-3.svg" />
                                     </div>
                                 </div>
                                 <div className="col-12 col-lg-6 order-1 order-lg-2">
@@ -427,7 +427,7 @@ class Home extends Component {
                                         <div className="work-icon">
                                             <img
                                                 className="avatar-md"
-                                                src="assets/img/icon/work/app-blits.png"
+                                                src="../assets_old/img/icon/work/app-blits.png"
 
                                             />
                                         </div>
@@ -444,7 +444,7 @@ class Home extends Component {
                                         <div className="work-icon">
                                             <img
                                                 className="avatar-md"
-                                                src="assets/img/icon/work/settings-blits.png"
+                                                src="../assets_old/img/icon/work/settings-blits.png"
 
                                             />
                                         </div>
@@ -461,7 +461,7 @@ class Home extends Component {
                                         <div className="work-icon">
                                             <img
                                                 className="avatar-md"
-                                                src="assets/img/icon/work/download-blits.png"
+                                                src="../assets_old/img/icon/work/download-blits.png"
 
                                             />
                                         </div>
@@ -626,10 +626,10 @@ class Home extends Component {
                                         {/* Store Buttons */}
                                         <div className="button-group store-buttons d-flex justify-content-center">
                                             <a href="#">
-                                                <img src="assets/img/icon/google-play.png" />
+                                                <img src="../assets_old/img/icon/google-play.png" />
                                             </a>
                                             <a href="#">
-                                                <img src="assets/img/icon/app-store.png" />
+                                                <img src="../assets_old/img/icon/app-store.png" />
                                             </a>
                                         </div>
                                         <span className="d-inline-block text-white fw-3 font-italic mt-3">
@@ -688,7 +688,7 @@ class Home extends Component {
                             <div className="col-12 text-center p-5">
                                 <div style={{ position: 'absolute', right: '10px', top: '-10px' }}><button onClick={this.handleCloseModal} className="icon-btn"><i style={{ color: 'white' }} className="fa fa-times-circle" style={{ fontSize: '26px', color: 'white' }}></i></button></div>
                                 <h2 className="modal-title">Subscribe to Get Early Access!</h2>
-                                <img className="modal-image mt-4" src="assets/images/blits_rocket.png" alt="" />
+                                <img className="modal-image mt-4" src="../assets_old/images/blits_rocket.png" alt="" />
 
                                 {this.state.subscribed === false
                                     ?

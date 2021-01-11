@@ -11,12 +11,12 @@ class Navbar extends Component {
                     <a className="navbar-brand" href="index.html">
                         <img
                             className="navbar-brand-regular"
-                            src="assets/images/logo.png"
+                            src="../assets_old/images/logo.png"
                             alt="brand-logo"
                         />
                         <img
                             className="navbar-brand-sticky"
-                            src="assets/img/logo/logo.png"
+                            src="../assets_old/img/logo/logo.png"
                             alt="sticky brand-logo"
                         />
                     </a>

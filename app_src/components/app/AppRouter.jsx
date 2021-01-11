@@ -24,7 +24,7 @@ class AppRouter extends Component {
 
         return (
             <Fragment>
-                <Route path={match.path} exact component={Home} />
+                <Route path={`${match.path}app`} exact component={Home} />
                 <Route path={`${match.path}app/loans`} exact component={LoansHome} />
                 <Route path={`${match.path}app/borrow`} component={BorrowDashboard} />
                 <Route path={`${match.path}app/lend`} exact={true} component={NewLoan} />

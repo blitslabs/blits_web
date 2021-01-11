@@ -109,7 +109,7 @@ class Header extends Component {
                         <div className="col-12 text-center p-5">
                             <div style={{ position: 'absolute', right: '10px', top: '-10px' }}><button onClick={this.handleCloseModal} className="icon-btn"><i style={{ color: 'white' }} className="fa fa-times-circle" style={{ fontSize: '26px', color: 'white' }}></i></button></div>
                             <h2 className="modal-title">Subscribe to Get Early Access!</h2>
-                            <img className="modal-image mt-4" src="assets/images/blits_rocket.png" alt="" />
+                            <img className="modal-image mt-4" src="../assets_old/images/blits_rocket.png" alt="" />
 
                             {this.state.subscribed === false
                                 ?
@@ -148,7 +148,7 @@ class Header extends Component {
                                 {/* Welcome Thumb */}
 
                                 <div className="welcome-thumb mx-auto">
-                                    <img className="wow fadeInRight" data-wow-delay='0.4s' style={{ visibility: 'visible', animationDelay: '0.4s', animationName: 'fadeInRight' }} src="assets/images/wallet1.png" />
+                                    <img className="wow fadeInRight" data-wow-delay='0.4s' style={{ visibility: 'visible', animationDelay: '0.4s', animationName: 'fadeInRight' }} src="../assets_old/images/wallet1.png" />
                                 </div>
                             </div>
                         </div>
